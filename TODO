@@ -1,0 +1,6 @@
+[ ] Add wait_time to YAML config
+[ ] Ordering scheds by priorities and conflict checking in YAML config
+[ ] Profile runner function
+[ ] Profile runner state file (readonly)
+[ ] systemd service file (which takes yaml templates)
+[ ] add-profile, rm-profile, start-profile, print-profile helpers and commands
