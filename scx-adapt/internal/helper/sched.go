@@ -11,8 +11,6 @@ import (
 
 // NOTE: No helper depends on another (except Write()), combine them in cmd and config logic
 
-// TODO: add: error handling and nil error outputs to cmd logic
-
 func AddScx(scxPath string, addedScxsPath string) error {
 	if os.Geteuid() != 0 {
 		return fmt.Errorf("Must run as root")
@@ -69,7 +67,6 @@ func RemoveAddedScx(scxFilename string, addedScxsPath string) error {
 				return fmt.Errorf("Error occured while removing scheduler '%s': %s\n", scxFilename, err)
 			}
 
-			// fmt.Printf("Scheduler removed: %s\n", scxFilename) TODO: move this to cmd part
 			return nil
 		}
 	}

@@ -24,6 +24,8 @@ var addCmd = &cobra.Command{
 					fmt.Println(err)
 					os.Exit(1)
 				}
+
+				fmt.Println("Scheduler added.")
 			}
 		} else {
 			fmt.Println("Missing scheduler file(s) as argument. scx-adapt --help to see usage")
