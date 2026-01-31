@@ -6,87 +6,9 @@ import (
 	"internal/checks"
 	"os"
 	"os/exec"
-	"path/filepath"
 )
 
 // NOTE: No helper depends on another (except Write()), combine them in cmd and config logic
-
-func AddScx(scxPath string, addedScxsPath string) error {
-	if os.Geteuid() != 0 {
-		return fmt.Errorf("Must run as root")
-	}
-
-	// Check object
-	if err := checks.CheckObj(scxPath); err != nil {
-		return err
-	}
-
-	// Check if same file exists
-	curScheds, err := os.ReadDir(addedScxsPath)
-
-	if err != nil {
-		return fmt.Errorf("Error reading directory '%s': %s\n", addedScxsPath, err)
-	}
-
-	for _, e := range curScheds {
-		if e.Name() == filepath.Base(scxPath) {
-			return fmt.Errorf("Scheduler exists with same name: %s\n", filepath.Base(scxPath))
-		}
-	}
-
-	// Copy file
-	input, err := os.ReadFile(scxPath)
-	if err != nil {
-		return fmt.Errorf("Error occured while reading '%s': %s\n", scxPath, err)
-	}
-
-	copyFilePath := filepath.Join(addedScxsPath, filepath.Base(scxPath))
-	err = os.WriteFile(copyFilePath, input, 0744)
-
-	if err != nil {
-		return fmt.Errorf("Error occured while writing '%s': %s\n", copyFilePath, err)
-	}
-
-	return nil
-}
-
-func RemoveAddedScx(scxFilename string, addedScxsPath string) error {
-	if os.Geteuid() != 0 {
-		return fmt.Errorf("Must run as root")
-	}
-
-	scheds, err := os.ReadDir(addedScxsPath)
-	if err != nil {
-		return fmt.Errorf("Error reading directory '%s': %s\n", addedScxsPath, err)
-	}
-
-	for _, s := range scheds {
-		if s.Name() == scxFilename {
-			err := os.Remove(filepath.Join(addedScxsPath, scxFilename))
-			if err != nil {
-				return fmt.Errorf("Error occured while removing scheduler '%s': %s\n", scxFilename, err)
-			}
-
-			return nil
-		}
-	}
-
-	return fmt.Errorf("Scheduler does not exist: %s\n", scxFilename)
-}
-
-func ListScxs(addedScxsPath string) error {
-	files, err := os.ReadDir(addedScxsPath)
-
-	if err != nil {
-		return fmt.Errorf("Error reading directory '%s': %s\n", addedScxsPath, err)
-	}
-
-	for _, e := range files {
-		fmt.Println(e.Name())
-	}
-
-	return nil
-}
 
 func CurrentScx() error {
 	opsFile := "/sys/kernel/sched_ext/root/ops"
@@ -167,36 +89,23 @@ func StopCurrScx() error {
 	return nil
 }
 
-func StartScx(scxPath string, addedScxsPath string) error {
+func StartScx(scxPath string) error {
 	if os.Geteuid() != 0 {
 		return fmt.Errorf("Must run as root")
 	}
 
-	err := checks.CheckDependencies()
-	if err != nil {
+	if err := checks.CheckDependencies(); err != nil {
 		return err
 	}
 
-	if filepath.IsAbs(scxPath) { // BUG: doesn't work on ../ ./ etc.
-		err := checks.CheckObj(scxPath)
-		if err != nil {
-			return nil
-		}
-
-	} else {
-		err := checks.CheckScxAdded(scxPath, addedScxsPath)
-		if err != nil {
-			return err
-		}
-
-		scxPath = filepath.Join(addedScxsPath, scxPath)
+	if err := checks.CheckObj(scxPath); err != nil {
+		return err
 	}
 
 	startCmd := exec.Command("bpftool", "struct_ops", "register", scxPath, "/sys/fs/bpf/sched_ext")
 	startCmd.Run()
-	err = startCmd.Err
 
-	if err != nil {
+	if err := startCmd.Err; err != nil {
 		return fmt.Errorf("Error occured while attaching scheduler: %s\n", err)
 	}
 

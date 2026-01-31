@@ -41,19 +41,6 @@ func CheckObj(path string) error {
 	return nil
 }
 
-func CheckDir(path string) error {
-	info, err := os.Stat(path)
-	if os.IsNotExist(err) {
-		return fmt.Errorf("Directory does not exist: %s\n", path)
-	}
-
-	if !info.IsDir() {
-		return fmt.Errorf("Not a directory: %s\n", path)
-	}
-
-	return nil
-}
-
 func CheckDependencies() error {
 	// Check if BPF tool is installed
 	whichCmd := exec.Command("which", "bpftool")
@@ -90,24 +77,6 @@ func IsScxRunning() bool {
 	}
 
 	return true
-}
-
-func CheckScxAdded(scxFilename string, addedScxsPath string) error {
-	files, err := os.ReadDir(addedScxsPath)
-
-	if err != nil {
-		return fmt.Errorf("Error reading directory '%s': %s\n", addedScxsPath, err)
-	}
-
-	for _, e := range files {
-		if e.Name() == scxFilename {
-			goto scxFound
-		}
-	}
-	return fmt.Errorf("Scheduler '%s' is not found in %s\n", scxFilename, addedScxsPath)
-
-scxFound:
-	return nil
 }
 
 func ContainsDuplicate[T comparable](arr []T) (bool, []T) {

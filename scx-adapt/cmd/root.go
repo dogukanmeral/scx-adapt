@@ -11,8 +11,8 @@ import (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "scx-adapt-ctl",
-	Short: "CLI interface to control scx-adapt",
+	Use:   "scx-adapt",
+	Short: "Adaptive and automated scheduler policies for sched_ext",
 	Long:  ``,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
