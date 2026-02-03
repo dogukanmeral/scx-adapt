@@ -13,7 +13,7 @@ import (
 
 // logCmd represents the log command
 var logCmd = &cobra.Command{
-	Use:   "log",
+	Use:   "log-sched",
 	Short: "Print sched_ext event tracing to stdout",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
