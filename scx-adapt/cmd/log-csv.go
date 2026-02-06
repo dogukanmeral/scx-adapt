@@ -16,6 +16,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// BUG: Fix problems arised by changes in the "telemetry.go"
+
 // logCsvCmd represents the log-csv command
 var logCsvCmd = &cobra.Command{
 	Use:   "log-csv",
@@ -90,7 +92,7 @@ var logCsvCmd = &cobra.Command{
 		}
 
 		// Interrupt handling (CTRL + Z)
-		ch := make(chan os.Signal)
+		ch := make(chan os.Signal, 1)
 		signal.Notify(ch, os.Interrupt, syscall.SIGTERM)
 
 		go func() {
@@ -100,15 +102,27 @@ var logCsvCmd = &cobra.Command{
 			os.Exit(0)
 		}()
 
-		types := []helper.PressureType{
+		prTypes := []helper.PressureType{
 			helper.Cpu,
 			helper.IO,
-			helper.Memory,
+			helper.Mem,
 		}
 
-		opts := []helper.PressureOption{
+		prOpts := []helper.PressureOption{
 			helper.Some,
 			helper.Full,
+		}
+
+		prSeconds := []helper.PressureSecond{
+			helper.Avg10sec,
+			helper.Avg60sec,
+			helper.Avg300sec,
+		}
+
+		laMinutes := []helper.LoadAvgMinute{
+			helper.Avg1min,
+			helper.Avg5min,
+			helper.Avg15min,
 		}
 
 		buf := make([]string, 0, len(features))
@@ -120,24 +134,30 @@ var logCsvCmd = &cobra.Command{
 			buf = append(buf, strconv.FormatFloat(curTime, 'f', -1, 64))
 
 			// Iterate over all pressures
-			for _, t := range types {
-				for _, o := range opts {
-					p, err := helper.Pressures(t, o)
-					if err != nil {
-						fmt.Println("Error occured while reading pressures.")
-						os.Exit(1)
-					}
+			for _, t := range prTypes {
+				for _, o := range prOpts {
+					for _, s := range prSeconds {
+						v, err := helper.Pressure(t, o, s)
+						if err != nil {
+							fmt.Println("Error occured while reading pressures.")
+							os.Exit(1)
+						}
 
-					buf = append(buf, helper.FloatsToStr(p)...)
+						buf = append(buf, strconv.FormatFloat(v, 'f', -1, 64))
+					}
 				}
 			}
 
 			// Load averages
-			if l, err := helper.LoadAvgs(); err != nil {
-				fmt.Println("Error occured while reading load averages.")
-				os.Exit(1)
-			} else {
-				buf = append(buf, helper.FloatsToStr(l)...)
+			for _, m := range laMinutes {
+				v, err := helper.LoadAvg(m)
+
+				if err != nil {
+					fmt.Println("Error occured while reading load averages.")
+					os.Exit(1)
+				}
+
+				buf = append(buf, strconv.FormatFloat(v, 'f', -1, 64))
 			}
 
 			// Processes
@@ -175,7 +195,7 @@ var logCsvCmd = &cobra.Command{
 
 			buf = []string{}
 
-			time.Sleep(time.Second * time.Duration(interval))
+			time.Sleep(time.Second * time.Duration(interval)) // BUG: Below zero values e.g. 0.5
 			curTime += interval * 1000
 		}
 	},
