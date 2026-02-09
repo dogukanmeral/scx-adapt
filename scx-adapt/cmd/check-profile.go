@@ -1,5 +1,5 @@
 /*
-Copyright © 2026 NAME HERE <EMAIL ADDRESS>
+Copyright © 2026 Doğukan Meral <dogukan.meral@yahoo.com>
 */
 package cmd
 
@@ -25,12 +25,12 @@ var checkProfileCmd = &cobra.Command{
 				os.Exit(1)
 			}
 
-			if err := helper.ValidateYAML(data); err != nil {
+			if _, err := helper.YamlToConfig(data); err != nil {
 				fmt.Println(err)
 				os.Exit(1)
 			}
 
-			fmt.Println("Valid config.")
+			fmt.Println("Valid configuration.")
 		} else {
 			fmt.Println("Too many arguments. scx-adapt --help to see usage")
 			os.Exit(1)
@@ -40,14 +40,4 @@ var checkProfileCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(checkProfileCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// checkProfileCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// checkProfileCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
