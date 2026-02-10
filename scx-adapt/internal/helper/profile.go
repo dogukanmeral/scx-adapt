@@ -2,6 +2,7 @@ package helper
 
 import (
 	"fmt"
+	"internal/checks"
 	"os"
 	"regexp"
 	"sort"
@@ -100,6 +101,14 @@ NEXT_SCHED:
 			}
 
 			if s.Path != currentSched.Path {
+				if checks.IsScxRunning() {
+					err := StopCurrScx()
+
+					if err != nil {
+						return err
+					}
+				}
+
 				err := StartScx(s.Path)
 				if err != nil {
 					return err

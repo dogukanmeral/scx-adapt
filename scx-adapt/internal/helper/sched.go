@@ -103,9 +103,9 @@ func StartScx(scxPath string) error {
 	}
 
 	startCmd := exec.Command("bpftool", "struct_ops", "register", scxPath, "/sys/fs/bpf/sched_ext")
-	startCmd.Run()
+	err := startCmd.Run()
 
-	if err := startCmd.Err; err != nil {
+	if err != nil {
 		return fmt.Errorf("Error occured while attaching scheduler: %s\n", err)
 	}
 

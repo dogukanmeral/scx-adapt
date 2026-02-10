@@ -9,6 +9,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const DATAFOLDER string = "/etc/scx-adapt/"
+const LOCKFILEPATH string = "/etc/scx-adapt/scx-adapt.lock"
+
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "scx-adapt",

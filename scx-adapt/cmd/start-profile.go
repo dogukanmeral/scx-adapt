@@ -34,8 +34,8 @@ var startProfileCmd = &cobra.Command{
 		}
 
 		// Check if lock exists (profiler already running)
-		if checks.IsProfileRunning() {
-			fmt.Printf("Error: Another scx-adapt profile already running. (/tmp/scx-adapt.lock)\n")
+		if checks.IsFileExist(LOCKFILEPATH) {
+			fmt.Printf("Error: Another scx-adapt profile already running. (%s)\n", LOCKFILEPATH)
 			os.Exit(1)
 		}
 
@@ -47,7 +47,7 @@ var startProfileCmd = &cobra.Command{
 			<-ch
 			fmt.Printf("\nStopping profile '%s'...\n", filepath)
 
-			if err := os.Remove("/tmp/scx-adapt.lock"); err != nil { // Remove the lock
+			if err := os.Remove(LOCKFILEPATH); err != nil { // Remove the lock
 				fmt.Println("\nError: Removing lock file at 'scx-adapt.lock' failed.")
 			}
 
@@ -59,9 +59,19 @@ var startProfileCmd = &cobra.Command{
 			os.Exit(0)
 		}()
 
+		// Create /etc/scx-adapt/ folder if not exist
+		if !checks.IsFileExist(DATAFOLDER) {
+			err := os.Mkdir(DATAFOLDER, 0700)
+
+			if err != nil {
+				fmt.Printf("Error occured while creating directory '%s': %s", DATAFOLDER, err)
+				os.Exit(1)
+			}
+		}
+
 		// Create lock file
-		if _, err := os.Create("/tmp/scx-adapt.lock"); err != nil {
-			fmt.Printf("Error occured while creating lock file: %s\n", err)
+		if _, err := os.Create(LOCKFILEPATH); err != nil {
+			fmt.Printf("Error occured while creating lock file at '%s': %s\n", LOCKFILEPATH, err)
 		}
 
 		err := helper.RunProfile(filepath)

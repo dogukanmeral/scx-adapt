@@ -96,7 +96,7 @@ func ContainsDuplicate[T comparable](arr []T) (bool, []T) {
 	}
 }
 
-func IsProfileRunning() bool {
-	_, err := os.Stat("/tmp/scx-adapt.lock")
+func IsFileExist(path string) bool {
+	_, err := os.Stat(path)
 	return !errors.Is(err, os.ErrNotExist)
 }
