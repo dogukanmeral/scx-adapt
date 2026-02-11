@@ -2,17 +2,11 @@ module scx-adapt
 
 go 1.25.6
 
-require internal/checks v1.0.0
-
-replace internal/checks => ./internal/checks
-
-require internal/errs v1.0.0 // indirect
-
-replace internal/errs => ./internal/errs
-
 require (
 	github.com/spf13/cobra v1.10.2
 	internal/helper v1.0.0
+	internal/errs v1.0.0
+	internal/checks v1.0.0
 )
 
 require (
@@ -30,3 +24,5 @@ require (
 )
 
 replace internal/helper => ./internal/helper
+replace internal/checks => ./internal/checks
+replace internal/errs => ./internal/errs
