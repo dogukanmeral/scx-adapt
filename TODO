@@ -6,9 +6,10 @@
 [X] Add wait_time to YAML config
 [X] Ordering scheds by priorities and conflict checking in YAML config
 [X] Profile runner function
-[ ] Profile runner state file (readonly)
-[ ] add-profile (to /etc/scx-adapt), rm-profile, start-profile (from /etc if, not absolute path or not in cwd), status helpers and commands
+[X] Profile runner state file (readonly)
+[X] add-profile (to /etc/scx-adapt), rm-profile, start-profile (from /etc if, not absolute path or not in cwd), status helpers and commands
 [ ] Commands' explanations and auto-completion
+[X] Turn to system scheduler if any scx satisfies criterias
 
 # Backlog
 
