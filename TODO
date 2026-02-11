@@ -1,5 +1,7 @@
 # v0.1
 
+CLI tool with profile file running and logging capabilities. 
+
 [X] Fix YAML unmarshalling and checks
 [X] Fix running profiles logic
 [X] Write unit tests for functions
@@ -8,8 +10,10 @@
 [X] Profile runner function
 [X] Profile runner state file (readonly)
 [X] add-profile (to /etc/scx-adapt), rm-profile, start-profile (from /etc if, not absolute path or not in cwd), status helpers and commands
-[ ] Commands' explanations and auto-completion
+[X] Commands' explanations and auto-completion
 [X] Turn to system scheduler if any scx satisfies criterias
+[ ] Fix test cases in order to work with new file structure
+
 
 # Backlog
 
