@@ -51,9 +51,11 @@ var startProfileCmd = &cobra.Command{
 				fmt.Println("\nError: Removing lock file at 'scx-adapt.lock' failed.")
 			}
 
+			if checks.IsScxRunning() {
 			if err := helper.StopCurrScx(); err != nil {
 				fmt.Printf("\nError occured while stopping currently running sched_ext scheduler: %s\n", err)
 				os.Exit(1)
+				}
 			}
 
 			os.Exit(0)

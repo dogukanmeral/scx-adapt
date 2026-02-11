@@ -90,36 +90,46 @@ func RunProfile(profilePath string) error { // TODO: add /etc/scx-adapt and isAb
 	var currentSched Scheduler
 
 NEXT_SCHED:
-	for _, s := range conf.Schedulers {
+	for i, s := range conf.Schedulers {
 		for _, c := range s.Criterias {
 			if b, err := c.Satisfies(); !b {
 				if err != nil {
 					return err
 				}
 
-				continue NEXT_SCHED
-			}
+				if i+1 == len(conf.Schedulers) {
+					if checks.IsScxRunning() {
+						err := StopCurrScx()
 
-			if s.Path != currentSched.Path {
-				if checks.IsScxRunning() {
-					err := StopCurrScx()
+						if err != nil {
+							return err
+						}
 
-					if err != nil {
-						return err
+						currentSched = Scheduler{"", 0, []Criteria{}}
 					}
 				}
+				continue NEXT_SCHED
+			}
+		}
 
-				err := StartScx(s.Path)
+		if s.Path != currentSched.Path {
+			if checks.IsScxRunning() {
+				err := StopCurrScx()
+
 				if err != nil {
 					return err
 				}
-
-				currentSched = s
 			}
 
-			goto SCHED_STARTED
+			err := StartScx(s.Path)
+			if err != nil {
+				return err
+			}
 
+			currentSched = s
 		}
+
+		goto SCHED_STARTED
 	}
 
 SCHED_STARTED:
