@@ -9,6 +9,7 @@ import (
 	"internal/helper"
 	"os"
 	"os/signal"
+	"path"
 	"syscall"
 
 	"github.com/spf13/cobra"
@@ -17,7 +18,7 @@ import (
 // startProfileCmd represents the startProfile command
 var startProfileCmd = &cobra.Command{
 	Use:   "start-profile",
-	Short: "Run scx-adapt with the profile config",
+	Short: "Run scx-adapt with the profile configuration",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		var filepath string
@@ -30,6 +31,11 @@ var startProfileCmd = &cobra.Command{
 			filepath = args[0]
 		default:
 			fmt.Println("Too many arguments. scx-adapt --help to see usage")
+			os.Exit(1)
+		}
+
+		if os.Geteuid() != 0 {
+			fmt.Println("Must run as root")
 			os.Exit(1)
 		}
 
@@ -52,9 +58,9 @@ var startProfileCmd = &cobra.Command{
 			}
 
 			if checks.IsScxRunning() {
-			if err := helper.StopCurrScx(); err != nil {
-				fmt.Printf("\nError occured while stopping currently running sched_ext scheduler: %s\n", err)
-				os.Exit(1)
+				if err := helper.StopCurrScx(); err != nil {
+					fmt.Printf("\nError occured while stopping currently running sched_ext scheduler: %s\n", err)
+					os.Exit(1)
 				}
 			}
 
@@ -62,18 +68,19 @@ var startProfileCmd = &cobra.Command{
 		}()
 
 		// Create /etc/scx-adapt/ folder if not exist
-		if !checks.IsFileExist(DATAFOLDER) {
-			err := os.Mkdir(DATAFOLDER, 0700)
-
-			if err != nil {
-				fmt.Printf("Error occured while creating directory '%s': %s", DATAFOLDER, err)
-				os.Exit(1)
-			}
+		if err := helper.CreateDirIfNotExist(DATAFOLDER); err != nil {
+			fmt.Println(err)
+			os.Exit(1)
 		}
 
 		// Create lock file
 		if _, err := os.Create(LOCKFILEPATH); err != nil {
 			fmt.Printf("Error occured while creating lock file at '%s': %s\n", LOCKFILEPATH, err)
+		}
+
+		// If profile exists in DATAFOLDER with that name, use it
+		if checks.IsFileExist(path.Join(PROFILESFOLDER, filepath)) {
+			filepath = path.Join(PROFILESFOLDER, filepath)
 		}
 
 		err := helper.RunProfile(filepath)

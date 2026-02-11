@@ -9,6 +9,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const PROFILESFOLDER string = "/etc/scx-adapt/profiles/"
 const DATAFOLDER string = "/etc/scx-adapt/"
 const LOCKFILEPATH string = "/etc/scx-adapt/scx-adapt.lock"
 
