@@ -60,16 +60,12 @@ var addProfileCmd = &cobra.Command{
 		if err := helper.CreateDirIfNotExist(DATAFOLDER); err != nil {
 			fmt.Println(err)
 			os.Exit(1)
-		} else {
-			fmt.Printf("Created directory: %s\n", DATAFOLDER)
 		}
 
 		// Create profiles directory if not exist
 		if err := helper.CreateDirIfNotExist(PROFILESFOLDER); err != nil {
 			fmt.Println(err)
 			os.Exit(1)
-		} else {
-			fmt.Printf("Created directory: %s\n", PROFILESFOLDER)
 		}
 
 		// Copy file to profiles directory

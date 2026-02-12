@@ -57,6 +57,7 @@ var startProfileCmd = &cobra.Command{
 				fmt.Println("\nError: Removing lock file at 'scx-adapt.lock' failed.")
 			}
 
+			// Pass if no scx is running
 			if checks.IsScxRunning() {
 				if err := helper.StopCurrScx(); err != nil {
 					fmt.Printf("\nError occured while stopping currently running sched_ext scheduler: %s\n", err)
@@ -78,7 +79,7 @@ var startProfileCmd = &cobra.Command{
 			fmt.Printf("Error occured while creating lock file at '%s': %s\n", LOCKFILEPATH, err)
 		}
 
-		// If profile exists in DATAFOLDER with that name, use it
+		// If profile exists in PROFILESFOLDER with that name, use it
 		if checks.IsFileExist(path.Join(PROFILESFOLDER, filepath)) {
 			filepath = path.Join(PROFILESFOLDER, filepath)
 		}

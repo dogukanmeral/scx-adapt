@@ -17,13 +17,13 @@ CLI tool with profile file running and logging capabilities.
 [X] Add list-profiles command
 [ ] README file
 [X] Add function descriptions
+[X] Systemd service file (which takes yaml templates)
 
 # Backlog
 
 [ ] Switch to log.Fatal() for error messages in CLI
 [ ] goReleaser in Github Actions
 [ ] Automated go tests in Github Actions
-[ ] Systemd service file (which takes yaml templates)
 [ ] Write automated tests for CLI program
 [ ] Add installation and remove scripts (Move executable to PATH, create .service file, completion for current shell if supported)
-[ ] Copy schedulers too with profile when add-profile is run (each profile in it's own folder) 
+[ ] add-scheduler, remove-scheduler, list-schedulers commands (to /etc/scx-adapt/schedulers), load automatically by filename in .yaml config
