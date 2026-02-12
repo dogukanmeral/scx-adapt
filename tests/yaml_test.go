@@ -18,7 +18,7 @@ func formatYamlError(yamlData string, err error) string {
 func TestSingleSched(t *testing.T) {
 	yamlData := `interval: 1000
 schedulers:
-  - path: "../../bytecode/fifo.bpf.c.o"
+  - path: "obj/valid_0.o"
     priority: 1
     criterias:
       - value_name: load_avg_1
@@ -38,12 +38,12 @@ schedulers:
 func TestMultipleScheds(t *testing.T) {
 	yamlData := `interval: 1000
 schedulers:
-  - path: "../../bytecode/fifo.bpf.c.o"
+  - path: "obj/valid_0.o"
     priority: 1
     criterias:
       - value_name: load_avg_1
         less_than: 5
-  - path: "../../bytecode/lottery.bpf.c.o"
+  - path: "obj/valid_1.o"
     priority: 2
     criterias:
       - value_name: load_avg_1
@@ -59,12 +59,12 @@ schedulers:
 func TestSameSchedMultiplePriorities(t *testing.T) {
 	yamlData := `interval: 1000
 schedulers:
-  - path: "../../bytecode/fifo.bpf.c.o"
+  - path: "obj/valid_0.o"
     priority: 1
     criterias:
       - value_name: load_avg_1
         less_than: 5
-  - path: "../../bytecode/fifo.bpf.c.o"
+  - path: "obj/valid_0.o"
     priority: 2
     criterias:
       - value_name: load_avg_1
@@ -81,7 +81,7 @@ schedulers:
 func TestInvalidValueName(t *testing.T) {
 	yamlData := `interval: 1000
 schedulers:
-  - path: "../../bytecode/fifo.bpf.c.o"
+  - path: "obj/valid_0.o"
     priority: 1
     criterias:
       - value_name: load_avg
@@ -98,7 +98,7 @@ schedulers:
 func TestMissingParameter(t *testing.T) { // no more_than or less_than specified
 	yamlData := `interval: 1000
 schedulers:
-  - path: "../../bytecode/fifo.bpf.c.o"
+  - path: "obj/valid_0.o"
     priority: 1
     criterias:
       - value_name: load_avg_1`
@@ -114,7 +114,7 @@ schedulers:
 func TestConflictCriterias(t *testing.T) { // same value_name specified multiple times
 	yamlData := `interval: 1000
 schedulers:
-  - path: "../../bytecode/fifo.bpf.c.o"
+  - path: "obj/valid_0.o"
     priority: 1
     criterias:
       - value_name: load_avg_1
@@ -133,7 +133,7 @@ schedulers:
 func TestConflictParametersBigger(t *testing.T) { // more_than > less_than
 	yamlData := `interval: 1000
 schedulers:
-  - path: "../../bytecode/fifo.bpf.c.o"
+  - path: "obj/valid_0.o"
     priority: 1
     criterias:
       - value_name: load_avg_1
@@ -151,7 +151,7 @@ schedulers:
 func TestConflictParametersEqual(t *testing.T) { // more_than == less_than
 	yamlData := `interval: 1000
 schedulers:
-  - path: "../../bytecode/fifo.bpf.c.o"
+  - path: "obj/valid_0.o"
     priority: 1
     criterias:
       - value_name: load_avg_1
@@ -185,12 +185,12 @@ schedulers:
 func TestConflictPriorities(t *testing.T) { // both schedulers have same priority
 	yamlData := `interval: 1000
 schedulers:
-  - path: "../../bytecode/fifo.bpf.c.o"
+  - path: "obj/valid_0.o"
     priority: 1
     criterias:
       - value_name: load_avg_1
         less_than: 1
-  - path: "../../bytecode/lottery.bpf.c.o"
+  - path: "obj/valid_1.o"
     priority: 1
     criterias:
       - value_name: load_avg_1

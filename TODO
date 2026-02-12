@@ -12,7 +12,7 @@ CLI tool with profile file running and logging capabilities.
 [X] add-profile (to /etc/scx-adapt), rm-profile, start-profile (from /etc if, not absolute path or not in cwd), status helpers and commands
 [X] Commands' explanations and auto-completion
 [X] Turn to system scheduler if any scx satisfies criterias
-[ ] Fix test cases in order to work with new file structure
+[X] Fix test cases in order to work with new file structure (obj's for testing to tests/obj folder)
 [X] Add logging to CLI
 [X] Add list-profiles command
 [ ] README file
@@ -26,3 +26,4 @@ CLI tool with profile file running and logging capabilities.
 [ ] Systemd service file (which takes yaml templates)
 [ ] Write automated tests for CLI program
 [ ] Add installation and remove scripts (Move executable to PATH, create .service file, completion for current shell if supported)
+[ ] Copy schedulers too with profile when add-profile is run (each profile in it's own folder) 
