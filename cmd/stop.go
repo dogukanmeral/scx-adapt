@@ -24,6 +24,8 @@ var stopCmd = &cobra.Command{
 				fmt.Println(err)
 				os.Exit(1)
 			}
+
+			fmt.Println("Current scheduler stopped.")
 		} else {
 			fmt.Println("Too many arguments. scx-adapt --help to see usage")
 			os.Exit(1)

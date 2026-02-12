@@ -74,7 +74,7 @@ func (c Criteria) Satisfies() (bool, error) {
 	}
 }
 
-func RunProfile(profilePath string) error { // TODO: add /etc/scx-adapt and isAbsolute stuff to cmd part, helpers just get absolute paths
+func RunProfile(profilePath string) error {
 	profileData, err := os.ReadFile(profilePath)
 	if err != nil {
 		return fmt.Errorf("Error occured while reading file '%s': %s\n", profilePath, err)
@@ -84,6 +84,8 @@ func RunProfile(profilePath string) error { // TODO: add /etc/scx-adapt and isAb
 	if err != nil {
 		return err
 	}
+
+	fmt.Printf("Profile at '%s' started.\n", profilePath)
 
 	sort.Sort(conf) // Sort schedulers by their priority (smaller int has higher priority)
 
@@ -105,6 +107,7 @@ NEXT_SCHED:
 							return err
 						}
 
+						fmt.Println("None of schedulers satisfy criterias. Switched to system scheduler.")
 						currentSched = Scheduler{"", 0, []Criteria{}}
 					}
 				}
@@ -126,6 +129,7 @@ NEXT_SCHED:
 				return err
 			}
 
+			fmt.Printf("Switched to scheduler '%s'\n", s.Path)
 			currentSched = s
 		}
 

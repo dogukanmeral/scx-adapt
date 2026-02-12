@@ -46,6 +46,8 @@ var removeProfileCmd = &cobra.Command{
 			fmt.Printf("Error occured while deleting profile '%s' in '%s': %s\n", profileFile, PROFILESFOLDER, err)
 			os.Exit(1)
 		}
+
+		fmt.Printf("Profile at '%s' removed.\n", path.Join(PROFILESFOLDER, profileFile))
 	},
 }
 

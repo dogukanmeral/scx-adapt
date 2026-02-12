@@ -13,10 +13,14 @@ CLI tool with profile file running and logging capabilities.
 [X] Commands' explanations and auto-completion
 [X] Turn to system scheduler if any scx satisfies criterias
 [ ] Fix test cases in order to work with new file structure
-
+[X] Add logging to CLI
+[ ] Add list-profiles command
+[ ] README file
 
 # Backlog
 
-[ ] Detailed logging to journal
+[ ] goReleaser in Github Actions
+[ ] Automated go tests in Github Actions
 [ ] Systemd service file (which takes yaml templates)
-[ ] Desktop notifications if WM is available
+[ ] No stdout option for start-profile
+[ ] Write automated tests for CLI program 
