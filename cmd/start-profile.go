@@ -17,7 +17,7 @@ import (
 
 // startProfileCmd represents the startProfile command
 var startProfileCmd = &cobra.Command{
-	Use:   "start-profile",
+	Use:   "start-profile <profile_path>",
 	Short: "Run scx-adapt with the profile configuration",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {

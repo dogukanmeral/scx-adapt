@@ -14,7 +14,7 @@ import (
 
 // checkProfileCmd represents the checkProfile command
 var checkProfileCmd = &cobra.Command{
-	Use:   "check-profile",
+	Use:   "check-profile <profile_path>",
 	Short: "Check if profile file in YAML format passed from STDIN is valid",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {

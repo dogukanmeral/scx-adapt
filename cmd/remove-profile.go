@@ -13,7 +13,7 @@ import (
 )
 
 var removeProfileCmd = &cobra.Command{
-	Use:   "remove-profile",
+	Use:   "remove-profile <profile_filename>",
 	Short: "Remove profile configuration from profiles folder ('/etc/scx-adapt/profiles' by default)",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {

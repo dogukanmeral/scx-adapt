@@ -15,7 +15,7 @@ import (
 )
 
 var addProfileCmd = &cobra.Command{
-	Use:   "add-profile",
+	Use:   "add-profile <profile_path>",
 	Short: "Add scx-adapt profile configuration to profiles folder ('/etc/scx-adapt/profiles' by default)",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {

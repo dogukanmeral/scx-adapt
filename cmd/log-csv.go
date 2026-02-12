@@ -20,7 +20,7 @@ import (
 
 // logCsvCmd represents the log-csv command
 var logCsvCmd = &cobra.Command{
-	Use:   "log-csv",
+	Use:   "log-csv <csv_file_path> [interval]",
 	Short: "Print system variables to file in csv format",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
