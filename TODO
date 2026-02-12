@@ -14,8 +14,9 @@ CLI tool with profile file running and logging capabilities.
 [X] Turn to system scheduler if any scx satisfies criterias
 [ ] Fix test cases in order to work with new file structure
 [X] Add logging to CLI
-[ ] Add list-profiles command
+[X] Add list-profiles command
 [ ] README file
+[ ] Add function descriptions
 
 # Backlog
 
@@ -23,4 +24,5 @@ CLI tool with profile file running and logging capabilities.
 [ ] Automated go tests in Github Actions
 [ ] Systemd service file (which takes yaml templates)
 [ ] No stdout option for start-profile
-[ ] Write automated tests for CLI program 
+[ ] Write automated tests for CLI program
+[ ] Add installation and remove scripts (Move executable to PATH, create .service file, completion for current shell if supported)
