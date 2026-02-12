@@ -10,6 +10,7 @@ import (
 	"slices"
 )
 
+// Checks if file is BPF bytecode and includes .struct_ops.link section
 func CheckObj(path string) error {
 	file, err := os.Open(path)
 
@@ -42,6 +43,7 @@ func CheckObj(path string) error {
 	return nil
 }
 
+// Checks dependencies: bpftool, kernel (BPF and sched_ext)
 func CheckDependencies() error {
 	// Check if BPF tool is installed
 	whichCmd := exec.Command("which", "bpftool")
@@ -69,6 +71,7 @@ func CheckDependencies() error {
 	return nil
 }
 
+// Checks if "/sys/kernel/sched_ext/root/ops" exists (if sched_ext is active).
 func IsScxRunning() bool {
 	opsFile := "/sys/kernel/sched_ext/root/ops"
 	_, err := os.Stat(opsFile)
@@ -80,6 +83,13 @@ func IsScxRunning() bool {
 	return true
 }
 
+// If passed slice of comparables has duplicates inside:
+//
+//	returns true, slice of duplicating values
+//
+// else:
+//
+//	returns false, nil
 func ContainsDuplicate[T comparable](arr []T) (bool, []T) {
 	var duplicates []T
 
@@ -96,6 +106,7 @@ func ContainsDuplicate[T comparable](arr []T) (bool, []T) {
 	}
 }
 
+// Returns if file exists or not
 func IsFileExist(path string) bool {
 	_, err := os.Stat(path)
 	return !errors.Is(err, os.ErrNotExist)

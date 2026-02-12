@@ -9,6 +9,7 @@ import (
 	"time"
 )
 
+// Checks if the system value satisfies 'less_than' or 'more_than'
 func (c Criteria) SatisfiesLessMore(sysValue float64) bool {
 	// Checking pointers to avoid null-pointer referance
 	if c.MoreThan != nil && c.LessThan != nil {
@@ -22,6 +23,7 @@ func (c Criteria) SatisfiesLessMore(sysValue float64) bool {
 	}
 }
 
+// Checks if live system values satisfies the criteria.
 func (c Criteria) Satisfies() (bool, error) {
 	if b, _ := regexp.MatchString(VALID_VALUE_REGEX["pressures"], c.ValueName); b {
 		pType, pOpt, pSec := ParsePressure(c.ValueName)
@@ -74,6 +76,7 @@ func (c Criteria) Satisfies() (bool, error) {
 	}
 }
 
+// Parses the profile and iterates on schedulers until all criterias of a scheduler is satisfied; then sleeps for a specified time period
 func RunProfile(profilePath string) error {
 	profileData, err := os.ReadFile(profilePath)
 	if err != nil {

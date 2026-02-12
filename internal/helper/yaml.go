@@ -33,10 +33,12 @@ func (c Config) Len() int {
 	return len(c.Schedulers)
 }
 
+// Interface for sorting schedulers by their priority
 func (c Config) Less(i, j int) bool {
 	return c.Schedulers[i].Priority < c.Schedulers[j].Priority
 }
 
+// Interface for sorting schedulers by their priority
 func (c Config) Swap(i, j int) {
 	c.Schedulers[i], c.Schedulers[j] = c.Schedulers[j], c.Schedulers[i]
 }
@@ -58,6 +60,7 @@ type Criteria struct {
 	LessThan  *float64 `yaml:"less_than"`
 }
 
+// Validate Criteria
 func (c Criteria) Validate() error {
 	v := validator.New()
 
@@ -91,6 +94,7 @@ valueNameValid:
 	return nil
 }
 
+// Validate Scheduler
 func (s Scheduler) Validate() error {
 	v := validator.New()
 
@@ -122,6 +126,7 @@ func (s Scheduler) Validate() error {
 	return nil
 }
 
+// Validate Config
 func (conf Config) Validate() error {
 	v := validator.New()
 
@@ -149,6 +154,7 @@ func (conf Config) Validate() error {
 	return nil
 }
 
+// Converts YAML data passed as []byte to Config. If any error occurs in the called functions; returns it as it is.
 func YamlToConfig(yamlData []byte) (Config, error) {
 	var conf Config
 

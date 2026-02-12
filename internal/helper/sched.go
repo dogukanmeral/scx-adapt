@@ -10,6 +10,7 @@ import (
 
 // NOTE: No helper depends on another (except Write()), combine them in cmd and config logic
 
+// Prints content of "/sys/kernel/sched_ext/root/ops" (currently running sched_ext scheduler if exists) to STDOUT.
 func CurrentScx() error {
 	opsFile := "/sys/kernel/sched_ext/root/ops"
 
@@ -29,14 +30,16 @@ func CurrentScx() error {
 	return nil
 }
 
+// Writes data to file with permissions '0644'
 func Write(path string, data string) {
 	err := os.WriteFile(path, []byte(data), 0644)
 
 	if err != nil {
-		panic(err)
+		panic(err) // TODO: Convert to error returning function as other components of project.
 	}
 }
 
+// Prints sched_ext trace to STDOUT (does not print anything if sched_ext is not active).
 func TraceSchedExt() error {
 	if os.Geteuid() != 0 {
 		return fmt.Errorf("Must run as root")
@@ -74,6 +77,7 @@ func TraceSchedExt() error {
 	}
 }
 
+// Removes file '/sys/fs/bpf/sched_ext/sched_ops' if exists (stops currently running sched_ext scheduler).
 func StopCurrScx() error {
 	if os.Geteuid() != 0 {
 		return fmt.Errorf("Must run as root")
@@ -89,6 +93,7 @@ func StopCurrScx() error {
 	return nil
 }
 
+// Attaches sched_ext scheduler to kernel using 'bpftool' at '/sys/fs/bpf/sched_ext'
 func StartScx(scxPath string) error {
 	if os.Geteuid() != 0 {
 		return fmt.Errorf("Must run as root")

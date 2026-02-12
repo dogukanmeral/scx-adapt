@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-// For files structured like: variablename: value
+// To extract integer values from files which has the format: <variablename>: <value>
 // Use for:
 //
 //	/proc/stat: procs_running, procs_blocked
@@ -39,6 +39,7 @@ out:
 	return val, nil
 }
 
+// Read system file '/proc/diskstats' and return number of process with current IO operations.
 func DiskCurIO() (int, error) {
 	diskData, err := os.ReadFile("/proc/diskstats")
 
@@ -72,8 +73,7 @@ const (
 	Avg15min LoadAvgMinute = 2
 )
 
-// 1-min 5-min 15-min
-// e.g.: 0.10 0.26 0.33
+// Read system file '/proc/loadavg' and return the load average for specified minute value.
 func LoadAvg(minutes LoadAvgMinute) (float64, error) {
 	loadAvgData, err := os.ReadFile("/proc/loadavg")
 	if err != nil {
@@ -95,6 +95,7 @@ func LoadAvg(minutes LoadAvgMinute) (float64, error) {
 	return loadAvgsFloat[minutes], nil
 }
 
+// Parse load average value name and return it's minute.
 func ParseLoadAvg(loadAvgValName string) LoadAvgMinute {
 	var laMinute LoadAvgMinute
 
@@ -138,7 +139,7 @@ const (
 	“full” line indicates the share of time in which all non-idle tasks are stalled on a given resource simultaneously.
 */
 
-// avg10 avg60 avg300 (seconds)
+// Read system file '/proc/pressure/<pressure type>' and return the pressure for specified type, option and second values.
 func Pressure(presType PressureType, presOpt PressureOption, presSec PressureSecond) (float64, error) {
 	presFile := fmt.Sprintf("/proc/pressure/%s", presType)
 
@@ -169,6 +170,7 @@ func Pressure(presType PressureType, presOpt PressureOption, presSec PressureSec
 	return pressures[presSec], nil
 }
 
+// Parse pressure value name to it's: type (CPU, IO or Mem), option(some or full), seconds(10, 60 or 300).
 func ParsePressure(pressureValName string) (PressureType, PressureOption, PressureSecond) { // 0: avg10, 1: avg60, 2: avg300
 	var pType PressureType
 	var pOpt PressureOption
@@ -202,6 +204,7 @@ func ParsePressure(pressureValName string) (PressureType, PressureOption, Pressu
 	return pType, pOpt, pSec
 }
 
+// Convert elements in []float64 to string and return these as []string
 func FloatsToStr(slice []float64) []string {
 
 	out := make([]string, len(slice))
