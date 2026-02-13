@@ -1,9 +1,0 @@
-[Unit]
-Description=scx-adapt daemon for profile at %I
-
-[Service]
-Type=exec
-ExecStart=/usr/bin/scx-adapt start-profile  %i
-
-[Install]
-WantedBy=multi-user.target

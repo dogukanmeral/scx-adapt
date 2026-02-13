@@ -1,6 +1,12 @@
-# v0.1
+# v0.0.1
 
-CLI tool with profile file running and logging capabilities. 
+Initial version of scx-adapt.
+It includes:
+    YAML profile configuration parsing-running,
+    Creating traces of sched_ext,
+    Creating CSV logs of system data (load avg. and pressures etc.),
+    Systemd profile for scx-adapt,
+    Managing profiles in /etc/scx-adapt/profiles
 
 [X] Fix YAML unmarshalling and checks
 [X] Fix running profiles logic
@@ -18,6 +24,7 @@ CLI tool with profile file running and logging capabilities.
 [ ] README file
 [X] Add function descriptions
 [X] Systemd service file (which takes yaml templates)
+[X] Add install-service and remove-service commands
 
 # Backlog
 
@@ -25,5 +32,4 @@ CLI tool with profile file running and logging capabilities.
 [ ] goReleaser in Github Actions
 [ ] Automated go tests in Github Actions
 [ ] Write automated tests for CLI program
-[ ] Add installation and remove scripts (Move executable to PATH, create .service file, completion for current shell if supported)
 [ ] add-scheduler, remove-scheduler, list-schedulers commands (to /etc/scx-adapt/schedulers), load automatically by filename in .yaml config
