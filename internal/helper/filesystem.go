@@ -18,3 +18,17 @@ func CreateDirIfNotExist(dirPath string) error {
 
 	return nil
 }
+
+func CopyFile(sourcePath string, destinationPath string, filePerm int) error {
+	input, err := os.ReadFile(sourcePath)
+	if err != nil {
+		return err
+	}
+
+	err = os.WriteFile(destinationPath, input, os.FileMode(filePerm))
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

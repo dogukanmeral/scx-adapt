@@ -16,8 +16,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// BUG: Fix problems arised by changes in the "telemetry.go"
-
 // logCsvCmd represents the log-csv command
 var logCsvCmd = &cobra.Command{
 	Use:   "log-csv <csv_file_path> [interval]",
