@@ -4,9 +4,9 @@ go 1.25.6
 
 require (
 	github.com/spf13/cobra v1.10.2
-	internal/helper v1.0.0
-	internal/errs v1.0.0
 	internal/checks v1.0.0
+	internal/errs v1.0.0
+	internal/helper v1.0.0
 )
 
 require (
@@ -24,5 +24,7 @@ require (
 )
 
 replace internal/helper => ./internal/helper
+
 replace internal/checks => ./internal/checks
+
 replace internal/errs => ./internal/errs
