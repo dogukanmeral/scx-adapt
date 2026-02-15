@@ -21,15 +21,15 @@ It includes:
 [X] Fix test cases in order to work with new file structure (obj's for testing to tests/obj folder)
 [X] Add logging to CLI
 [X] Add list-profiles command
-[ ] README file
+[X] README file
 [X] Add function descriptions
 [X] Systemd service file (which takes yaml templates)
 [X] Add install-service and remove-service commands
+[X] Automated go tests in Github Actions
 
 # Backlog
 
 [ ] Switch to log.Fatal() for error messages in CLI
 [ ] goReleaser in Github Actions
-[ ] Automated go tests in Github Actions
 [ ] Write automated tests for CLI program
 [ ] add-scheduler, remove-scheduler, list-schedulers commands (to /etc/scx-adapt/schedulers), load automatically by filename in .yaml config
