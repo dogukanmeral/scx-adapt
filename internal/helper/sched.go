@@ -3,9 +3,10 @@ package helper
 import (
 	"errors"
 	"fmt"
-	"internal/checks"
 	"os"
 	"os/exec"
+
+	"github.com/dogukanmeral/scx-adapt/internal/checks"
 )
 
 // NOTE: No helper depends on another (except Write()), combine them in cmd and config logic

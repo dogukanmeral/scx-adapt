@@ -2,8 +2,9 @@ package helper
 
 import (
 	"fmt"
-	"internal/checks"
 	"os"
+
+	"github.com/dogukanmeral/scx-adapt/internal/checks"
 )
 
 // Creates directory with permission '700' if it does not exist already.

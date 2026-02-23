@@ -5,9 +5,10 @@ package cmd
 
 import (
 	"fmt"
-	"internal/helper"
 	"io"
 	"os"
+
+	"github.com/dogukanmeral/scx-adapt/internal/helper"
 
 	"github.com/spf13/cobra"
 )

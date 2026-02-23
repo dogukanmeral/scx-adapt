@@ -5,11 +5,12 @@ package cmd
 
 import (
 	"fmt"
-	"internal/checks"
-	"internal/helper"
 	"os"
 	"path"
 	"path/filepath"
+
+	"github.com/dogukanmeral/scx-adapt/internal/checks"
+	"github.com/dogukanmeral/scx-adapt/internal/helper"
 
 	"github.com/spf13/cobra"
 )

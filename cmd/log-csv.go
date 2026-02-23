@@ -5,13 +5,14 @@ package cmd
 
 import (
 	"fmt"
-	"internal/helper"
 	"os"
 	"os/signal"
 	"strconv"
 	"strings"
 	"syscall"
 	"time"
+
+	"github.com/dogukanmeral/scx-adapt/internal/helper"
 
 	"github.com/spf13/cobra"
 )

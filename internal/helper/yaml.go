@@ -3,9 +3,10 @@ package helper
 import (
 	"bytes"
 	"fmt"
-	"internal/checks"
-	"internal/errs"
 	"regexp"
+
+	"github.com/dogukanmeral/scx-adapt/internal/checks"
+	"github.com/dogukanmeral/scx-adapt/internal/errs"
 
 	"github.com/go-playground/validator/v10"
 	"gopkg.in/yaml.v3"

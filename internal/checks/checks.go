@@ -4,10 +4,11 @@ import (
 	"debug/elf"
 	"errors"
 	"fmt"
-	"internal/errs"
 	"os"
 	"os/exec"
 	"slices"
+
+	"github.com/dogukanmeral/scx-adapt/internal/errs"
 )
 
 // Checks if file is BPF bytecode and includes .struct_ops.link section

@@ -5,9 +5,10 @@ package cmd
 
 import (
 	"fmt"
-	"internal/checks"
 	"os"
 	"path"
+
+	"github.com/dogukanmeral/scx-adapt/internal/checks"
 
 	"github.com/spf13/cobra"
 )

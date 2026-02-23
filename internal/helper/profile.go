@@ -2,11 +2,12 @@ package helper
 
 import (
 	"fmt"
-	"internal/checks"
 	"os"
 	"regexp"
 	"sort"
 	"time"
+
+	"github.com/dogukanmeral/scx-adapt/internal/checks"
 )
 
 // Checks if the system value satisfies 'less_than' or 'more_than'

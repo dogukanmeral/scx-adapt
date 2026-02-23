@@ -1,9 +1,10 @@
 package main
 
 import (
-	"internal/checks"
 	"slices"
 	"testing"
+
+	"github.com/dogukanmeral/scx-adapt/internal/checks"
 )
 
 type duplicateTest[T comparable] = struct {

@@ -3,10 +3,11 @@ package main
 import (
 	"errors"
 	"fmt"
-	"internal/errs"
-	"internal/helper"
 	"os"
 	"testing"
+
+	"github.com/dogukanmeral/scx-adapt/internal/errs"
+	"github.com/dogukanmeral/scx-adapt/internal/helper"
 )
 
 func formatYamlError(yamlData string, err error) string {
