@@ -19,12 +19,12 @@ import (
 
 // logCsvCmd represents the log-csv command
 var logCsvCmd = &cobra.Command{
-	Use:   "log-csv <csv_file_path> [interval]",
+	Use:   "log-csv <csv_file_path> [interval_ms]",
 	Short: "Print system variables to file in csv format",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		var filepath string
-		var interval float64
+		var interval time.Duration
 
 		switch len(args) {
 		case 0:
@@ -32,14 +32,14 @@ var logCsvCmd = &cobra.Command{
 			os.Exit(1)
 		case 1:
 			filepath = args[0]
-			interval = 1 // second
+			interval = 1000 // milliseconds
 		case 2:
 			filepath = args[0]
-			if i, err := strconv.ParseFloat(args[1], 64); err != nil {
+			if i, err := strconv.Atoi(args[1]); err != nil {
 				fmt.Println("Error: Interval argument must be a positive integer.")
 				os.Exit(1)
 			} else {
-				interval = i
+				interval = time.Duration(i)
 			}
 		default:
 			fmt.Println("Too many arguments. scx-adapt --help to see usage")
@@ -126,11 +126,11 @@ var logCsvCmd = &cobra.Command{
 
 		buf := make([]string, 0, len(features))
 
-		var curTime float64 = 0
+		var curTime time.Duration = 0
 
 		for {
 			// Current time after start (milliseconds)
-			buf = append(buf, strconv.FormatFloat(curTime, 'f', -1, 64))
+			buf = append(buf, strconv.Itoa(int(curTime)))
 
 			// Iterate over all pressures
 			for _, t := range prTypes {
@@ -138,7 +138,7 @@ var logCsvCmd = &cobra.Command{
 					for _, s := range prSeconds {
 						v, err := helper.Pressure(t, o, s)
 						if err != nil {
-							fmt.Println("Error occured while reading pressures.")
+							fmt.Printf("Error occured while reading pressures: %s", err)
 							os.Exit(1)
 						}
 
@@ -194,8 +194,8 @@ var logCsvCmd = &cobra.Command{
 
 			buf = []string{}
 
-			time.Sleep(time.Second * time.Duration(interval)) // BUG: Below zero values e.g. 0.5
-			curTime += interval * 1000
+			time.Sleep(time.Millisecond * interval) // BUG: Below zero values e.g. 0.5
+			curTime += interval
 		}
 	},
 }

@@ -116,7 +116,7 @@ type PressureType string
 const (
 	Cpu PressureType = "cpu"
 	IO  PressureType = "io"
-	Mem PressureType = "mem"
+	Mem PressureType = "memory"
 )
 
 type PressureOption string
