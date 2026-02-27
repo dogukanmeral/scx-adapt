@@ -88,7 +88,7 @@ To disable/stop and delete service file:
 
 ## further development
 
-I (Doğukan Meral) have been the sole developer for v0.0.1 while my friend @onurkaragur is currently working on performance analysis of schedulers and ways to optimize scx-adapt configurations using machine learning techniques on the ***scx-adapt-experiments*** repository.
+I (Doğukan Meral) have been the sole developer for v0.0.1 while my friend @onurkaragur is currently working on performance analysis of schedulers and ways to optimize scx-adapt configurations using machine learning techniques on the [scx-adapt-experiments](https://github.com/onurkaragur/scx-adapt-experiments) repository.
 
 Your feedbacks, suggestions, criticisms and most importantly your contributions are highly appriciated. Feel free to contact me at my e-mail address `dogukan.meral@yahoo.com`   
 

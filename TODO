@@ -27,6 +27,14 @@ It includes:
 [X] Add install-service and remove-service commands
 [X] Automated go tests in Github Actions
 
+# v0.0.2
+
+Bug fixes
+
+[X] Fix go.mod "replace" problem
+[X] Fix below zero values in log-csv (e.g. 0.5)
+[X] Update README
+
 # Backlog
 
 [ ] Switch to log.Fatal() for error messages in CLI
