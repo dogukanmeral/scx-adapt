@@ -78,13 +78,13 @@ func TraceSchedExt() error {
 	}
 }
 
-// Removes file '/sys/fs/bpf/sched_ext/sched_ops' if exists (stops currently running sched_ext scheduler).
+// Removes files in '/sys/fs/bpf/sched_ext' if exists (stops currently running sched_ext scheduler).
 func StopCurrScx() error {
 	if os.Geteuid() != 0 {
 		return fmt.Errorf("Must run as root")
 	}
 
-	err := os.Remove("/sys/fs/bpf/sched_ext/sched_ops")
+	err := os.RemoveAll("/sys/fs/bpf/sched_ext/")
 	if errors.Is(err, os.ErrNotExist) {
 		return fmt.Errorf("No custom schedulers are attached")
 	} else if err != nil {
@@ -112,7 +112,7 @@ func StartScx(scxPath string) error {
 	err := startCmd.Run()
 
 	if err != nil {
-		return fmt.Errorf("Error occured while attaching scheduler: %s\n", err)
+		return fmt.Errorf("Error occured while attaching scheduler '%s': %s\n", scxPath, err)
 	}
 
 	return nil
