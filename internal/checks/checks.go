@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"slices"
+	"strings"
 
 	"github.com/dogukanmeral/scx-adapt/internal/errs"
 )
@@ -117,9 +118,5 @@ func IsFileExist(path string) bool {
 func IsSchedExtActive() bool {
 	s, _ := os.ReadFile("/sys/kernel/sched_ext/state")
 
-	if string(s) != "enabled" {
-		return false
-	}
-
-	return true
+	return strings.TrimSpace(string(s[:])) == "enabled"
 }
