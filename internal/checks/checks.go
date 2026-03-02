@@ -112,3 +112,14 @@ func IsFileExist(path string) bool {
 	_, err := os.Stat(path)
 	return !errors.Is(err, os.ErrNotExist)
 }
+
+// Returns if sched_ext is active or not
+func IsSchedExtActive() bool {
+	s, _ := os.ReadFile("/sys/kernel/sched_ext/state")
+
+	if string(s) != "enabled" {
+		return false
+	}
+
+	return true
+}

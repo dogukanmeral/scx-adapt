@@ -95,6 +95,7 @@ func RunProfile(profilePath string) error {
 
 	var currentSched Scheduler
 
+	// TODO: add sched_ext status check
 NEXT_SCHED:
 	for i, s := range conf.Schedulers {
 		for _, c := range s.Criterias {
@@ -131,6 +132,10 @@ NEXT_SCHED:
 			err := StartScx(s.Path)
 			if err != nil {
 				return err
+			}
+
+			if !checks.IsSchedExtActive() {
+				return fmt.Errorf("Error: Scheduler '%s' did not start.", s.Path)
 			}
 
 			fmt.Printf("Switched to scheduler '%s'\n", s.Path)
