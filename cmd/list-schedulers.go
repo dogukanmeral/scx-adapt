@@ -1,6 +1,7 @@
 /*
 Copyright © 2026 Doğukan Meral <dogukan.meral@yahoo.com>
 */
+
 package cmd
 
 import (
@@ -8,17 +9,13 @@ import (
 	"os"
 	"path"
 
-	"github.com/dogukanmeral/scx-adapt/internal/helper"
-
 	"github.com/dogukanmeral/scx-adapt/internal/checks"
-
 	"github.com/spf13/cobra"
 )
 
-// listProfilesCmd represents the listProfiles command
-var listProfilesCmd = &cobra.Command{
-	Use:   "list-profiles",
-	Short: "List profile configurations in profiles folder ('/etc/scx-adapt/profiles' by default)",
+var listSchedulersCmd = &cobra.Command{
+	Use:   "list-schedulers",
+	Short: "List schedulers in schedulers folder ('/etc/scx-adapt/schedulers' by default)",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		switch len(args) {
@@ -29,12 +26,12 @@ var listProfilesCmd = &cobra.Command{
 			}
 
 			// Check if profiles directory exists
-			if !checks.IsFileExist(PROFILESFOLDER) {
-				fmt.Printf("Error: Profiles folder '%s' does not exist.\n", PROFILESFOLDER)
+			if !checks.IsFileExist(SCHEDULERSFOLDER) {
+				fmt.Printf("Error: Schedulers folder '%s' does not exist.\n", SCHEDULERSFOLDER)
 				os.Exit(1)
 			}
 
-			files, err := os.ReadDir(PROFILESFOLDER)
+			files, err := os.ReadDir(SCHEDULERSFOLDER)
 
 			if err != nil {
 				fmt.Println(err)
@@ -42,15 +39,8 @@ var listProfilesCmd = &cobra.Command{
 			}
 
 			for _, f := range files {
-				fileData, err := os.ReadFile(path.Join(PROFILESFOLDER, f.Name()))
-				if err != nil {
+				if err := checks.CheckObj(path.Join(SCHEDULERSFOLDER, f.Name())); err != nil {
 					fmt.Println(err)
-					continue
-				}
-
-				_, err = helper.YamlToConfig(fileData)
-				if err != nil {
-					fmt.Printf("Error in profile '%s': %s\n", f.Name(), err)
 					continue
 				}
 
@@ -64,5 +54,5 @@ var listProfilesCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(listProfilesCmd)
+	rootCmd.AddCommand(listSchedulersCmd)
 }

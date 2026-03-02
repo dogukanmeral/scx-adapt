@@ -89,7 +89,7 @@ var startProfileCmd = &cobra.Command{
 		err := helper.RunProfile(filepath)
 
 		if err != nil {
-			fmt.Printf("Error occured while starting profile '%s': %s\n", filepath, err)
+			fmt.Printf("Error occured in profile '%s': %s\n", filepath, err)
 
 			if err := os.Remove(LOCKFILEPATH); err != nil { // Remove the lock
 				fmt.Println("\nError: Removing lock file at 'scx-adapt.lock' failed.")

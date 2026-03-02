@@ -35,9 +35,15 @@ Bug fixes
 [X] Fix below zero values in log-csv (e.g. 0.5)
 [X] Update README
 
+# v0.1.0
+
+[X] Fix scx-adapt keeps running even if sched_ext scheduler crashes bug (check status of sched_ext: /sys/kernel/sched_ext/state)
+[X] Fix scx-adapt.lock exists problem when exited with error and lock doesn't get deleted.
+[X] add-scheduler, remove-scheduler, list-schedulers commands (to /etc/scx-adapt/schedulers).
+[ ] Load schedulers in "/etc/scx-adapt/schedulers" automatically in .yaml config
+
 # Backlog
 
 [ ] Switch to log.Fatal() for error messages in CLI
 [ ] goReleaser in Github Actions
 [ ] Write automated tests for CLI program
-[ ] add-scheduler, remove-scheduler, list-schedulers commands (to /etc/scx-adapt/schedulers), load automatically by filename in .yaml config
