@@ -39,7 +39,7 @@ var addProfileCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		// Check if configuration is valid
+		// Read file
 		profileData, err := os.ReadFile(profilePath)
 		if err != nil {
 			fmt.Printf("Error occured while reading file '%s': %s\n", profilePath, err)

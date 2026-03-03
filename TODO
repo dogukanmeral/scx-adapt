@@ -41,7 +41,7 @@ Bug fixes
 [X] Fix scx-adapt.lock exists problem when exited with error and lock doesn't get deleted.
 [X] add-scheduler, remove-scheduler, list-schedulers commands (to SCHEDULERSFOLDER).
 [X] Load schedulers in "SCHEDULERSFOLDER" automatically in .yaml config (Refer to file in "SCHEDULERSFOLDER" if filepath in yaml is not absolute)
-[ ] Change check-profile to read file from file path.
+[X] Change check-profile to read file from file path.
 [ ] Move non-configuration files to /var/lib/scx-adapt
 
 # Backlog
