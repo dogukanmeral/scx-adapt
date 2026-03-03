@@ -19,7 +19,7 @@ import (
 // listProfilesCmd represents the listProfiles command
 var listProfilesCmd = &cobra.Command{
 	Use:   "list-profiles",
-	Short: "List profile configurations in profiles folder ('/etc/scx-adapt/profiles' by default)",
+	Short: fmt.Sprintf("List profile configurations in profiles folder (%s)", paths.PROFILESFOLDER),
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		switch len(args) {

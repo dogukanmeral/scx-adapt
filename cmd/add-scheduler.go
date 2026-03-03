@@ -18,7 +18,7 @@ import (
 
 var addSchedulerCmd = &cobra.Command{
 	Use:   "add-scheduler <scheduler_path>",
-	Short: "Add sched_ext scheduler object file to schedulers folder ('/etc/scx-adapt/schedulers' by default)",
+	Short: fmt.Sprintf("Add sched_ext scheduler object file to schedulers folder (%s)", paths.SCHEDULERSFOLDER),
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		var schedulerPath string

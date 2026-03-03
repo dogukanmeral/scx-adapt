@@ -16,7 +16,7 @@ import (
 
 var removeSchedulerCmd = &cobra.Command{
 	Use:   "remove-scheduler <scheduler_filename>",
-	Short: "Remove scheduler from schedulers folder ('/etc/scx-adapt/schedulers' by default)",
+	Short: fmt.Sprintf("Remove scheduler from schedulers folder (%s)", paths.SCHEDULERSFOLDER),
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		var schedulerFile string

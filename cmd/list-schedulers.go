@@ -16,7 +16,7 @@ import (
 
 var listSchedulersCmd = &cobra.Command{
 	Use:   "list-schedulers",
-	Short: "List schedulers in schedulers folder ('/etc/scx-adapt/schedulers' by default)",
+	Short: fmt.Sprintf("List schedulers in schedulers folder (%s)", paths.SCHEDULERSFOLDER),
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		switch len(args) {
