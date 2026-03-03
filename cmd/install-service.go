@@ -9,6 +9,7 @@ import (
 	"os/exec"
 	"path"
 
+	paths "github.com/dogukanmeral/scx-adapt/internal"
 	"github.com/dogukanmeral/scx-adapt/internal/checks"
 
 	"github.com/spf13/cobra"
@@ -25,13 +26,10 @@ ExecStart=/usr/bin/scx-adapt start-profile  %i
 [Install]
 WantedBy=multi-user.target`
 
-const SERVICEFILENAME string = "scx-adapt@.service"
-const SERVICESDIR string = "/etc/systemd/system"
-
 // installServiceCmd represents the installService command
 var installServiceCmd = &cobra.Command{
 	Use:   "install-service",
-	Short: fmt.Sprintf("Add Systemd service file '%s' to '%s'", SERVICEFILENAME, SERVICESDIR),
+	Short: fmt.Sprintf("Add Systemd service file '%s' to '%s'", paths.SERVICEFILENAME, paths.SERVICESDIR),
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) > 0 {
@@ -45,19 +43,19 @@ var installServiceCmd = &cobra.Command{
 		}
 
 		// Check if .service file already exists.
-		if checks.IsFileExist(path.Join(SERVICESDIR, SERVICEFILENAME)) {
-			fmt.Printf("Error: Service file already exists at %s\n", path.Join(SERVICESDIR, SERVICEFILENAME))
+		if checks.IsFileExist(path.Join(paths.SERVICESDIR, paths.SERVICEFILENAME)) {
+			fmt.Printf("Error: Service file already exists at %s\n", path.Join(paths.SERVICESDIR, paths.SERVICEFILENAME))
 			os.Exit(1)
 		}
 
 		// Write service file.
-		err := os.WriteFile(path.Join(SERVICESDIR, SERVICEFILENAME), []byte(SERVICEFILE), 0700)
+		err := os.WriteFile(path.Join(paths.SERVICESDIR, paths.SERVICEFILENAME), []byte(SERVICEFILE), 0700)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}
 
-		fmt.Printf("Service file added: %s\n", path.Join(SERVICESDIR, SERVICEFILENAME))
+		fmt.Printf("Service file added: %s\n", path.Join(paths.SERVICESDIR, paths.SERVICEFILENAME))
 
 		reloadCmd := exec.Command("systemctl", "daemon-reload")
 		err = reloadCmd.Run()
