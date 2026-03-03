@@ -45,18 +45,20 @@ schedulers:
 
 - `scx-adapt [command]`
 
-- `add-profile <profile_path>` | Add scx-adapt profile configuration to profiles folder ('/etc/scx-adapt/profiles' by default)
-- `check-profile` | Check if profile file in YAML format passed from STDIN is valid
+- `add-profile <profile_path>` | Add scx-adapt profile configuration to profiles folder
+- `check-profile <profile_path>` | Check if profile file in YAML format is valid
 - `install-service` | Add Systemd service file 'scx-adapt@.service' to '/etc/systemd/system'
-- `list-profiles` | List profile configurations in profiles folder ('/etc/scx-adapt/profiles' by default)
+- `list-profiles` | List profile configurations in profiles folder
 - `log-csv <csv_file_path> [interval]` | Print system variables to file in csv format
 - `log-sched` | Print sched_ext event tracing to stdout
-- `remove-profile <profile_filename>` | Remove profile configuration from profiles folder ('/etc/scx-adapt/profiles' by default)
+- `remove-profile <profile_filename>` | Remove profile configuration from profiles folder
 - `remove-service`  Remove Systemd service file 'scx-adapt@.service' in '/etc/systemd/system'
 - `start-profile <profile_path>` | Run scx-adapt with the profile configuration
-    - To start added profiles, pass profile filename (no need to specify directory, since scx-adapt scans '*/etc/scx-adapt/schedulers*' first)
 - `status` | Print currently running sched_ext scheduler.
 - `stop` | Stop currently running sched_ext scheduler
+- `add-scheduler` | Add sched_ext scheduler object file to schedulers folder
+- `remove-scheduler` | Remove scheduler from schedulers folder
+- `list-schedulers` | List schedulers in schedulers folder
 
 ### Systemd service
 

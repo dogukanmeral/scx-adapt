@@ -56,6 +56,13 @@ Bug fixes
 [X] Move files to `/var/lib/scx-adapt`
 [X] Enhance TODO with Markdown 
 
+# v0.1.1
+
+Update documentations for changes made in v0.1.0
+
+[X] Fix paths in short explanations of cmd
+[X] Update README.md
+
 # Backlog
 
 [ ] Switch to log.Fatal() for error messages in CLI
