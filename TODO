@@ -1,12 +1,12 @@
 # v0.0.1
 
 Initial version of scx-adapt.
-It includes:
-    YAML profile configuration parsing-running,
-    Creating traces of sched_ext,
-    Creating CSV logs of system data (load avg. and pressures etc.),
-    Systemd profile for scx-adapt,
-    Managing profiles in /etc/scx-adapt/profiles
+- It includes:
+    - YAML profile configuration parsing-running,
+    - Creating traces of sched_ext,
+    - Creating CSV logs of system data (load avg. and pressures etc.),
+    - Systemd profile for scx-adapt,
+    - Managing profiles in /etc/scx-adapt/profiles
 
 [X] Fix YAML unmarshalling and checks
 [X] Fix running profiles logic
@@ -15,16 +15,16 @@ It includes:
 [X] Ordering scheds by priorities and conflict checking in YAML config
 [X] Profile runner function
 [X] Profile runner state file (readonly)
-[X] add-profile (to /etc/scx-adapt), rm-profile, start-profile (from /etc if, not absolute path or not in cwd), status helpers and commands
+[X] `add-profile` (to `/etc/scx-adapt`), `rm-profile`, `start-profile` (from /etc if, not absolute path or not in cwd), status helpers and commands
 [X] Commands' explanations and auto-completion
 [X] Turn to system scheduler if any scx satisfies criterias
-[X] Fix test cases in order to work with new file structure (obj's for testing to tests/obj folder)
+[X] Fix test cases in order to work with new file structure (obj's for testing to `tests/obj` folder)
 [X] Add logging to CLI
 [X] Add list-profiles command
 [X] README file
 [X] Add function descriptions
 [X] Systemd service file (which takes yaml templates)
-[X] Add install-service and remove-service commands
+[X] Add `install-service` and `remove-service` commands
 [X] Automated go tests in Github Actions
 
 # v0.0.2
@@ -32,17 +32,29 @@ It includes:
 Bug fixes
 
 [X] Fix go.mod "replace" problem
-[X] Fix below zero values in log-csv (e.g. 0.5)
+[X] Fix below zero values in `log-csv` (e.g. 0.5)
 [X] Update README
 
 # v0.1.0
 
-[X] Fix scx-adapt keeps running even if sched_ext scheduler crashes bug (check status of sched_ext: /sys/kernel/sched_ext/state)
-[X] Fix scx-adapt.lock exists problem when exited with error and lock doesn't get deleted.
-[X] add-scheduler, remove-scheduler, list-schedulers commands (to SCHEDULERSFOLDER).
-[X] Load schedulers in "SCHEDULERSFOLDER" automatically in .yaml config (Refer to file in "SCHEDULERSFOLDER" if filepath in yaml is not absolute)
-[X] Change check-profile to read file from file path.
-[ ] Move non-configuration files to /var/lib/scx-adapt
+- Bug fixes:
+    - scx-adapt does not keep running if sched_ext scheduler crashes anymore (Checks state at: `/sys/kernel/sched_ext/state`)
+    - `scx-adapt.lock exists` problem when exited with error
+- Added:
+    - `add-scheduler`, `remove-scheduler`, `list-schedulers` commands
+    - Load schedulers from added schedulers (`add-scheduler`) automatically in .yaml config
+- Changed:
+    - Program files moved from `/etc/scx-adapt` to `/var/lib/scx-adapt`
+    - `check-profile` now reads file from path positional argument (instead of STDIN)
+    - **TODO** looks more beautiful
+
+[X] Fix scx-adapt keeps running even if sched_ext scheduler crashes bug (check status of sched_ext: `/sys/kernel/sched_ext/state`)
+[X] Fix `scx-adapt.lock exists` problem when exited with error and lock doesn't get deleted.
+[X] `add-scheduler`, `remove-scheduler`, `list-schedulers` commands (to *SCHEDULERSFOLDER*).
+[X] Load schedulers in *SCHEDULERSFOLDER* automatically in .yaml config (Refer to file in *SCHEDULERSFOLDER* if filepath in yaml is not absolute)
+[X] Change `check-profile` to read file from file path.
+[X] Move files to `/var/lib/scx-adapt`
+[X] Enhance TODO with Markdown 
 
 # Backlog
 
