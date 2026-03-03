@@ -132,12 +132,12 @@ NEXT_SCHED:
 				}
 			}
 
-			err := StartScx(s.Path)
+			err := StartScx(s.GetAbsolutePath())
 			if err != nil {
 				return err
 			}
 
-			fmt.Printf("Switched to scheduler '%s'\n", s.Path)
+			fmt.Printf("Switched to scheduler '%s'\n", s.GetAbsolutePath())
 			currentSched = s
 		}
 

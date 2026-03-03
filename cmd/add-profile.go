@@ -46,6 +46,7 @@ var addProfileCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
+		// Check YAML configuration (discard "Config")
 		_, err = helper.YamlToConfig(profileData)
 		if err != nil {
 			fmt.Println(err)

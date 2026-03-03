@@ -39,8 +39,10 @@ Bug fixes
 
 [X] Fix scx-adapt keeps running even if sched_ext scheduler crashes bug (check status of sched_ext: /sys/kernel/sched_ext/state)
 [X] Fix scx-adapt.lock exists problem when exited with error and lock doesn't get deleted.
-[X] add-scheduler, remove-scheduler, list-schedulers commands (to /etc/scx-adapt/schedulers).
-[ ] Load schedulers in "/etc/scx-adapt/schedulers" automatically in .yaml config
+[X] add-scheduler, remove-scheduler, list-schedulers commands (to SCHEDULERSFOLDER).
+[X] Load schedulers in "SCHEDULERSFOLDER" automatically in .yaml config (Refer to file in "SCHEDULERSFOLDER" if filepath in yaml is not absolute)
+[ ] Change check-profile to read file from file path.
+[ ] Move non-configuration files to /var/lib/scx-adapt
 
 # Backlog
 

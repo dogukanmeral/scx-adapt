@@ -3,8 +3,10 @@ package helper
 import (
 	"bytes"
 	"fmt"
+	"path"
 	"regexp"
 
+	paths "github.com/dogukanmeral/scx-adapt/internal"
 	"github.com/dogukanmeral/scx-adapt/internal/checks"
 	"github.com/dogukanmeral/scx-adapt/internal/errs"
 
@@ -95,6 +97,17 @@ valueNameValid:
 	return nil
 }
 
+// Returns: path as it is if an absolute path, if not path of scheduler in SCHEDULERSFOLDER if exists, if none of both path as it is
+func (s Scheduler) GetAbsolutePath() string {
+	if path.IsAbs(s.Path) {
+		return s.Path
+	} else if p := path.Join(paths.SCHEDULERSFOLDER, s.Path); checks.IsFileExist(p) {
+		return p
+	}
+
+	return s.Path
+}
+
 // Validate Scheduler
 func (s Scheduler) Validate() error {
 	v := validator.New()
@@ -104,7 +117,7 @@ func (s Scheduler) Validate() error {
 	}
 
 	// Check if file at the path exists and a BPF object file
-	if err := checks.CheckObj(s.Path); err != nil {
+	if err := checks.CheckObj(s.GetAbsolutePath()); err != nil {
 		return err
 	}
 
@@ -121,7 +134,7 @@ func (s Scheduler) Validate() error {
 	// Check if a criteria is defined multiple times in same scheduler
 	cont, dup := checks.ContainsDuplicate(valueNames)
 	if cont {
-		return &errs.ConflictCriteriasError{Msg: fmt.Sprintf("Criteria(s) '%s' defined multiple times for scheduler '%s'", dup, s.Path)}
+		return &errs.ConflictCriteriasError{Msg: fmt.Sprintf("Criteria(s) '%s' defined multiple times for scheduler '%s'", dup, s.GetAbsolutePath())}
 	}
 
 	return nil
