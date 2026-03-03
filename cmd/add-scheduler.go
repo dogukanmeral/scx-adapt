@@ -10,6 +10,7 @@ import (
 	"path"
 	"path/filepath"
 
+	paths "github.com/dogukanmeral/scx-adapt/internal"
 	"github.com/dogukanmeral/scx-adapt/internal/checks"
 	"github.com/dogukanmeral/scx-adapt/internal/helper"
 	"github.com/spf13/cobra"
@@ -51,29 +52,29 @@ var addSchedulerCmd = &cobra.Command{
 		}
 
 		// Check if a scheduler exists with the same name in schedulers directory
-		if checks.IsFileExist(path.Join(SCHEDULERSFOLDER, filepath.Base(schedulerPath))) {
-			fmt.Printf("Another scheduler with filename '%s' already exists at '%s'\n", filepath.Base(schedulerPath), SCHEDULERSFOLDER)
+		if checks.IsFileExist(path.Join(paths.SCHEDULERSFOLDER, filepath.Base(schedulerPath))) {
+			fmt.Printf("Another scheduler with filename '%s' already exists at '%s'\n", filepath.Base(schedulerPath), paths.SCHEDULERSFOLDER)
 			os.Exit(1)
 		}
 
 		// Create /etc/scx-adapt/ directory if not exist
-		if err := helper.CreateDirIfNotExist(DATAFOLDER); err != nil {
+		if err := helper.CreateDirIfNotExist(paths.DATAFOLDER); err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}
 
 		// Create schedulers directory if not exist
-		if err := helper.CreateDirIfNotExist(SCHEDULERSFOLDER); err != nil {
+		if err := helper.CreateDirIfNotExist(paths.SCHEDULERSFOLDER); err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}
 
 		// Copy file to profiles directory
-		if err := os.WriteFile(path.Join(SCHEDULERSFOLDER, filepath.Base(schedulerPath)), schedulerData, 0700); err != nil {
-			fmt.Printf("Error occured while writing to file '%s': %s\n", path.Join(SCHEDULERSFOLDER, filepath.Base(schedulerPath)), err)
+		if err := os.WriteFile(path.Join(paths.SCHEDULERSFOLDER, filepath.Base(schedulerPath)), schedulerData, 0700); err != nil {
+			fmt.Printf("Error occured while writing to file '%s': %s\n", path.Join(paths.SCHEDULERSFOLDER, filepath.Base(schedulerPath)), err)
 			os.Exit(1)
 		} else {
-			fmt.Printf("Profile added to '%s'\n", path.Join(SCHEDULERSFOLDER, filepath.Base(schedulerPath)))
+			fmt.Printf("Profile added to '%s'\n", path.Join(paths.SCHEDULERSFOLDER, filepath.Base(schedulerPath)))
 		}
 	},
 }

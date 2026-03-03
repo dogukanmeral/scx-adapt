@@ -8,6 +8,7 @@ import (
 	"os"
 	"path"
 
+	paths "github.com/dogukanmeral/scx-adapt/internal"
 	"github.com/dogukanmeral/scx-adapt/internal/helper"
 
 	"github.com/dogukanmeral/scx-adapt/internal/checks"
@@ -29,12 +30,12 @@ var listProfilesCmd = &cobra.Command{
 			}
 
 			// Check if profiles directory exists
-			if !checks.IsFileExist(PROFILESFOLDER) {
-				fmt.Printf("Error: Profiles folder '%s' does not exist.\n", PROFILESFOLDER)
+			if !checks.IsFileExist(paths.PROFILESFOLDER) {
+				fmt.Printf("Error: Profiles folder '%s' does not exist.\n", paths.PROFILESFOLDER)
 				os.Exit(1)
 			}
 
-			files, err := os.ReadDir(PROFILESFOLDER)
+			files, err := os.ReadDir(paths.PROFILESFOLDER)
 
 			if err != nil {
 				fmt.Println(err)
@@ -42,7 +43,7 @@ var listProfilesCmd = &cobra.Command{
 			}
 
 			for _, f := range files {
-				fileData, err := os.ReadFile(path.Join(PROFILESFOLDER, f.Name()))
+				fileData, err := os.ReadFile(path.Join(paths.PROFILESFOLDER, f.Name()))
 				if err != nil {
 					fmt.Println(err)
 					continue

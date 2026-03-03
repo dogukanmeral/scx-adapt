@@ -10,6 +10,7 @@ import (
 	"path"
 	"syscall"
 
+	paths "github.com/dogukanmeral/scx-adapt/internal"
 	"github.com/dogukanmeral/scx-adapt/internal/helper"
 
 	"github.com/dogukanmeral/scx-adapt/internal/checks"
@@ -42,8 +43,8 @@ var startProfileCmd = &cobra.Command{
 		}
 
 		// Check if lock exists (profiler already running)
-		if checks.IsFileExist(LOCKFILEPATH) {
-			fmt.Printf("Error: Another scx-adapt profile already running. (%s)\n", LOCKFILEPATH)
+		if checks.IsFileExist(paths.LOCKFILEPATH) {
+			fmt.Printf("Error: Another scx-adapt profile already running. (%s)\n", paths.LOCKFILEPATH)
 			os.Exit(1)
 		}
 
@@ -55,7 +56,7 @@ var startProfileCmd = &cobra.Command{
 			<-ch
 			fmt.Printf("\nStopping profile '%s'...\n", filepath)
 
-			if err := os.Remove(LOCKFILEPATH); err != nil { // Remove the lock
+			if err := os.Remove(paths.LOCKFILEPATH); err != nil { // Remove the lock
 				fmt.Println("\nError: Removing lock file at 'scx-adapt.lock' failed.")
 			}
 
@@ -71,19 +72,19 @@ var startProfileCmd = &cobra.Command{
 		}()
 
 		// Create /etc/scx-adapt/ folder if not exist
-		if err := helper.CreateDirIfNotExist(DATAFOLDER); err != nil {
+		if err := helper.CreateDirIfNotExist(paths.DATAFOLDER); err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}
 
 		// Create lock file
-		if _, err := os.Create(LOCKFILEPATH); err != nil {
-			fmt.Printf("Error occured while creating lock file at '%s': %s\n", LOCKFILEPATH, err)
+		if _, err := os.Create(paths.LOCKFILEPATH); err != nil {
+			fmt.Printf("Error occured while creating lock file at '%s': %s\n", paths.LOCKFILEPATH, err)
 		}
 
 		// If profile exists in PROFILESFOLDER with that name, use it
-		if checks.IsFileExist(path.Join(PROFILESFOLDER, filepath)) {
-			filepath = path.Join(PROFILESFOLDER, filepath)
+		if checks.IsFileExist(path.Join(paths.PROFILESFOLDER, filepath)) {
+			filepath = path.Join(paths.PROFILESFOLDER, filepath)
 		}
 
 		err := helper.RunProfile(filepath)
@@ -91,7 +92,7 @@ var startProfileCmd = &cobra.Command{
 		if err != nil {
 			fmt.Printf("Error occured in profile '%s': %s\n", filepath, err)
 
-			if err := os.Remove(LOCKFILEPATH); err != nil { // Remove the lock
+			if err := os.Remove(paths.LOCKFILEPATH); err != nil { // Remove the lock
 				fmt.Println("\nError: Removing lock file at 'scx-adapt.lock' failed.")
 			}
 

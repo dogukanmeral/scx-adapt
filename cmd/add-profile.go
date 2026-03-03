@@ -9,6 +9,7 @@ import (
 	"path"
 	"path/filepath"
 
+	paths "github.com/dogukanmeral/scx-adapt/internal"
 	"github.com/dogukanmeral/scx-adapt/internal/checks"
 	"github.com/dogukanmeral/scx-adapt/internal/helper"
 
@@ -52,29 +53,29 @@ var addProfileCmd = &cobra.Command{
 		}
 
 		// Check if a profile exists with the same name in profiles directory
-		if checks.IsFileExist(path.Join(PROFILESFOLDER, filepath.Base(profilePath))) {
-			fmt.Printf("Another profile configuration with filename '%s' already exists at '%s'\n", filepath.Base(profilePath), PROFILESFOLDER)
+		if checks.IsFileExist(path.Join(paths.PROFILESFOLDER, filepath.Base(profilePath))) {
+			fmt.Printf("Another profile configuration with filename '%s' already exists at '%s'\n", filepath.Base(profilePath), paths.PROFILESFOLDER)
 			os.Exit(1)
 		}
 
 		// Create /etc/scx-adapt/ directory if not exist
-		if err := helper.CreateDirIfNotExist(DATAFOLDER); err != nil {
+		if err := helper.CreateDirIfNotExist(paths.DATAFOLDER); err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}
 
 		// Create profiles directory if not exist
-		if err := helper.CreateDirIfNotExist(PROFILESFOLDER); err != nil {
+		if err := helper.CreateDirIfNotExist(paths.PROFILESFOLDER); err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}
 
 		// Copy file to profiles directory
-		if err := os.WriteFile(path.Join(PROFILESFOLDER, filepath.Base(profilePath)), profileData, 0700); err != nil {
-			fmt.Printf("Error occured while writing to file '%s': %s\n", path.Join(PROFILESFOLDER, filepath.Base(profilePath)), err)
+		if err := os.WriteFile(path.Join(paths.PROFILESFOLDER, filepath.Base(profilePath)), profileData, 0700); err != nil {
+			fmt.Printf("Error occured while writing to file '%s': %s\n", path.Join(paths.PROFILESFOLDER, filepath.Base(profilePath)), err)
 			os.Exit(1)
 		} else {
-			fmt.Printf("Profile added to '%s'\n", path.Join(PROFILESFOLDER, filepath.Base(profilePath)))
+			fmt.Printf("Profile added to '%s'\n", path.Join(paths.PROFILESFOLDER, filepath.Base(profilePath)))
 		}
 	},
 }

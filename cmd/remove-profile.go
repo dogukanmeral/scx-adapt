@@ -8,6 +8,7 @@ import (
 	"os"
 	"path"
 
+	paths "github.com/dogukanmeral/scx-adapt/internal"
 	"github.com/dogukanmeral/scx-adapt/internal/checks"
 
 	"github.com/spf13/cobra"
@@ -37,18 +38,18 @@ var removeProfileCmd = &cobra.Command{
 		}
 
 		// Check if profile exists in the profiles directory
-		if !checks.IsFileExist(path.Join(PROFILESFOLDER, profileFile)) {
-			fmt.Printf("Profile configuration with filename '%s' does not exist at '%s'\n", profileFile, PROFILESFOLDER)
+		if !checks.IsFileExist(path.Join(paths.PROFILESFOLDER, profileFile)) {
+			fmt.Printf("Profile configuration with filename '%s' does not exist at '%s'\n", profileFile, paths.PROFILESFOLDER)
 			os.Exit(1)
 		}
 
 		// Remove profile file in the profiles directory
-		if err := os.Remove(path.Join(PROFILESFOLDER, profileFile)); err != nil {
-			fmt.Printf("Error occured while deleting profile '%s' in '%s': %s\n", profileFile, PROFILESFOLDER, err)
+		if err := os.Remove(path.Join(paths.PROFILESFOLDER, profileFile)); err != nil {
+			fmt.Printf("Error occured while deleting profile '%s' in '%s': %s\n", profileFile, paths.PROFILESFOLDER, err)
 			os.Exit(1)
 		}
 
-		fmt.Printf("Profile at '%s' removed.\n", path.Join(PROFILESFOLDER, profileFile))
+		fmt.Printf("Profile at '%s' removed.\n", path.Join(paths.PROFILESFOLDER, profileFile))
 	},
 }
 

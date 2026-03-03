@@ -9,6 +9,7 @@ import (
 	"os"
 	"path"
 
+	paths "github.com/dogukanmeral/scx-adapt/internal"
 	"github.com/dogukanmeral/scx-adapt/internal/checks"
 	"github.com/spf13/cobra"
 )
@@ -26,12 +27,12 @@ var listSchedulersCmd = &cobra.Command{
 			}
 
 			// Check if profiles directory exists
-			if !checks.IsFileExist(SCHEDULERSFOLDER) {
-				fmt.Printf("Error: Schedulers folder '%s' does not exist.\n", SCHEDULERSFOLDER)
+			if !checks.IsFileExist(paths.SCHEDULERSFOLDER) {
+				fmt.Printf("Error: Schedulers folder '%s' does not exist.\n", paths.SCHEDULERSFOLDER)
 				os.Exit(1)
 			}
 
-			files, err := os.ReadDir(SCHEDULERSFOLDER)
+			files, err := os.ReadDir(paths.SCHEDULERSFOLDER)
 
 			if err != nil {
 				fmt.Println(err)
@@ -39,7 +40,7 @@ var listSchedulersCmd = &cobra.Command{
 			}
 
 			for _, f := range files {
-				if err := checks.CheckObj(path.Join(SCHEDULERSFOLDER, f.Name())); err != nil {
+				if err := checks.CheckObj(path.Join(paths.SCHEDULERSFOLDER, f.Name())); err != nil {
 					fmt.Println(err)
 					continue
 				}
