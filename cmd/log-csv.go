@@ -55,6 +55,7 @@ var logCsvCmd = &cobra.Command{
 
 		features := []string{
 			"time_ms",
+			"cpu_cores",
 			"cpu_psi_some_10",
 			"cpu_psi_some_60",
 			"cpu_psi_some_300",
@@ -131,6 +132,15 @@ var logCsvCmd = &cobra.Command{
 		for {
 			// Current time after start (milliseconds)
 			buf = append(buf, strconv.Itoa(int(curTime)))
+
+			// Total # of CPU cores
+			c, err := helper.TotalCores()
+
+			if err != nil {
+				fmt.Println(err)
+				os.Exit(1)
+			}
+			buf = append(buf, strconv.Itoa(c))
 
 			// Iterate over all pressures
 			for _, t := range prTypes {

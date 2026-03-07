@@ -63,6 +63,12 @@ Update documentations for changes made in v0.1.0
 [X] Fix paths in short explanations of cmd
 [X] Update README.md
 
+# v0.1.2
+
+Add # of CPU cores feature to CSV output (`log-csv`)
+
+[X] Add # of CPU's feature to CSV
+
 # Backlog
 
 [ ] Switch to log.Fatal() for error messages in CLI

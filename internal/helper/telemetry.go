@@ -39,6 +39,17 @@ out:
 	return val, nil
 }
 
+// Read system file '/proc/cpuinfo' and return number of occurences of 'processor'
+func TotalCores() (int, error) {
+	cpuInfo, err := os.ReadFile("/proc/cpuinfo")
+
+	if err != nil {
+		return -1, fmt.Errorf("Error occured while reading file '%s': %s\n", "/proc/cpuinfo", err)
+	}
+
+	return strings.Count(string(cpuInfo), "processor"), nil
+}
+
 // Read system file '/proc/diskstats' and return number of process with current IO operations.
 func DiskCurIO() (int, error) {
 	diskData, err := os.ReadFile("/proc/diskstats")
