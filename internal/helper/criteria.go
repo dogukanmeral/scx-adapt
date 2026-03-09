@@ -1,6 +1,71 @@
 package helper
 
-import "regexp"
+import (
+	"fmt"
+	"regexp"
+
+	"github.com/dogukanmeral/scx-adapt/internal/errs"
+	"github.com/go-playground/validator/v10"
+)
+
+type Criteria struct {
+	ValueName string   `yaml:"value_name" validate:"required"`
+	MoreThan  *float64 `yaml:"more_than"`
+	LessThan  *float64 `yaml:"less_than"`
+}
+
+/*
+	Valid value_name(s):
+		(cpu|io|mem)_psi_(some|full)_(10|60|300)
+		load_avg_(1|5|15)
+		procs_running
+		procs_blocked
+		procs_disk_io
+*/
+
+var VALID_VALUE_REGEX = map[string]string{
+	"pressures":    "^(cpu|io|mem)_psi_(some|full)_(10|60|300)$",
+	"loadAvgs":     "^load_avg_(1|5|15)$",
+	"procsRunning": "^procs_running$",
+	"procsBlocked": "^procs_blocked$",
+	"procsDiskIo":  "^procs_disk_io$",
+}
+
+// Validate Criteria
+func (c Criteria) Validate() error {
+	v := validator.New()
+
+	if err := v.Struct(c); err != nil {
+		return err
+	}
+
+	for _, r := range VALID_VALUE_REGEX {
+		if m, _ := regexp.MatchString(r, c.ValueName); m {
+			goto valueNameValid
+		}
+	}
+	return &errs.InvalidValueNameError{
+		Msg: fmt.Sprintf("Invalid value_name: %s", c.ValueName),
+	}
+
+valueNameValid:
+
+	if c.MoreThan == nil && c.LessThan == nil {
+		return &errs.MissingParameterError{
+			Msg: fmt.Sprintf("There is no 'more_than' and/or 'less_than' parameter for value '%s'", c.ValueName),
+		}
+	}
+
+	if c.MoreThan != nil && c.LessThan != nil {
+		if *c.MoreThan >= *c.LessThan {
+			return &errs.ConflictParametersError{
+				Msg: fmt.Sprintf("Parameter 'more_than' cannot be >= 'less_than' in value '%s'", c.ValueName),
+			}
+		}
+	}
+
+	return nil
+}
 
 // Checks if the system value satisfies 'less_than' or 'more_than'
 func (c Criteria) SatisfiesLessMore(sysValue float64) bool {
