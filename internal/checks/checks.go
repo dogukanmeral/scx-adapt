@@ -45,6 +45,17 @@ func CheckObj(path string) error {
 	return nil
 }
 
+// Checks if file is an ELF and executable
+func IsExecutableELF(path string) bool {
+	file, err := elf.Open(path)
+	if err != nil {
+		return false
+	}
+	defer file.Close()
+
+	return file.Type == elf.ET_DYN || file.Type == elf.ET_EXEC
+}
+
 // Checks dependencies: bpftool, kernel (BPF and sched_ext)
 func CheckDependencies() error {
 	// Check if BPF tool is installed

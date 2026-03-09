@@ -49,3 +49,27 @@ type ConflictParametersError struct {
 func (e *ConflictParametersError) Error() string {
 	return e.Msg
 }
+
+type ParametersForKernelSchedError struct {
+	Msg string
+}
+
+func (e *ParametersForKernelSchedError) Error() string {
+	return e.Msg
+}
+
+type SchedulerDoesNotExistError struct {
+	Msg string
+}
+
+func (e *SchedulerDoesNotExistError) Error() string {
+	return e.Msg
+}
+
+type NotExecutableELFError struct {
+	Msg string
+}
+
+func (e *NotExecutableELFError) Error() string {
+	return e.Msg
+}
