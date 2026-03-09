@@ -1,6 +1,6 @@
 package errs
 
-// NO nested errors: if an error occured from a function call; return the error as it is
+// NO nested errors: if a custom error occured from a function call; return the error as it is
 
 type ConflictPrioritiesError struct {
 	Msg string
