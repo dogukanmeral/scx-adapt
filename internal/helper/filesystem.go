@@ -33,3 +33,12 @@ func CopyFile(sourcePath string, destinationPath string, filePerm int) error {
 
 	return nil
 }
+
+// Writes data to file with permissions '0644'
+func Write(path string, data string) {
+	err := os.WriteFile(path, []byte(data), 0644)
+
+	if err != nil {
+		panic(err) // TODO: Convert to error returning function as other components of project.
+	}
+}
