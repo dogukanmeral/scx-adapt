@@ -11,32 +11,28 @@ import (
 
 // NOTE: No helper depends on another (except Write()), combine them in cmd and config logic
 
-// Prints content of "/sys/kernel/sched_ext/root/ops" (currently running sched_ext scheduler if exists) to STDOUT.
-func CurrentScx() error {
+// Returns content of "/sys/kernel/sched_ext/root/ops" (currently running sched_ext scheduler if exists).
+func CurrentScx() (string, error) {
 	opsFile := "/sys/kernel/sched_ext/root/ops"
 
 	if _, err := os.Stat(opsFile); err == nil {
 		data, err := os.ReadFile(opsFile)
 
 		if err != nil {
-			return fmt.Errorf("Error occured while reading '%s'.\n", opsFile)
+			return "", fmt.Errorf("Error occured while reading '%s'.\n", opsFile)
 		}
 
-		fmt.Printf("%s", string(data))
+		return string(data), nil
 
 	} else if errors.Is(err, os.ErrNotExist) {
-		fmt.Println("No custom schedulers are attached")
+		return "", fmt.Errorf("No custom schedulers are attached")
+	} else {
+		return "", err
 	}
-
-	return nil
 }
 
-// Prints sched_ext trace to STDOUT (does not print anything if sched_ext is not active).
-func TraceSchedExt() error {
-	if os.Geteuid() != 0 {
-		return fmt.Errorf("Must run as root")
-	}
-
+// Returns sched_ext trace (does not return anything if sched_ext is not active).
+func TraceSchedExt(outfile string) error {
 	// stop tracing
 	Write("/sys/kernel/tracing/tracing_on", "0")
 
@@ -58,14 +54,24 @@ func TraceSchedExt() error {
 	}
 	defer f.Close()
 
+	o, err := os.OpenFile(outfile, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
+	if err != nil {
+		return err
+	}
+	defer o.Close()
+
 	buf := make([]byte, 4096) // heap allocation
 
 	for {
-		n, err := f.Read(buf)
+		nr, err := f.Read(buf)
 		if err != nil {
 			return err
 		}
-		fmt.Print(string(buf[:n]))
+
+		_, err = o.Write(buf[:nr])
+		if err != nil {
+			return fmt.Errorf("Error occured while writing trace to file '%s': %s", outfile, err)
+		}
 	}
 }
 
@@ -75,11 +81,11 @@ func StopCurrScx() error {
 		return fmt.Errorf("Must run as root")
 	}
 
-	err := os.RemoveAll("/sys/fs/bpf/sched_ext/")
-	if errors.Is(err, os.ErrNotExist) {
-		return fmt.Errorf("No custom schedulers are attached")
-	} else if err != nil {
-		return fmt.Errorf("Error occured while stopping current scheduler: %s\n", err)
+		err := os.RemoveAll("/sys/fs/bpf/sched_ext/")
+		if errors.Is(err, os.ErrNotExist) {
+			return fmt.Errorf("No custom schedulers are attached")
+		} else if err != nil {
+			return fmt.Errorf("Error occured while stopping current scheduler: %s\n", err)
 	}
 
 	return nil
@@ -91,18 +97,18 @@ func StartScx(scxPath string) error {
 		return fmt.Errorf("Must run as root")
 	}
 
-	if err := checks.CheckDependencies(); err != nil {
-		return err
-	}
+		if err := checks.CheckDependencies(); err != nil {
+			return err
+		}
 
 	if err := checks.CheckObj(scxPath); err != nil {
-		return err
-	}
+			return err
+		}
 
 	startCmd := exec.Command("bpftool", "struct_ops", "register", scxPath, "/sys/fs/bpf/sched_ext")
-	err := startCmd.Run()
+		err := startCmd.Run()
 
-	if err != nil {
+		if err != nil {
 		return fmt.Errorf("Error occured while attaching scheduler '%s': %s\n", scxPath, err)
 	}
 
