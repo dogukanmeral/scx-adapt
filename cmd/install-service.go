@@ -42,6 +42,11 @@ var installServiceCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
+		if err := checks.CheckDependencies(); err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
 		// Check if .service file already exists.
 		if checks.IsFileExist(path.Join(paths.SERVICESDIR, paths.SERVICEFILENAME)) {
 			fmt.Printf("Error: Service file already exists at %s\n", path.Join(paths.SERVICESDIR, paths.SERVICEFILENAME))

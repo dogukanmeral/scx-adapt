@@ -121,14 +121,6 @@ func (s Scheduler) Stop() error {
 func (s Scheduler) Start() error {
 	switch s.Type {
 	case string(KernelOnly):
-		if err := checks.CheckDependencies(); err != nil {
-			return err
-		}
-
-		if err := checks.CheckObj(s.Path); err != nil {
-			return err
-		}
-
 		startCmd := exec.Command("bpftool", "struct_ops", "register", s.GetAbsolutePath(), "/sys/fs/bpf/sched_ext")
 		err := startCmd.Run()
 

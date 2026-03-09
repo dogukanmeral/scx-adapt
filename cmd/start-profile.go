@@ -42,6 +42,12 @@ var startProfileCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
+		if err := checks.CheckDependencies(); err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		/*
 		// Check if lock exists (profiler already running)
 		if checks.IsFileExist(paths.LOCKFILEPATH) {
 			fmt.Printf("Error: Another scx-adapt profile already running. (%s)\n", paths.LOCKFILEPATH)
