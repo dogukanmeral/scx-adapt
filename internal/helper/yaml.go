@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"path"
 	"regexp"
+	"slices"
 
 	paths "github.com/dogukanmeral/scx-adapt/internal"
 	"github.com/dogukanmeral/scx-adapt/internal/checks"
@@ -52,6 +53,7 @@ type Config struct {
 }
 
 type Scheduler struct {
+	Type      string     `yaml:"type" validate:"required"`
 	Path      string     `yaml:"path" validate:"required"`
 	Priority  int        `yaml:"priority" validate:"required,gte=1,lte=139"`
 	Criterias []Criteria `yaml:"criterias" validate:"required,dive"`
@@ -76,7 +78,9 @@ func (c Criteria) Validate() error {
 			goto valueNameValid
 		}
 	}
-	return &errs.InvalidValueNameError{Msg: fmt.Sprintf("Invalid value_name: %s", c.ValueName)}
+	return &errs.InvalidValueNameError{
+		Msg: fmt.Sprintf("Invalid value_name: %s", c.ValueName),
+	}
 
 valueNameValid:
 
@@ -114,6 +118,13 @@ func (s Scheduler) Validate() error {
 
 	if err := v.Struct(s); err != nil {
 		return err
+	}
+
+	// Check if scheduler type is valid (kernel, userspace)
+	if !slices.Contains([]string{"kernel", "userspace"}, s.Type) {
+		return &errs.InvalidSchedulerTypeError{
+			Msg: fmt.Sprintf("Invalid scheduler type '%s' for scheduler '%s'.", s.Type, s.Path),
+		}
 	}
 
 	// Check if file at the path exists and a BPF object file

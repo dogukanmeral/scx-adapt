@@ -10,11 +10,11 @@ func (e *ConflictPrioritiesError) Error() string {
 	return e.Msg
 }
 
-type InvalidSchedulerError struct {
+type InvalidSchedulerTypeError struct {
 	Msg string
 }
 
-func (e *InvalidSchedulerError) Error() string {
+func (e *InvalidSchedulerTypeError) Error() string {
 	return e.Msg
 }
 

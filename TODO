@@ -69,6 +69,17 @@ Add # of CPU cores feature to CSV output (`log-csv`)
 
 [X] Add # of CPU's feature to CSV
 
+# v0.2.0
+
+[ ] Add check-dependencies cmd
+[X] In YAML file, specify scheduler type as 'kernel' or 'userspace'. (Keep bpftool attaching for this version)
+[ ] Change "StartScx" and "StopScx" helpers to get "Scheduler" struct as argument (for userspace schedulers, StartScx runs the executable and StopScx terminates the executable)
+[ ] Move "must run as root" stuff to CLI (remove from helpers)
+[ ] Refactor RunProfile and add support for 'userspace' schedulers
+[ ] CHANGE project focus to userspace schedulers (binaries like in kernel examples) (single executable with loader compiled - no bpftool) (execute schedulers in go-routine)
+[ ] Add log file support for executables (capture stdout)
+[ ] Add parameter support for userspace schedulers
+
 # Backlog
 
 [ ] Switch to log.Fatal() for error messages in CLI
