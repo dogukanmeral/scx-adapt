@@ -18,14 +18,17 @@ var statusCmd = &cobra.Command{
 	Short: "Print currently running sched_ext scheduler.",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) == 0 {
-			err := helper.CurrentScx()
+		switch len(args) {
+		case 0:
+			c, err := helper.CurrentScx()
 
 			if err != nil {
 				fmt.Println(err)
 				os.Exit(1)
 			}
-		} else {
+
+			fmt.Printf("Current scheduler: %s\n", c)
+		default:
 			fmt.Println("Too many arguments. scx-adapt --help to see usage")
 			os.Exit(1)
 		}

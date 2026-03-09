@@ -14,13 +14,25 @@ import (
 
 // logCmd represents the log command
 var logCmd = &cobra.Command{
-	Use:   "log-sched",
-	Short: "Print sched_ext event tracing to stdout",
+	Use:   "log-sched <file_path>",
+	Short: "Write sched_ext event tracing to file.",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) == 0 {
-			helper.TraceSchedExt()
-		} else {
+		var filepath string
+
+		if os.Geteuid() != 0 {
+			fmt.Println("Must run as root")
+			os.Exit(1)
+		}
+
+		switch len(args) {
+		case 0:
+			fmt.Println("Missing arguments. scx-adapt --help to see usage")
+			os.Exit(1)
+		case 1:
+			filepath = args[0]
+			helper.TraceSchedExt(filepath)
+		default:
 			fmt.Println("Too many arguments. scx-adapt --help to see usage")
 			os.Exit(1)
 		}
