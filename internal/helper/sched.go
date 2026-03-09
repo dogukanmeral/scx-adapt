@@ -76,40 +76,38 @@ func TraceSchedExt(outfile string) error {
 }
 
 // Removes files in '/sys/fs/bpf/sched_ext' if exists (stops currently running sched_ext scheduler).
-func StopCurrScx() error {
-	if os.Geteuid() != 0 {
-		return fmt.Errorf("Must run as root")
-	}
-
+func (s Scheduler) Stop() error {
+	switch s.Type {
+	case "kernel":
 		err := os.RemoveAll("/sys/fs/bpf/sched_ext/")
 		if errors.Is(err, os.ErrNotExist) {
 			return fmt.Errorf("No custom schedulers are attached")
 		} else if err != nil {
 			return fmt.Errorf("Error occured while stopping current scheduler: %s\n", err)
+		}
 	}
 
 	return nil
 }
 
 // Attaches sched_ext scheduler to kernel using 'bpftool' at '/sys/fs/bpf/sched_ext'
-func StartScx(scxPath string) error {
-	if os.Geteuid() != 0 {
-		return fmt.Errorf("Must run as root")
-	}
-
+func (s Scheduler) Start() error {
+	switch s.Type {
+	case "kernel":
 		if err := checks.CheckDependencies(); err != nil {
 			return err
 		}
 
-	if err := checks.CheckObj(scxPath); err != nil {
+		if err := checks.CheckObj(s.Path); err != nil {
 			return err
 		}
 
-	startCmd := exec.Command("bpftool", "struct_ops", "register", scxPath, "/sys/fs/bpf/sched_ext")
+		startCmd := exec.Command("bpftool", "struct_ops", "register", s.GetAbsolutePath(), "/sys/fs/bpf/sched_ext")
 		err := startCmd.Run()
 
 		if err != nil {
-		return fmt.Errorf("Error occured while attaching scheduler '%s': %s\n", scxPath, err)
+			return fmt.Errorf("Error occured while attaching scheduler '%s': %s\n", s.Path, err)
+		}
 	}
 
 	return nil
