@@ -1,7 +1,6 @@
 package helper
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -102,32 +101,47 @@ func (s Scheduler) Validate() error {
 	return nil
 }
 
-// Removes files in '/sys/fs/bpf/sched_ext' if exists (stops currently running sched_ext scheduler).
-func (s Scheduler) Stop() error {
+func (s Scheduler) Run(stop <-chan bool, errmsg chan<- error) {
+	var cmd *exec.Cmd
+
 	switch s.Type {
 	case string(KernelOnly):
-		err := os.RemoveAll("/sys/fs/bpf/sched_ext/")
-		if errors.Is(err, os.ErrNotExist) {
-			return fmt.Errorf("No custom schedulers are attached")
-		} else if err != nil {
-			return fmt.Errorf("Error occured while stopping current scheduler: %s\n", err)
+		cmd = exec.Command("bpftool", "struct_ops", "register", s.GetAbsolutePath(), "/sys/fs/bpf/sched_ext")
+
+	case string(Userspace):
+		cmd = exec.Command(s.GetAbsolutePath(), *s.Parameters...)
+
+		if err := cmd.Start(); err != nil {
+			errmsg <- err
+			return
+		}
+
+		finished := make(chan error, 1)
+		go func() {
+			finished <- cmd.Wait()
+		}()
+
+		select {
+		case err := <-finished:
+			if err != nil {
+				errmsg <- err
+			}
+
+		case <-stop:
+			switch s.Type {
+			case string(KernelOnly):
+				if err := os.RemoveAll("/sys/fs/bpf/sched_ext/"); err != nil {
+					errmsg <- fmt.Errorf("Error occured while detaching kernel-only scheduler '%s': %s\n", s.GetAbsolutePath(), err)
+				} else {
+					errmsg <- nil
+				}
+			case string(Userspace):
+				if err := cmd.Process.Kill(); err != nil {
+					errmsg <- fmt.Errorf("Error occured while stopping userspace scheduler '%s': %s\n", s.GetAbsolutePath(), err)
+				} else {
+					errmsg <- nil
+				}
+			}
 		}
 	}
-
-	return nil
-}
-
-// Attaches sched_ext scheduler to kernel using 'bpftool' at '/sys/fs/bpf/sched_ext'
-func (s Scheduler) Start() error {
-	switch s.Type {
-	case string(KernelOnly):
-		startCmd := exec.Command("bpftool", "struct_ops", "register", s.GetAbsolutePath(), "/sys/fs/bpf/sched_ext")
-		err := startCmd.Run()
-
-		if err != nil {
-			return fmt.Errorf("Error occured while attaching scheduler '%s': %s\n", s.Path, err)
-		}
-	}
-
-	return nil
 }

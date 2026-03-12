@@ -54,30 +54,7 @@ var startProfileCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		// Interrupt handling
-		ch := make(chan os.Signal, 1)
-		signal.Notify(ch, os.Interrupt, syscall.SIGTERM)
-
-		go func() {
-			<-ch
-			fmt.Printf("\nStopping profile '%s'...\n", filepath)
-
-			if err := os.Remove(paths.LOCKFILEPATH); err != nil { // Remove the lock
-				fmt.Println("\nError: Removing lock file at 'scx-adapt.lock' failed.")
-			}
-
-			// Pass if no scx is running
-			if checks.IsScxRunning() {
-				if err := helper.StopCurrScx(); err != nil {
-					fmt.Printf("\nError occured while stopping currently running sched_ext scheduler: %s\n", err)
-					os.Exit(1)
-				}
-			}
-
-			os.Exit(0)
-		}()
-
-		// Create /etc/scx-adapt/ folder if not exist
+		// Create DATAFOLDER folder if not exist
 		if err := helper.CreateDirIfNotExist(paths.DATAFOLDER); err != nil {
 			fmt.Println(err)
 			os.Exit(1)
@@ -93,16 +70,64 @@ var startProfileCmd = &cobra.Command{
 			filepath = path.Join(paths.PROFILESFOLDER, filepath)
 		}
 
-		err := helper.RunProfile(filepath)
-
+		yamlData, err := os.ReadFile(filepath)
 		if err != nil {
-			fmt.Printf("Error occured in profile '%s': %s\n", filepath, err)
+			log.Fatalf("Error occured while reading file '%s': %s\n", filepath, err)
+		}
+
+		conf, err := helper.YamlToConfig(yamlData)
+		if err != nil {
+			log.Fatalln(err)
+		}
+
+		// Interrupt handling
+		interrupt := make(chan os.Signal, 1)
+		signal.Notify(interrupt, os.Interrupt, syscall.SIGTERM)
+
+		stop := make(chan bool, 1)
+		errmsg := make(chan error, 1)
+		schedChanged := make(chan helper.Scheduler, 1)
+
+		go conf.Run(schedChanged, errmsg)
+
+	STOPERROR:
+		for {
+			select {
+			case err := <-errmsg:
+				fmt.Println(err)
+
+				if err := os.Remove(paths.LOCKFILEPATH); err != nil { // Remove the lock
+					log.Fatalln("\nError: Removing lock file at 'scx-adapt.lock' failed.")
+				}
+
+			case sched := <-schedChanged:
+				if checks.IsSchedExtActive() {
+					stop <- true
+					if err := <-errmsg; err != nil {
+						errmsg <- err
+						goto STOPERROR
+					}
+				}
+
+				if sched.Path != "" {
+					go sched.Run(stop, errmsg)
+				}
+
+			case <-interrupt:
+				if checks.IsSchedExtActive() {
+					stop <- true
+					if err := <-errmsg; err != nil {
+						errmsg <- err
+						goto STOPERROR
+					}
+				}
 
 			if err := os.Remove(paths.LOCKFILEPATH); err != nil { // Remove the lock
 				fmt.Println("\nError: Removing lock file at 'scx-adapt.lock' failed.")
 			}
 
-			os.Exit(1)
+				os.Exit(0)
+			}
 		}
 	},
 }

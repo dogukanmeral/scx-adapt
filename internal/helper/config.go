@@ -3,6 +3,8 @@ package helper
 import (
 	"bytes"
 	"fmt"
+	"sort"
+	"time"
 
 	"github.com/dogukanmeral/scx-adapt/internal/checks"
 	"github.com/dogukanmeral/scx-adapt/internal/errs"
@@ -74,4 +76,41 @@ func YamlToConfig(yamlData []byte) (Config, error) {
 	}
 
 	return conf, nil
+}
+
+func (conf Config) Run(changed chan<- Scheduler, errmsg chan<- error) {
+	sort.Sort(conf)
+
+	var currentSched Scheduler = Scheduler{"", nil, "", 0, nil}
+
+NEXT_SCHED:
+	for i, s := range conf.Schedulers {
+		for _, c := range s.Criterias {
+			if b, err := c.Satisfies(); !b {
+				if err != nil {
+					errmsg <- err
+					return
+				}
+
+				if i+1 == len(conf.Schedulers) {
+					if currentSched.Path != "" {
+						currentSched = Scheduler{"", nil, "", 0, nil}
+						changed <- currentSched
+					}
+				}
+				continue NEXT_SCHED
+			}
+		}
+
+		if s.Path != currentSched.Path {
+			currentSched = s
+			changed <- s
+		}
+
+		goto SCHED_STARTED
+	}
+
+SCHED_STARTED:
+	time.Sleep(time.Millisecond * time.Duration(conf.Interval))
+	goto NEXT_SCHED
 }
