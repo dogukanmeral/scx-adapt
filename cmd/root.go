@@ -4,7 +4,7 @@ Copyright © 2026 Doğukan Meral <dogukan.meral@yahoo.com>
 package cmd
 
 import (
-	"os"
+	"log"
 
 	"github.com/spf13/cobra"
 )
@@ -18,7 +18,7 @@ var rootCmd = &cobra.Command{
 func Execute() {
 	err := rootCmd.Execute()
 	if err != nil {
-		os.Exit(1)
+		log.Fatalln(err)
 	}
 }
 

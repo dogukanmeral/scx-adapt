@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"os/signal"
 	"strconv"
@@ -28,29 +29,25 @@ var logCsvCmd = &cobra.Command{
 
 		switch len(args) {
 		case 0:
-			fmt.Println("Missing arguments. scx-adapt --help to see usage")
-			os.Exit(1)
+			log.Fatalln("Missing arguments. scx-adapt --help to see usage")
 		case 1:
 			filepath = args[0]
 			interval = 1000 // milliseconds
 		case 2:
 			filepath = args[0]
 			if i, err := strconv.Atoi(args[1]); err != nil {
-				fmt.Println("Error: Interval argument must be a positive integer.")
-				os.Exit(1)
+				log.Fatalln("Error: Interval argument must be a positive integer.")
 			} else {
 				interval = time.Duration(i)
 			}
 		default:
-			fmt.Println("Too many arguments. scx-adapt --help to see usage")
-			os.Exit(1)
+			log.Fatalln("Too many arguments. scx-adapt --help to see usage")
 		}
 
 		f, err := os.Create(filepath)
 
 		if err != nil {
-			fmt.Printf("Error occured while creating file '%s': %s\n", filepath, err)
-			os.Exit(1)
+			log.Fatalf("Error occured while creating file '%s': %s\n", filepath, err)
 		}
 
 		features := []string{
@@ -87,8 +84,7 @@ var logCsvCmd = &cobra.Command{
 		_, err = f.WriteString(fmt.Sprintf("%s\n", featuresLine))
 
 		if err != nil {
-			fmt.Printf("Error occured while writing features line to file '%s': %s", filepath, err)
-			os.Exit(1)
+			log.Fatalf("Error occured while writing features line to file '%s': %s", filepath, err)
 		}
 
 		// Interrupt handling (CTRL + Z)
@@ -137,8 +133,7 @@ var logCsvCmd = &cobra.Command{
 			c, err := helper.TotalCores()
 
 			if err != nil {
-				fmt.Println(err)
-				os.Exit(1)
+				log.Fatalln(err)
 			}
 			buf = append(buf, strconv.Itoa(c))
 
@@ -148,8 +143,7 @@ var logCsvCmd = &cobra.Command{
 					for _, s := range prSeconds {
 						v, err := helper.Pressure(t, o, s)
 						if err != nil {
-							fmt.Printf("Error occured while reading pressures: %s", err)
-							os.Exit(1)
+							log.Fatalf("Error occured while reading pressures: %s", err)
 						}
 
 						buf = append(buf, strconv.FormatFloat(v, 'f', -1, 64))
@@ -162,8 +156,7 @@ var logCsvCmd = &cobra.Command{
 				v, err := helper.LoadAvg(m)
 
 				if err != nil {
-					fmt.Println("Error occured while reading load averages.")
-					os.Exit(1)
+					log.Fatalln("Error occured while reading load averages.")
 				}
 
 				buf = append(buf, strconv.FormatFloat(v, 'f', -1, 64))
@@ -171,22 +164,19 @@ var logCsvCmd = &cobra.Command{
 
 			// Processes
 			if procsR, err := helper.GetVariableAsInt("/proc/stat", "procs_running"); err != nil {
-				fmt.Println("Error occured while reading procs_running.")
-				os.Exit(1)
+				log.Fatalln("Error occured while reading procs_running.")
 			} else {
 				buf = append(buf, strconv.Itoa(procsR))
 			}
 
 			if procsB, err := helper.GetVariableAsInt("/proc/stat", "procs_blocked"); err != nil {
-				fmt.Println("Error occured while reading procs_blocked.")
-				os.Exit(1)
+				log.Fatalln("Error occured while reading procs_blocked.")
 			} else {
 				buf = append(buf, strconv.Itoa(procsB))
 			}
 
 			if procsIO, err := helper.DiskCurIO(); err != nil {
-				fmt.Println("Error occured while reading diskstats.")
-				os.Exit(1)
+				log.Fatalln("Error occured while reading diskstats.")
 			} else {
 				buf = append(buf, strconv.Itoa(procsIO))
 			}
@@ -197,8 +187,7 @@ var logCsvCmd = &cobra.Command{
 				_, err := f.WriteString(row + "\n")
 
 				if err != nil {
-					fmt.Printf("Error occured while writing to file '%s': %s\n", filepath, err)
-					os.Exit(1)
+					log.Fatalf("Error occured while writing to file '%s': %s\n", filepath, err)
 				}
 			}
 

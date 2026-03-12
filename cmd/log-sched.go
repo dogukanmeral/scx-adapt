@@ -4,7 +4,7 @@ Copyright © 2026 Doğukan Meral <dogukan.meral@yahoo.com>
 package cmd
 
 import (
-	"fmt"
+	"log"
 	"os"
 
 	"github.com/dogukanmeral/scx-adapt/internal/helper"
@@ -21,20 +21,17 @@ var logCmd = &cobra.Command{
 		var filepath string
 
 		if os.Geteuid() != 0 {
-			fmt.Println("Must run as root")
-			os.Exit(1)
+			log.Fatalln("Must run as root")
 		}
 
 		switch len(args) {
 		case 0:
-			fmt.Println("Missing arguments. scx-adapt --help to see usage")
-			os.Exit(1)
+			log.Fatalln("Missing arguments. scx-adapt --help to see usage")
 		case 1:
 			filepath = args[0]
 			helper.TraceSchedExt(filepath)
 		default:
-			fmt.Println("Too many arguments. scx-adapt --help to see usage")
-			os.Exit(1)
+			log.Fatalln("Too many arguments. scx-adapt --help to see usage")
 		}
 	},
 }

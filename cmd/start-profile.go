@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"os/signal"
 	"path"
@@ -28,41 +29,34 @@ var startProfileCmd = &cobra.Command{
 
 		switch len(args) {
 		case 0:
-			fmt.Println("Missing arguments. scx-adapt --help to see usage")
-			os.Exit(1)
+			log.Fatalln("Missing arguments. scx-adapt --help to see usage")
 		case 1:
 			filepath = args[0]
 		default:
-			fmt.Println("Too many arguments. scx-adapt --help to see usage")
-			os.Exit(1)
+			log.Fatalln("Too many arguments. scx-adapt --help to see usage")
 		}
 
 		if os.Geteuid() != 0 {
-			fmt.Println("Must run as root")
-			os.Exit(1)
+			log.Fatalln("Must run as root")
 		}
 
 		if err := checks.CheckDependencies(); err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+			log.Fatalln(err)
 		}
 
-		/*
 		// Check if lock exists (profiler already running)
 		if checks.IsFileExist(paths.LOCKFILEPATH) {
-			fmt.Printf("Error: Another scx-adapt profile already running. (%s)\n", paths.LOCKFILEPATH)
-			os.Exit(1)
+			log.Fatalf("Error: Another scx-adapt profile already running. (%s)\n", paths.LOCKFILEPATH)
 		}
 
 		// Create DATAFOLDER folder if not exist
 		if err := helper.CreateDirIfNotExist(paths.DATAFOLDER); err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+			log.Fatalln(err)
 		}
 
 		// Create lock file
-		if _, err := os.Create(paths.LOCKFILEPATH); err != nil {
-			fmt.Printf("Error occured while creating lock file at '%s': %s\n", paths.LOCKFILEPATH, err)
+		if err := helper.CreateLock(); err != nil {
+			log.Fatalln(err)
 		}
 
 		// If profile exists in PROFILESFOLDER with that name, use it
@@ -122,9 +116,9 @@ var startProfileCmd = &cobra.Command{
 					}
 				}
 
-			if err := os.Remove(paths.LOCKFILEPATH); err != nil { // Remove the lock
-				fmt.Println("\nError: Removing lock file at 'scx-adapt.lock' failed.")
-			}
+				if err := os.Remove(paths.LOCKFILEPATH); err != nil { // Remove the lock
+					fmt.Println("\nError: Removing lock file at 'scx-adapt.lock' failed.")
+				}
 
 				os.Exit(0)
 			}

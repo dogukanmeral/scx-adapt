@@ -6,6 +6,7 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"path"
 
@@ -22,21 +23,18 @@ var listSchedulersCmd = &cobra.Command{
 		switch len(args) {
 		case 0:
 			if os.Geteuid() != 0 {
-				fmt.Println("Must run as root")
-				os.Exit(1)
+				log.Fatalln("Must run as root")
 			}
 
 			// Check if profiles directory exists
 			if !checks.IsFileExist(paths.SCHEDULERSFOLDER) {
-				fmt.Printf("Error: Schedulers folder '%s' does not exist.\n", paths.SCHEDULERSFOLDER)
-				os.Exit(1)
+				log.Fatalf("Error: Schedulers folder '%s' does not exist.\n", paths.SCHEDULERSFOLDER)
 			}
 
 			files, err := os.ReadDir(paths.SCHEDULERSFOLDER)
 
 			if err != nil {
-				fmt.Println(err)
-				os.Exit(1)
+				log.Fatalln(err)
 			}
 
 			for _, f := range files {
@@ -48,8 +46,7 @@ var listSchedulersCmd = &cobra.Command{
 				fmt.Println(f.Name())
 			}
 		default:
-			fmt.Println("Too many arguments. scx-adapt --help to see usage")
-			os.Exit(1)
+			log.Fatalln("Too many arguments. scx-adapt --help to see usage")
 		}
 	},
 }
