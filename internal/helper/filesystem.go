@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	paths "github.com/dogukanmeral/scx-adapt/internal"
 	"github.com/dogukanmeral/scx-adapt/internal/checks"
 )
 
@@ -41,4 +42,22 @@ func Write(path string, data string) {
 	if err != nil {
 		panic(err) // TODO: Convert to error returning function as other components of project.
 	}
+}
+
+// Removes the lock file
+func RemoveLock() error {
+	if err := os.Remove(paths.LOCKFILEPATH); err != nil {
+		return fmt.Errorf("Error: Removing lock file at '%s' failed: %s", paths.LOCKFILEPATH, err)
+	}
+
+	return nil
+}
+
+// Creates the lock file
+func CreateLock() error {
+	if _, err := os.Create(paths.LOCKFILEPATH); err != nil {
+		return fmt.Errorf("Error: Creating lock file at '%s': %s", paths.LOCKFILEPATH, err)
+	}
+
+	return nil
 }
