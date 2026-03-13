@@ -114,36 +114,41 @@ func (s Scheduler) Run(stop <-chan bool, errmsg chan<- error) {
 		} else {
 			cmd = exec.Command(s.GetAbsolutePath())
 		}
-		if err := cmd.Start(); err != nil {
+	}
+
+	if err := cmd.Start(); err != nil {
+		errmsg <- err
+		return
+	}
+
+	finished := make(chan error, 1)
+
+	go func() {
+		finished <- cmd.Wait()
+	}()
+
+SELECTSTART:
+	select {
+	case err := <-finished:
+		if err != nil {
 			errmsg <- err
-			return
+		} else {
+			goto SELECTSTART
 		}
 
-		finished := make(chan error, 1)
-		go func() {
-			finished <- cmd.Wait()
-		}()
-
-		select {
-		case err := <-finished:
-			if err != nil {
-				errmsg <- err
+	case <-stop:
+		switch s.Type {
+		case string(KernelOnly):
+			if err := os.RemoveAll("/sys/fs/bpf/sched_ext/"); err != nil {
+				errmsg <- fmt.Errorf("Error occured while detaching kernel-only scheduler '%s': %s\n", s.GetAbsolutePath(), err)
+			} else {
+				errmsg <- nil
 			}
-
-		case <-stop:
-			switch s.Type {
-			case string(KernelOnly):
-				if err := os.RemoveAll("/sys/fs/bpf/sched_ext/"); err != nil {
-					errmsg <- fmt.Errorf("Error occured while detaching kernel-only scheduler '%s': %s\n", s.GetAbsolutePath(), err)
-				} else {
-					errmsg <- nil
-				}
-			case string(Userspace):
-				if err := cmd.Process.Kill(); err != nil {
-					errmsg <- fmt.Errorf("Error occured while stopping userspace scheduler '%s': %s\n", s.GetAbsolutePath(), err)
-				} else {
-					errmsg <- nil
-				}
+		case string(Userspace):
+			if err := cmd.Process.Kill(); err != nil {
+				errmsg <- fmt.Errorf("Error occured while stopping userspace scheduler '%s': %s\n", s.GetAbsolutePath(), err)
+			} else {
+				errmsg <- nil
 			}
 		}
 	}
