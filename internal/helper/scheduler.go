@@ -109,8 +109,11 @@ func (s Scheduler) Run(stop <-chan bool, errmsg chan<- error) {
 		cmd = exec.Command("bpftool", "struct_ops", "register", s.GetAbsolutePath(), "/sys/fs/bpf/sched_ext")
 
 	case string(Userspace):
-		cmd = exec.Command(s.GetAbsolutePath(), *s.Parameters...)
-
+		if s.Parameters != nil {
+			cmd = exec.Command(s.GetAbsolutePath(), *s.Parameters...)
+		} else {
+			cmd = exec.Command(s.GetAbsolutePath())
+		}
 		if err := cmd.Start(); err != nil {
 			errmsg <- err
 			return
