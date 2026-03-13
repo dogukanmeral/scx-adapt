@@ -5,7 +5,6 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"path"
 	"path/filepath"
@@ -26,47 +25,56 @@ var addProfileCmd = &cobra.Command{
 
 		switch len(args) {
 		case 0:
-			log.Fatalln("Missing arguments. scx-adapt --help to see usage")
+			fmt.Println(MISSING_ARGS_MSG)
+			os.Exit(1)
 		case 1:
 			profilePath = args[0]
 		default:
-			log.Fatalln("Too many arguments. scx-adapt --help to see usage")
+			fmt.Println(TOO_MANY_ARGS_MSG)
+			os.Exit(1)
 		}
 
 		if os.Geteuid() != 0 {
-			log.Fatalln("Must run as root")
+			fmt.Println(MUST_RUN_AS_ROOT_MSG)
+			os.Exit(1)
 		}
 
 		// Read file
 		profileData, err := os.ReadFile(profilePath)
 		if err != nil {
-			log.Fatalf("Error: Reading file '%s': %s\n", profilePath, err)
+			fmt.Printf("Error: Reading file '%s': %s\n", profilePath, err)
+			os.Exit(1)
 		}
 
 		// Check YAML configuration (discard "Config")
 		_, err = helper.YamlToConfig(profileData)
 		if err != nil {
-			log.Fatalln(err)
+			fmt.Println(err)
+			os.Exit(1)
 		}
 
 		// Check if a profile exists with the same name in profiles directory
 		if checks.IsFileExist(path.Join(paths.PROFILESFOLDER, filepath.Base(profilePath))) {
-			log.Fatalf("Another profile configuration with filename '%s' already exists at '%s'\n", filepath.Base(profilePath), paths.PROFILESFOLDER)
+			fmt.Printf("Another profile configuration with filename '%s' already exists at '%s'\n", filepath.Base(profilePath), paths.PROFILESFOLDER)
+			os.Exit(1)
 		}
 
 		// Create /etc/scx-adapt/ directory if not exist
 		if err := helper.CreateDirIfNotExist(paths.DATAFOLDER); err != nil {
-			log.Fatalln(err)
+			fmt.Println(err)
+			os.Exit(1)
 		}
 
 		// Create profiles directory if not exist
 		if err := helper.CreateDirIfNotExist(paths.PROFILESFOLDER); err != nil {
-			log.Fatalln(err)
+			fmt.Println(err)
+			os.Exit(1)
 		}
 
 		// Copy file to profiles directory
 		if err := os.WriteFile(path.Join(paths.PROFILESFOLDER, filepath.Base(profilePath)), profileData, 0700); err != nil {
-			log.Fatalf("Error: Writing to file '%s': %s\n", path.Join(paths.PROFILESFOLDER, filepath.Base(profilePath)), err)
+			fmt.Printf("Error: Writing to file '%s': %s\n", path.Join(paths.PROFILESFOLDER, filepath.Base(profilePath)), err)
+			os.Exit(1)
 		} else {
 			fmt.Printf("Profile added to '%s'\n", path.Join(paths.PROFILESFOLDER, filepath.Base(profilePath)))
 		}

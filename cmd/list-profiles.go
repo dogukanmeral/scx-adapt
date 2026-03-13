@@ -5,7 +5,6 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"path"
 
@@ -26,18 +25,20 @@ var listProfilesCmd = &cobra.Command{
 		switch len(args) {
 		case 0:
 			if os.Geteuid() != 0 {
-				log.Fatalln("Must run as root")
+				fmt.Println(MUST_RUN_AS_ROOT_MSG)
+				os.Exit(1)
 			}
 
 			// Check if profiles directory exists
 			if !checks.IsFileExist(paths.PROFILESFOLDER) {
-				log.Fatalf("Error: Profiles folder '%s' does not exist.\n", paths.PROFILESFOLDER)
+				fmt.Printf("Error: Profiles folder '%s' does not exist.\n", paths.PROFILESFOLDER)
+				os.Exit(1)
 			}
 
 			files, err := os.ReadDir(paths.PROFILESFOLDER)
-
 			if err != nil {
-				log.Fatalln(err)
+				fmt.Println(err)
+				os.Exit(1)
 			}
 
 			for _, f := range files {
@@ -49,14 +50,15 @@ var listProfilesCmd = &cobra.Command{
 
 				_, err = helper.YamlToConfig(fileData)
 				if err != nil {
-					fmt.Printf("Error in profile '%s': %s\n", f.Name(), err)
+					fmt.Printf("Error: In profile '%s': %s\n", f.Name(), err)
 					continue
 				}
 
 				fmt.Println(f.Name())
 			}
 		default:
-			log.Fatalln("Too many arguments. scx-adapt --help to see usage")
+			fmt.Println(TOO_MANY_ARGS_MSG)
+			os.Exit(1)
 		}
 	},
 }

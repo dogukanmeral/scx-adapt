@@ -6,7 +6,6 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"path"
 
@@ -24,25 +23,32 @@ var removeSchedulerCmd = &cobra.Command{
 
 		switch len(args) {
 		case 0:
-			log.Fatalln("Missing arguments. scx-adapt --help to see usage")
+			fmt.Println(MISSING_ARGS_MSG)
+			os.Exit(1)
 		case 1:
 			schedulerFile = args[0]
 		default:
-			log.Fatalln("Too many arguments. scx-adapt --help to see usage")
+			fmt.Println(TOO_MANY_ARGS_MSG)
+			os.Exit(1)
 		}
 
 		if os.Geteuid() != 0 {
-			log.Fatalln("Must run as root")
+			fmt.Println(MUST_RUN_AS_ROOT_MSG)
+			os.Exit(1)
 		}
 
 		// Check if scheduler exists in the schedulers directory
 		if !checks.IsFileExist(path.Join(paths.SCHEDULERSFOLDER, schedulerFile)) {
-			log.Fatalf("Scheduler with filename '%s' does not exist at '%s'\n", schedulerFile, paths.SCHEDULERSFOLDER)
+			fmt.Printf("Scheduler with filename '%s' does not exist at '%s'\n",
+				schedulerFile, paths.SCHEDULERSFOLDER)
+			os.Exit(1)
 		}
 
 		// Remove scheduler file in the schedulers directory
 		if err := os.Remove(path.Join(paths.SCHEDULERSFOLDER, schedulerFile)); err != nil {
-			log.Fatalf("Error occured while deleting scheduler '%s' in '%s': %s\n", schedulerFile, paths.SCHEDULERSFOLDER, err)
+			fmt.Printf("Error: Deleting scheduler '%s' in '%s': %s\n",
+				schedulerFile, paths.SCHEDULERSFOLDER, err)
+			os.Exit(1)
 		}
 
 		fmt.Printf("Scheduler at '%s' removed.\n", path.Join(paths.SCHEDULERSFOLDER, schedulerFile))

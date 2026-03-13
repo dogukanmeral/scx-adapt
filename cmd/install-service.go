@@ -5,7 +5,6 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"os/exec"
 	"path"
@@ -34,35 +33,41 @@ var installServiceCmd = &cobra.Command{
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) > 0 {
-			log.Fatalln("Too many arguments. scx-adapt --help to see usage")
+			fmt.Println(TOO_MANY_ARGS_MSG)
+			os.Exit(1)
 		}
 
 		if os.Geteuid() != 0 {
-			log.Fatalln("Must run as root")
+			fmt.Println(MUST_RUN_AS_ROOT_MSG)
+			os.Exit(1)
 		}
 
 		if err := checks.CheckDependencies(); err != nil {
-			log.Fatalln(err)
+			fmt.Println(err)
+			os.Exit(1)
 		}
 
 		// Check if .service file already exists.
 		if checks.IsFileExist(path.Join(paths.SERVICESDIR, paths.SERVICEFILENAME)) {
-			log.Fatalf("Error: Service file already exists at %s\n", path.Join(paths.SERVICESDIR, paths.SERVICEFILENAME))
+			fmt.Printf("Error: Service file already exists at %s\n", path.Join(paths.SERVICESDIR,
+				paths.SERVICEFILENAME))
+			os.Exit(1)
 		}
 
 		// Write service file.
-		err := os.WriteFile(path.Join(paths.SERVICESDIR, paths.SERVICEFILENAME), []byte(SERVICEFILE), 0700)
-		if err != nil {
-			log.Fatalln(err)
+		if err := os.WriteFile(path.Join(paths.SERVICESDIR,
+			paths.SERVICEFILENAME), []byte(SERVICEFILE), 0700); err != nil {
+			fmt.Println(err)
+			os.Exit(1)
 		}
 
 		fmt.Printf("Service file added: %s\n", path.Join(paths.SERVICESDIR, paths.SERVICEFILENAME))
 
 		reloadCmd := exec.Command("systemctl", "daemon-reload")
-		err = reloadCmd.Run()
 
-		if err != nil {
-			log.Fatalf("Error occured while reloading daemons: %s\n", err)
+		if err := reloadCmd.Run(); err != nil {
+			fmt.Printf("Error: Reloading daemons: %s\n", err)
+			os.Exit(1)
 		}
 	},
 }

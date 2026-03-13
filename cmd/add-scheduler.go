@@ -6,7 +6,6 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"path"
 	"path/filepath"
@@ -26,45 +25,54 @@ var addSchedulerCmd = &cobra.Command{
 
 		switch len(args) {
 		case 0:
-			log.Fatalln("Missing arguments. scx-adapt --help to see usage")
+			fmt.Println(MISSING_ARGS_MSG)
+			os.Exit(1)
 		case 1:
 			schedulerPath = args[0]
 		default:
-			log.Fatalln("Too many arguments. scx-adapt --help to see usage")
+			fmt.Println(TOO_MANY_ARGS_MSG)
+			os.Exit(1)
 		}
 
 		if os.Geteuid() != 0 {
-			log.Fatalln("Must run as root")
+			fmt.Println(MUST_RUN_AS_ROOT_MSG)
+			os.Exit(1)
 		}
 
 		// Check obj
 		if err := checks.CheckObj(schedulerPath); err != nil {
-			log.Fatalf("Error: Checking object file: %s\n", err)
+			fmt.Printf("Error: Checking object file: %s\n", err)
+			os.Exit(1)
 		}
 
 		schedulerData, err := os.ReadFile(schedulerPath)
 		if err != nil {
-			log.Fatalf("Error: Reading file '%s': %s\n", schedulerPath, err)
+			fmt.Printf("Error: Reading file '%s': %s\n", schedulerPath, err)
+			os.Exit(1)
 		}
 
 		// Check if a scheduler exists with the same name in schedulers directory
 		if checks.IsFileExist(path.Join(paths.SCHEDULERSFOLDER, filepath.Base(schedulerPath))) {
-			log.Fatalf("Another scheduler with filename '%s' already exists at '%s'\n", filepath.Base(schedulerPath), paths.SCHEDULERSFOLDER)
+			fmt.Printf("Another scheduler with filename '%s' already exists at '%s'\n", filepath.Base(schedulerPath), paths.SCHEDULERSFOLDER)
+			os.Exit(1)
 		}
 
 		// Create /etc/scx-adapt/ directory if not exist
 		if err := helper.CreateDirIfNotExist(paths.DATAFOLDER); err != nil {
-			log.Fatalln(err)
+			fmt.Println(err)
+			os.Exit(1)
 		}
 
 		// Create schedulers directory if not exist
 		if err := helper.CreateDirIfNotExist(paths.SCHEDULERSFOLDER); err != nil {
-			log.Fatalln(err)
+			fmt.Println(err)
+			os.Exit(1)
 		}
 
 		// Copy file to profiles directory
 		if err := os.WriteFile(path.Join(paths.SCHEDULERSFOLDER, filepath.Base(schedulerPath)), schedulerData, 0700); err != nil {
-			log.Fatalf("Error: Writing to file '%s': %s\n", path.Join(paths.SCHEDULERSFOLDER, filepath.Base(schedulerPath)), err)
+			fmt.Printf("Error: Writing to file '%s': %s\n", path.Join(paths.SCHEDULERSFOLDER, filepath.Base(schedulerPath)), err)
+			os.Exit(1)
 		} else {
 			fmt.Printf("Profile added to '%s'\n", path.Join(paths.SCHEDULERSFOLDER, filepath.Base(schedulerPath)))
 		}

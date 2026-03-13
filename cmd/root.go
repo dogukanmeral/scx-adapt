@@ -4,10 +4,16 @@ Copyright © 2026 Doğukan Meral <dogukan.meral@yahoo.com>
 package cmd
 
 import (
-	"log"
+	"fmt"
+	"os"
 
 	"github.com/spf13/cobra"
 )
+
+const MISSING_ARGS_MSG = "Missing arguments. scx-adapt --help to see usage"
+const TOO_MANY_ARGS_MSG = "Too many arguments. scx-adapt --help to see usage"
+const MUST_RUN_AS_ROOT_MSG = "Must run as root"
+const INTERRUPT_MSG = "Interrupted... Exiting..."
 
 var rootCmd = &cobra.Command{
 	Use:   "scx-adapt",
@@ -18,7 +24,8 @@ var rootCmd = &cobra.Command{
 func Execute() {
 	err := rootCmd.Execute()
 	if err != nil {
-		log.Fatalln(err)
+		fmt.Println(err)
+		os.Exit(1)
 	}
 }
 

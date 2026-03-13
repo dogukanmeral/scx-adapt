@@ -5,7 +5,6 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/dogukanmeral/scx-adapt/internal/helper"
@@ -23,23 +22,26 @@ var checkProfileCmd = &cobra.Command{
 
 		switch len(args) {
 		case 0:
-			log.Fatalln("Missing arguments. scx-adapt --help to see usage")
+			fmt.Println(MISSING_ARGS_MSG)
+			os.Exit(1)
 		case 1:
 			profilePath = args[0]
 		default:
-			log.Fatalln("Too many arguments. scx-adapt --help to see usage")
+			fmt.Println("Too many arguments. scx-adapt --help to see usage")
+			os.Exit(1)
 		}
 
 		// Read file
 		profileData, err := os.ReadFile(profilePath)
 		if err != nil {
-			log.Fatalf("Error: Reading file '%s': %s\n", profilePath, err)
+			fmt.Printf("Error: Reading file '%s': %s\n", profilePath, err)
+			os.Exit(1)
 		}
 
 		// Check YAML configuration (discard "Config")
-		_, err = helper.YamlToConfig(profileData)
-		if err != nil {
-			log.Fatalln(err)
+		if _, err = helper.YamlToConfig(profileData); err != nil {
+			fmt.Println(err)
+			os.Exit(1)
 		}
 
 		fmt.Printf("Valid config: %s\n", profilePath)

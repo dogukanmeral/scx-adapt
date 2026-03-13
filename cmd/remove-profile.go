@@ -5,7 +5,6 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"path"
 
@@ -24,25 +23,32 @@ var removeProfileCmd = &cobra.Command{
 
 		switch len(args) {
 		case 0:
-			log.Fatalln("Missing arguments. scx-adapt --help to see usage")
+			fmt.Println(MISSING_ARGS_MSG)
+			os.Exit(1)
 		case 1:
 			profileFile = args[0]
 		default:
-			log.Fatalln("Too many arguments. scx-adapt --help to see usage")
+			fmt.Println(TOO_MANY_ARGS_MSG)
+			os.Exit(1)
 		}
 
 		if os.Geteuid() != 0 {
-			log.Fatalln("Must run as root")
+			fmt.Println(MUST_RUN_AS_ROOT_MSG)
+			os.Exit(1)
 		}
 
 		// Check if profile exists in the profiles directory
 		if !checks.IsFileExist(path.Join(paths.PROFILESFOLDER, profileFile)) {
-			log.Fatalf("Profile configuration with filename '%s' does not exist at '%s'\n", profileFile, paths.PROFILESFOLDER)
+			fmt.Printf("Profile configuration with filename '%s' does not exist at '%s'\n",
+				profileFile, paths.PROFILESFOLDER)
+			os.Exit(1)
 		}
 
 		// Remove profile file in the profiles directory
 		if err := os.Remove(path.Join(paths.PROFILESFOLDER, profileFile)); err != nil {
-			log.Fatalf("Error occured while deleting profile '%s' in '%s': %s\n", profileFile, paths.PROFILESFOLDER, err)
+			fmt.Printf("Error: Deleting profile '%s' in '%s': %s\n",
+				profileFile, paths.PROFILESFOLDER, err)
+			os.Exit(1)
 		}
 
 		fmt.Printf("Profile at '%s' removed.\n", path.Join(paths.PROFILESFOLDER, profileFile))

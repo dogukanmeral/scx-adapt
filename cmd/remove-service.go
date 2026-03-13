@@ -5,7 +5,6 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"path"
 
@@ -22,22 +21,26 @@ var removeServiceCmd = &cobra.Command{
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) > 0 {
-			log.Fatalln("Too many arguments. scx-adapt --help to see usage")
+			fmt.Println(TOO_MANY_ARGS_MSG)
+			os.Exit(1)
 		}
 
 		if os.Geteuid() != 0 {
-			log.Fatalln("Must run as root")
+			fmt.Println(MUST_RUN_AS_ROOT_MSG)
+			os.Exit(1)
 		}
 
 		// Check if .service file already exists.
 		if !checks.IsFileExist(path.Join(paths.SERVICESDIR, paths.SERVICEFILENAME)) {
-			log.Fatalf("Error: Service file does not exist at %s\n", path.Join(paths.SERVICESDIR, paths.SERVICEFILENAME))
+			fmt.Printf("Error: Service file does not exist at %s\n",
+				path.Join(paths.SERVICESDIR, paths.SERVICEFILENAME))
+			os.Exit(1)
 		}
 
 		// Remove service file.
-		err := os.Remove(path.Join(paths.SERVICESDIR, paths.SERVICEFILENAME))
-		if err != nil {
-			log.Fatalln(err)
+		if err := os.Remove(path.Join(paths.SERVICESDIR, paths.SERVICEFILENAME)); err != nil {
+			fmt.Println(err)
+			os.Exit(1)
 		}
 
 		fmt.Printf("Service file removed: %s\n", path.Join(paths.SERVICESDIR, paths.SERVICEFILENAME))

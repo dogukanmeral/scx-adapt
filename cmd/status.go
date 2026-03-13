@@ -5,7 +5,7 @@ package cmd
 
 import (
 	"fmt"
-	"log"
+	"os"
 
 	"github.com/dogukanmeral/scx-adapt/internal/helper"
 
@@ -21,14 +21,15 @@ var statusCmd = &cobra.Command{
 		switch len(args) {
 		case 0:
 			c, err := helper.CurrentScx()
-
 			if err != nil {
-				log.Fatalln(err)
+				fmt.Println(err)
+				os.Exit(1)
 			}
 
 			fmt.Printf("Current scheduler: %s\n", c)
 		default:
-			log.Fatalln("Too many arguments. scx-adapt --help to see usage")
+			fmt.Println(TOO_MANY_ARGS_MSG)
+			os.Exit(1)
 		}
 	},
 }
