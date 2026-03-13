@@ -5,7 +5,6 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"os/signal"
 	"path"
@@ -29,34 +28,35 @@ var startProfileCmd = &cobra.Command{
 
 		switch len(args) {
 		case 0:
-			log.Fatalln("Missing arguments. scx-adapt --help to see usage")
+			fmt.Println(MISSING_ARGS_MSG)
+			os.Exit(1)
 		case 1:
 			filepath = args[0]
 		default:
-			log.Fatalln("Too many arguments. scx-adapt --help to see usage")
+			fmt.Println(TOO_MANY_ARGS_MSG)
+			os.Exit(1)
 		}
 
 		if os.Geteuid() != 0 {
-			log.Fatalln("Must run as root")
+			fmt.Println(MUST_RUN_AS_ROOT_MSG)
+			os.Exit(1)
 		}
 
 		if err := checks.CheckDependencies(); err != nil {
-			log.Fatalln(err)
+			fmt.Println(err)
+			os.Exit(1)
 		}
 
 		// Check if lock exists (profiler already running)
 		if checks.IsFileExist(paths.LOCKFILEPATH) {
-			log.Fatalf("Error: Another scx-adapt profile already running. (%s)\n", paths.LOCKFILEPATH)
+			fmt.Printf("Error: Another scx-adapt profile is already running. (%s)\n", paths.LOCKFILEPATH)
+			os.Exit(1)
 		}
 
 		// Create DATAFOLDER folder if not exist
 		if err := helper.CreateDirIfNotExist(paths.DATAFOLDER); err != nil {
-			log.Fatalln(err)
-		}
-
-		// Create lock file
-		if err := helper.CreateLock(); err != nil {
-			log.Fatalln(err)
+			fmt.Println(err)
+			os.Exit(1)
 		}
 
 		// If profile exists in PROFILESFOLDER with that name, use it
@@ -66,12 +66,20 @@ var startProfileCmd = &cobra.Command{
 
 		yamlData, err := os.ReadFile(filepath)
 		if err != nil {
-			log.Fatalf("Error occured while reading file '%s': %s\n", filepath, err)
+			fmt.Printf("Error: Reading file '%s': %s\n", filepath, err)
+			os.Exit(1)
 		}
 
 		conf, err := helper.YamlToConfig(yamlData)
 		if err != nil {
-			log.Fatalln(err)
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		// Create lock file
+		if err := helper.CreateLock(); err != nil {
+			fmt.Println(err)
+			os.Exit(1)
 		}
 
 		// Interrupt handling
@@ -90,11 +98,21 @@ var startProfileCmd = &cobra.Command{
 			case err := <-errmsg:
 				fmt.Println(err)
 
-				if err := os.Remove(paths.LOCKFILEPATH); err != nil { // Remove the lock
-					log.Fatalln("\nError: Removing lock file at 'scx-adapt.lock' failed.")
+				if e := helper.RemoveLock(); e != nil {
+					fmt.Println(e)
 				}
 
+				os.Exit(1)
+
 			case sched := <-schedChanged:
+				switch sched.Path {
+				case "":
+					fmt.Println("None of sched_ext schedulers match criterias. Switching to system scheduler...")
+
+				default:
+					fmt.Printf("Switching to scheduler '%s'...\n", sched.Path)
+				}
+
 				if checks.IsSchedExtActive() {
 					stop <- true
 					if err := <-errmsg; err != nil {
@@ -105,9 +123,13 @@ var startProfileCmd = &cobra.Command{
 
 				if sched.Path != "" {
 					go sched.Run(stop, errmsg)
+
+					fmt.Printf("Starting scheduler '%s'...\n", sched.Path)
 				}
 
 			case <-interrupt:
+				fmt.Println(INTERRUPT_MSG)
+
 				if checks.IsSchedExtActive() {
 					stop <- true
 					if err := <-errmsg; err != nil {
@@ -116,8 +138,8 @@ var startProfileCmd = &cobra.Command{
 					}
 				}
 
-				if err := os.Remove(paths.LOCKFILEPATH); err != nil { // Remove the lock
-					fmt.Println("\nError: Removing lock file at 'scx-adapt.lock' failed.")
+				if e := helper.RemoveLock(); e != nil {
+					fmt.Println(e)
 				}
 
 				os.Exit(0)
