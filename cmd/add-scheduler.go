@@ -16,8 +16,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var addSchedulerType string
+
 var addSchedulerCmd = &cobra.Command{
-	Use:   "add-scheduler <scheduler_path>",
+	Use:   "add-scheduler [flags] <scheduler_path>",
 	Short: fmt.Sprintf("Add sched_ext scheduler object file to schedulers folder (%s)", paths.SCHEDULERSFOLDER),
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -39,9 +41,27 @@ var addSchedulerCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		// Check obj
-		if err := checks.CheckObj(schedulerPath); err != nil {
-			fmt.Printf("Error: Checking object file: %s\n", err)
+		var subdir string
+
+		switch addSchedulerType {
+		case string(helper.KernelOnly):
+			if err := checks.CheckObj(schedulerPath); err != nil {
+				fmt.Printf("Error: Checking object file: %s\n", err)
+				os.Exit(1)
+			}
+
+			subdir = paths.KERNELONLYFOLDER
+
+		case string(helper.Userspace):
+			if !checks.IsExecutableELF(schedulerPath) {
+				fmt.Printf("Error: Not an executable ELF file: %s\n", schedulerPath)
+				os.Exit(1)
+			}
+
+			subdir = paths.USERSPACEFOLDER
+
+		default:
+			fmt.Printf("Error: Invalid scheduler type '%s'. Available scheduler types: kernelonly, userspace\n", addSchedulerType)
 			os.Exit(1)
 		}
 
@@ -52,8 +72,8 @@ var addSchedulerCmd = &cobra.Command{
 		}
 
 		// Check if a scheduler exists with the same name in schedulers directory
-		if helper.IsFileExist(path.Join(paths.SCHEDULERSFOLDER, filepath.Base(schedulerPath))) {
-			fmt.Printf("Another scheduler with filename '%s' already exists at '%s'\n", filepath.Base(schedulerPath), paths.SCHEDULERSFOLDER)
+		if helper.IsFileExist(path.Join(subdir, filepath.Base(schedulerPath))) {
+			fmt.Printf("Another scheduler with filename '%s' already exists at '%s'\n", filepath.Base(schedulerPath), subdir)
 			os.Exit(1)
 		}
 
@@ -69,16 +89,31 @@ var addSchedulerCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
+		// Create scheduler type directory if not exist
+		if err := helper.CreateDirIfNotExist(subdir); err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
 		// Copy file to profiles directory
-		if err := os.WriteFile(path.Join(paths.SCHEDULERSFOLDER, filepath.Base(schedulerPath)), schedulerData, 0700); err != nil {
-			fmt.Printf("Error: Writing to file '%s': %s\n", path.Join(paths.SCHEDULERSFOLDER, filepath.Base(schedulerPath)), err)
+		if err := os.WriteFile(path.Join(subdir, filepath.Base(schedulerPath)), schedulerData, 0700); err != nil {
+			fmt.Printf("Error: Writing to file '%s': %s\n", path.Join(subdir, filepath.Base(schedulerPath)), err)
 			os.Exit(1)
 		} else {
-			fmt.Printf("Profile added to '%s'\n", path.Join(paths.SCHEDULERSFOLDER, filepath.Base(schedulerPath)))
+			fmt.Printf("Profile added to '%s'\n", path.Join(subdir, filepath.Base(schedulerPath)))
 		}
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(addSchedulerCmd)
+
+	addSchedulerCmd.Flags().StringVarP(
+		&addSchedulerType,
+		"type",
+		"t",
+		"",
+		"Scheduler type (kernelonly|userspace)",
+	)
+	addSchedulerCmd.MarkFlagRequired("type")
 }

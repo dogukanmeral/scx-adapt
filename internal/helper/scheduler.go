@@ -32,7 +32,18 @@ type Scheduler struct {
 func (s Scheduler) GetAbsolutePath() string {
 	if path.IsAbs(s.Path) {
 		return s.Path
-	} else if p := path.Join(paths.SCHEDULERSFOLDER, s.Path); IsFileExist(p) {
+	}
+
+	var subdir string
+
+	switch s.Type {
+	case string(KernelOnly):
+		subdir = paths.KERNELONLYFOLDER
+	case string(Userspace):
+		subdir = paths.USERSPACEFOLDER
+	}
+
+	if p := path.Join(subdir, s.Path); IsFileExist(p) {
 		return p
 	}
 
