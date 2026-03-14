@@ -9,7 +9,7 @@ import (
 	"path"
 
 	paths "github.com/dogukanmeral/scx-adapt/internal"
-	"github.com/dogukanmeral/scx-adapt/internal/checks"
+	"github.com/dogukanmeral/scx-adapt/internal/helper"
 
 	"github.com/spf13/cobra"
 )
@@ -31,7 +31,7 @@ var removeServiceCmd = &cobra.Command{
 		}
 
 		// Check if .service file already exists.
-		if !checks.IsFileExist(path.Join(paths.SERVICESDIR, paths.SERVICEFILENAME)) {
+		if !helper.IsFileExist(path.Join(paths.SERVICESDIR, paths.SERVICEFILENAME)) {
 			fmt.Printf("Error: Service file does not exist at %s\n",
 				path.Join(paths.SERVICESDIR, paths.SERVICEFILENAME))
 			os.Exit(1)

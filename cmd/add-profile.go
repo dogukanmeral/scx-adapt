@@ -10,7 +10,6 @@ import (
 	"path/filepath"
 
 	paths "github.com/dogukanmeral/scx-adapt/internal"
-	"github.com/dogukanmeral/scx-adapt/internal/checks"
 	"github.com/dogukanmeral/scx-adapt/internal/helper"
 
 	"github.com/spf13/cobra"
@@ -54,7 +53,7 @@ var addProfileCmd = &cobra.Command{
 		}
 
 		// Check if a profile exists with the same name in profiles directory
-		if checks.IsFileExist(path.Join(paths.PROFILESFOLDER, filepath.Base(profilePath))) {
+		if helper.IsFileExist(path.Join(paths.PROFILESFOLDER, filepath.Base(profilePath))) {
 			fmt.Printf("Another profile configuration with filename '%s' already exists at '%s'\n", filepath.Base(profilePath), paths.PROFILESFOLDER)
 			os.Exit(1)
 		}

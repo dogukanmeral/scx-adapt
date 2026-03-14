@@ -11,6 +11,7 @@ import (
 
 	paths "github.com/dogukanmeral/scx-adapt/internal"
 	"github.com/dogukanmeral/scx-adapt/internal/checks"
+	"github.com/dogukanmeral/scx-adapt/internal/helper"
 
 	"github.com/spf13/cobra"
 )
@@ -42,13 +43,13 @@ var installServiceCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		if err := checks.CheckDependencies(); err != nil {
+		if err := checks.CheckBPFDependencies(); err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}
 
 		// Check if .service file already exists.
-		if checks.IsFileExist(path.Join(paths.SERVICESDIR, paths.SERVICEFILENAME)) {
+		if helper.IsFileExist(path.Join(paths.SERVICESDIR, paths.SERVICEFILENAME)) {
 			fmt.Printf("Error: Service file already exists at %s\n", path.Join(paths.SERVICESDIR,
 				paths.SERVICEFILENAME))
 			os.Exit(1)

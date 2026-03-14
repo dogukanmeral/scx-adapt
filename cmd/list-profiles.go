@@ -11,8 +11,6 @@ import (
 	paths "github.com/dogukanmeral/scx-adapt/internal"
 	"github.com/dogukanmeral/scx-adapt/internal/helper"
 
-	"github.com/dogukanmeral/scx-adapt/internal/checks"
-
 	"github.com/spf13/cobra"
 )
 
@@ -30,7 +28,7 @@ var listProfilesCmd = &cobra.Command{
 			}
 
 			// Check if profiles directory exists
-			if !checks.IsFileExist(paths.PROFILESFOLDER) {
+			if !helper.IsFileExist(paths.PROFILESFOLDER) {
 				fmt.Printf("Error: Profiles folder '%s' does not exist.\n", paths.PROFILESFOLDER)
 				os.Exit(1)
 			}

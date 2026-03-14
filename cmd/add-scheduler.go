@@ -52,7 +52,7 @@ var addSchedulerCmd = &cobra.Command{
 		}
 
 		// Check if a scheduler exists with the same name in schedulers directory
-		if checks.IsFileExist(path.Join(paths.SCHEDULERSFOLDER, filepath.Base(schedulerPath))) {
+		if helper.IsFileExist(path.Join(paths.SCHEDULERSFOLDER, filepath.Base(schedulerPath))) {
 			fmt.Printf("Another scheduler with filename '%s' already exists at '%s'\n", filepath.Base(schedulerPath), paths.SCHEDULERSFOLDER)
 			os.Exit(1)
 		}

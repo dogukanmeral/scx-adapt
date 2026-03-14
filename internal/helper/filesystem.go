@@ -1,16 +1,16 @@
 package helper
 
 import (
+	"errors"
 	"fmt"
 	"os"
 
 	paths "github.com/dogukanmeral/scx-adapt/internal"
-	"github.com/dogukanmeral/scx-adapt/internal/checks"
 )
 
 // Creates directory with permission '700' if it does not exist already.
 func CreateDirIfNotExist(dirPath string) error {
-	if !checks.IsFileExist(dirPath) {
+	if !IsFileExist(dirPath) {
 		err := os.Mkdir(dirPath, 0700)
 
 		if err != nil {
@@ -60,4 +60,10 @@ func CreateLock() error {
 	}
 
 	return nil
+}
+
+// Returns if file exists or not
+func IsFileExist(path string) bool {
+	_, err := os.Stat(path)
+	return !errors.Is(err, os.ErrNotExist)
 }

@@ -9,7 +9,7 @@ import (
 	"path"
 
 	paths "github.com/dogukanmeral/scx-adapt/internal"
-	"github.com/dogukanmeral/scx-adapt/internal/checks"
+	"github.com/dogukanmeral/scx-adapt/internal/helper"
 
 	"github.com/spf13/cobra"
 )
@@ -38,7 +38,7 @@ var removeProfileCmd = &cobra.Command{
 		}
 
 		// Check if profile exists in the profiles directory
-		if !checks.IsFileExist(path.Join(paths.PROFILESFOLDER, profileFile)) {
+		if !helper.IsFileExist(path.Join(paths.PROFILESFOLDER, profileFile)) {
 			fmt.Printf("Profile configuration with filename '%s' does not exist at '%s'\n",
 				profileFile, paths.PROFILESFOLDER)
 			os.Exit(1)

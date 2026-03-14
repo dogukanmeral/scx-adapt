@@ -10,7 +10,7 @@ import (
 	"path"
 
 	paths "github.com/dogukanmeral/scx-adapt/internal"
-	"github.com/dogukanmeral/scx-adapt/internal/checks"
+	"github.com/dogukanmeral/scx-adapt/internal/helper"
 	"github.com/spf13/cobra"
 )
 
@@ -38,7 +38,7 @@ var removeSchedulerCmd = &cobra.Command{
 		}
 
 		// Check if scheduler exists in the schedulers directory
-		if !checks.IsFileExist(path.Join(paths.SCHEDULERSFOLDER, schedulerFile)) {
+		if !helper.IsFileExist(path.Join(paths.SCHEDULERSFOLDER, schedulerFile)) {
 			fmt.Printf("Scheduler with filename '%s' does not exist at '%s'\n",
 				schedulerFile, paths.SCHEDULERSFOLDER)
 			os.Exit(1)

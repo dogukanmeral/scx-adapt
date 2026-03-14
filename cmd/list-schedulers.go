@@ -11,6 +11,7 @@ import (
 
 	paths "github.com/dogukanmeral/scx-adapt/internal"
 	"github.com/dogukanmeral/scx-adapt/internal/checks"
+	"github.com/dogukanmeral/scx-adapt/internal/helper"
 	"github.com/spf13/cobra"
 )
 
@@ -27,7 +28,7 @@ var listSchedulersCmd = &cobra.Command{
 			}
 
 			// Check if profiles directory exists
-			if !checks.IsFileExist(paths.SCHEDULERSFOLDER) {
+			if !helper.IsFileExist(paths.SCHEDULERSFOLDER) {
 				fmt.Printf("Error: Schedulers folder '%s' does not exist.\n", paths.SCHEDULERSFOLDER)
 				os.Exit(1)
 			}

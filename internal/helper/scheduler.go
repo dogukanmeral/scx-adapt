@@ -32,7 +32,7 @@ type Scheduler struct {
 func (s Scheduler) GetAbsolutePath() string {
 	if path.IsAbs(s.Path) {
 		return s.Path
-	} else if p := path.Join(paths.SCHEDULERSFOLDER, s.Path); checks.IsFileExist(p) {
+	} else if p := path.Join(paths.SCHEDULERSFOLDER, s.Path); IsFileExist(p) {
 		return p
 	}
 
@@ -69,7 +69,7 @@ func (s Scheduler) Validate() error {
 			return err
 		}
 	case string(Userspace):
-		if !checks.IsFileExist(s.GetAbsolutePath()) {
+		if !IsFileExist(s.GetAbsolutePath()) {
 			return &errs.SchedulerDoesNotExistError{
 				Msg: fmt.Sprintf("Scheduler does not exist at path '%s'", s.GetAbsolutePath()),
 			}

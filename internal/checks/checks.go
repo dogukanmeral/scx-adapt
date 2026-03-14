@@ -57,7 +57,7 @@ func IsExecutableELF(path string) bool {
 }
 
 // Checks dependencies: bpftool, kernel (BPF and sched_ext)
-func CheckDependencies() error {
+func CheckBPFDependencies() error {
 	// Check if BPF tool is installed
 	whichCmd := exec.Command("which", "bpftool")
 	whichCmd.Run()
@@ -117,12 +117,6 @@ func ContainsDuplicate[T comparable](arr []T) (bool, []T) {
 	} else {
 		return true, duplicates
 	}
-}
-
-// Returns if file exists or not
-func IsFileExist(path string) bool {
-	_, err := os.Stat(path)
-	return !errors.Is(err, os.ErrNotExist)
 }
 
 // Returns if sched_ext is active or not
