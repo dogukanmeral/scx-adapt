@@ -33,19 +33,38 @@ var listSchedulersCmd = &cobra.Command{
 				os.Exit(1)
 			}
 
-			files, err := os.ReadDir(paths.SCHEDULERSFOLDER)
-			if err != nil {
-				fmt.Println(err)
-				os.Exit(1)
-			}
+			// List kernelonly schedulers
+			fmt.Println("Kernel-only schedulers:")
+			if helper.IsFileExist(paths.KERNELONLYFOLDER) {
 
-			for _, f := range files {
-				if err := checks.CheckObj(path.Join(paths.SCHEDULERSFOLDER, f.Name())); err != nil {
+				kernelonlyFiles, err := os.ReadDir(paths.KERNELONLYFOLDER)
+				if err != nil {
 					fmt.Println(err)
-					continue
+					os.Exit(1)
 				}
 
-				fmt.Println(f.Name())
+				for _, f := range kernelonlyFiles {
+					if err := checks.CheckObj(path.Join(paths.KERNELONLYFOLDER, f.Name())); err == nil {
+						fmt.Printf("    %s\n", f.Name())
+					}
+				}
+			}
+
+			// List userspace schedulers
+			fmt.Println("Userspace schedulers:")
+			if helper.IsFileExist(paths.USERSPACEFOLDER) {
+
+				userspaceFiles, err := os.ReadDir(paths.USERSPACEFOLDER)
+				if err != nil {
+					fmt.Println(err)
+					os.Exit(1)
+				}
+
+				for _, f := range userspaceFiles {
+					if checks.IsExecutableELF(path.Join(paths.USERSPACEFOLDER, f.Name())) {
+						fmt.Printf("    %s\n", f.Name())
+					}
+				}
 			}
 		default:
 			fmt.Println(TOO_MANY_ARGS_MSG)
