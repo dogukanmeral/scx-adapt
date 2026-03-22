@@ -2,10 +2,12 @@ package helper
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"path"
 	"slices"
+	"time"
 
 	paths "github.com/dogukanmeral/scx-adapt/internal"
 	"github.com/dogukanmeral/scx-adapt/internal/checks"
@@ -112,8 +114,58 @@ func (s Scheduler) Validate() error {
 	return nil
 }
 
+func (s Scheduler) Log(cmd *exec.Cmd, stopLog <-chan bool, logErr chan<- error) {
+	// Create logs directory if not exist
+	if err := CreateDirIfNotExist(paths.LOGSFOLDER); err != nil {
+		logErr <- err
+		return
+	}
+
+	stdoutP, err := cmd.StdoutPipe()
+	if err != nil {
+		logErr <- fmt.Errorf("Creating stdout pipe for scheduler failed '%s': %s", s.Path, err)
+		return
+	}
+
+	stderrP, err := cmd.StderrPipe()
+	if err != nil {
+		logErr <- fmt.Errorf("Creating stderr pipe for scheduler failed '%s': %s", s.Path, err)
+		return
+	}
+
+	logFileName := fmt.Sprintf("%s-%s.log",
+		path.Join(paths.LOGSFOLDER, path.Base(s.Path)),
+		time.Now().Format("2006-01-02T15-04-05"))
+
+	logFile, err := os.Create(logFileName)
+	if err != nil {
+		logErr <- fmt.Errorf("Creating log file for scheduler failed '%s': %s", s.Path, err)
+		return
+	}
+	defer logFile.Close()
+
+	copyErr := make(chan error, 1)
+
+	go func() {
+		_, err := io.Copy(logFile, io.MultiReader(stdoutP, stderrP))
+		if err != nil {
+			copyErr <- err
+		}
+	}()
+
+	select {
+	case <-stopLog:
+		return
+	case <-copyErr:
+		logErr <- fmt.Errorf("Writing logs to '%s' for scheduler '%s' failed: %s", logFileName, s.Path, err)
+	}
+}
+
 func (s Scheduler) Run(stop <-chan bool, errmsg chan<- error) {
 	var cmd *exec.Cmd
+
+	var logErr chan error
+	var stopLog chan bool
 
 	switch s.Type {
 	case string(KernelOnly):
@@ -132,35 +184,50 @@ func (s Scheduler) Run(stop <-chan bool, errmsg chan<- error) {
 		return
 	}
 
-	finished := make(chan error, 1)
+	if s.Type == string(Userspace) {
+		logErr = make(chan error, 1)
+		stopLog = make(chan bool, 1)
+		go s.Log(cmd, stopLog, logErr)
+	}
 
+	finished := make(chan error, 1)
 	go func() {
 		finished <- cmd.Wait()
 	}()
 
-SELECTSTART:
-	select {
-	case err := <-finished:
-		if err != nil {
-			errmsg <- err
-		} else {
-			goto SELECTSTART
-		}
+	for {
+		select {
+		case err := <-finished:
+			if err != nil {
+				errmsg <- err
+				return
+			}
 
-	case <-stop:
-		switch s.Type {
-		case string(KernelOnly):
-			if err := os.RemoveAll("/sys/fs/bpf/sched_ext/"); err != nil {
-				errmsg <- fmt.Errorf("Error occured while detaching kernel-only scheduler '%s': %s\n", s.GetAbsolutePath(), err)
-			} else {
-				errmsg <- nil
+		case <-stop:
+			switch s.Type {
+			case string(KernelOnly):
+				if err := os.RemoveAll("/sys/fs/bpf/sched_ext/"); err != nil {
+					errmsg <- fmt.Errorf("Error: Detaching kernel-only scheduler '%s': %s\n", s.GetAbsolutePath(), err)
+				} else {
+					errmsg <- nil
+				}
+
+				return
+
+			case string(Userspace):
+				if err := cmd.Process.Kill(); err != nil {
+					errmsg <- fmt.Errorf("Error: Stopping userspace scheduler '%s': %s\n", s.GetAbsolutePath(), err)
+				} else {
+					errmsg <- nil
+				}
+
+				stopLog <- true
+
+				return
 			}
-		case string(Userspace):
-			if err := cmd.Process.Kill(); err != nil {
-				errmsg <- fmt.Errorf("Error occured while stopping userspace scheduler '%s': %s\n", s.GetAbsolutePath(), err)
-			} else {
-				errmsg <- nil
-			}
+
+		case e := <-logErr:
+			fmt.Println("Logging warning: ", e)
 		}
 	}
 }
