@@ -58,27 +58,47 @@ func IsExecutableELF(path string) bool {
 
 // Checks dependencies: bpftool, kernel (BPF and sched_ext)
 func CheckBPFDependencies() error {
-	// Check if BPF tool is installed
+	if err := IsBpfToolInstalled(); err != nil {
+		return err
+	}
+
+	if err := IsBpfFsMounted(); err != nil {
+		return err
+	}
+
+	if err := IsSchedExtDirExist(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func IsBpfToolInstalled() error {
 	whichCmd := exec.Command("which", "bpftool")
 	whichCmd.Run()
-	err := whichCmd.Err
 
-	if err != nil {
-		return fmt.Errorf("'bpftool' is not found in PATH: %s\n", os.Getenv("PATH"))
+	if whichCmd.Err != nil {
+		return fmt.Errorf("Error: 'bpftool' is not found in PATH: %s\n", os.Getenv("PATH"))
 	}
 
-	// Check if BPF filesystem is mounted
+	return nil
+}
+
+func IsBpfFsMounted() error {
 	grepBpfCmd := "mount | grep bpf"
-	err = exec.Command("bash", "-c", grepBpfCmd).Err
+	err := exec.Command("bash", "-c", grepBpfCmd).Err
 
 	if err != nil {
-		return fmt.Errorf("Kernel does not have BPF functionalities")
+		return fmt.Errorf("Error: BPF filesystem is not mounted\n")
 	}
 
-	// Check if sched_ext directory exists
-	_, err = os.Stat("/sys/kernel/sched_ext")
+	return nil
+}
+
+func IsSchedExtDirExist() error {
+	_, err := os.Stat("/sys/kernel/sched_ext")
 	if os.IsNotExist(err) {
-		return fmt.Errorf("Kernel does not have sched_ext functionalities")
+		return fmt.Errorf("Kernel does not have sched_ext functionalities ('/sys/kernel/sched_ext' does not exist)\n")
 	}
 
 	return nil

@@ -71,12 +71,12 @@ Add # of CPU cores feature to CSV output (`log-csv`)
 
 # v0.2.0
 
-[ ] Add `check-dependencies` cmd
+[X] Add `check-dependencies` cmd
 [X] In YAML file, specify scheduler type as 'kernel' or 'userspace'. (Keep bpftool attaching for this version)
 [X] Change "StartScx" and "StopScx" helpers to get "Scheduler" struct as argument
 [X] Move all CheckObj to YAML validation part, move all CheckDependencies to only CLI
 [X] Fix "CurrentScx()" and "TraceSchedExt()" parameter passing (considering CLI)
-[ ] Add check if sched_ext is already enabled when scx-adapt started
+[X] Add check if sched_ext is already enabled when scx-adapt started
 [X] Move "must run as root" stuff to CLI (remove from helpers)
 [X] Parameters section in YAML for userspace schedulers
 [X] Refactor RunProfile and add support for 'userspace' schedulers
