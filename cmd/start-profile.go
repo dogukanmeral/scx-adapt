@@ -53,6 +53,12 @@ var startProfileCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
+		// Check if sched_ext is already active
+		if checks.IsSchedExtActive() {
+			fmt.Println("Error: sched_ext is already active")
+			os.Exit(1)
+		}
+
 		// Create DATAFOLDER folder if not exist
 		if err := helper.CreateDirIfNotExist(paths.DATAFOLDER); err != nil {
 			fmt.Println(err)
@@ -110,7 +116,7 @@ var startProfileCmd = &cobra.Command{
 					fmt.Println("None of sched_ext schedulers match criterias. Switching to system scheduler...")
 
 				default:
-					fmt.Printf("Switching to scheduler '%s'...\n", sched.Path)
+					fmt.Printf("Criterias match for scheduler '%s'...\n", sched.Path)
 				}
 
 				if checks.IsSchedExtActive() {
