@@ -83,6 +83,43 @@ schedulers:
 	}
 }
 
+func TestParametersToUserspace(t *testing.T) {
+	yamlData := `interval: 1000
+schedulers:
+  - path: "obj/userspace_scx"
+    type: userspace
+    parameters:
+      - param1
+      - param2
+    priority: 1
+    criterias:
+      - value_name: load_avg_1
+        less_than: 5
+        more_than: 0`
+
+	_, err := helper.YamlToConfig([]byte(yamlData))
+	if err != nil {
+		t.Error(formatYamlError(yamlData, err))
+	}
+}
+
+func TestNoParametersToUserspace(t *testing.T) {
+	yamlData := `interval: 1000
+schedulers:
+  - path: "obj/userspace_scx"
+    type: userspace
+    priority: 1
+    criterias:
+      - value_name: load_avg_1
+        less_than: 5
+        more_than: 0`
+
+	_, err := helper.YamlToConfig([]byte(yamlData))
+	if err != nil {
+		t.Error(formatYamlError(yamlData, err))
+	}
+}
+
 // //////// Negative tests //////////
 func TestInvalidValueName(t *testing.T) {
 	yamlData := `interval: 1000
@@ -213,6 +250,27 @@ schedulers:
 	_, err := helper.YamlToConfig([]byte(yamlData))
 
 	var expErr *errs.ConflictPrioritiesError
+	if !errors.As(err, &expErr) {
+		t.Error(formatYamlError(yamlData, err))
+	}
+}
+
+func TestParametersToKernelOnly(t *testing.T) {
+	yamlData := `interval: 1000
+schedulers:
+  - path: "obj/valid_0.o"
+    type: kernelonly
+    parameters:
+      - param1
+      - param2
+    priority: 1
+    criterias:
+      - value_name: load_avg_1
+        less_than: 5
+        more_than: 0`
+
+	_, err := helper.YamlToConfig([]byte(yamlData))
+	var expErr *errs.ParametersForKernelSchedError
 	if !errors.As(err, &expErr) {
 		t.Error(formatYamlError(yamlData, err))
 	}

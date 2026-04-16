@@ -1,7 +1,6 @@
 package helper
 
 import (
-	"errors"
 	"fmt"
 	"os"
 
@@ -64,6 +63,7 @@ func CreateLock() error {
 
 // Returns if file exists or not
 func IsFileExist(path string) bool {
-	_, err := os.Stat(path)
-	return !errors.Is(err, os.ErrNotExist)
+	_, err := os.Open(path)
+
+	return err == nil
 }
