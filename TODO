@@ -81,8 +81,7 @@ Add # of CPU cores feature to CSV output (`log-csv`)
 [X] Parameters section in YAML for userspace schedulers
 [X] Refactor RunProfile and add support for 'userspace' schedulers
 [X] Add parameter passing to userspace schedulers
-[ ] Update README for new features-changes (explain commands in table structure)
-[ ] Record a demo video
+[X] Update README for new features-changes (explain commands in table structure)
 [X] Update automated tests and add new tests for "Parameters"
 [X] Update `add-scheduler`, `check-profile` and `list-schedulers` to work with **userspace** schedulers
 [X] Add `kernelonly` and `userspace` directories under **SCHEDULERSFOLDER** 
@@ -90,6 +89,7 @@ Add # of CPU cores feature to CSV output (`log-csv`)
 
 # Backlog
 
+[ ] Record a demo video
 [ ] Add log file support for executables (pipe stdout and stderr)
 [ ] Add disable logging option to YAML for userspace schedulers
 [ ] goReleaser in Github Actions
