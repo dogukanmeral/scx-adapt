@@ -9,5 +9,7 @@ const DATAFOLDER string = "/var/lib/scx-adapt/"
 
 const LOCKFILEPATH string = "/var/lib/scx-adapt/scx-adapt.lock"
 
+const LOGFOLDER string = "/var/log/scx-adapt/"
+
 const SERVICEFILENAME string = "scx-adapt@.service"
 const SERVICESDIR string = "/etc/systemd/system"

@@ -89,8 +89,12 @@ Add # of CPU cores feature to CSV output (`log-csv`)
 
 # Backlog
 
+[X] Add: scx-adapt started message to `start-profile`
+[X] Add: log file support for executables (pipe stdout and stderr) (schedulername_2004-09-07_12-00-00.log)
+[X] Add: enable logging option to YAML for userspace schedulers
+[ ] Add: automated tests for CLI program
+[ ] Add: automated tests to CI workflow (create a vm setup and collect test result)
 [ ] Record a demo video
-[ ] Add log file support for executables (pipe stdout and stderr)
-[ ] Add disable logging option to YAML for userspace schedulers
-[ ] goReleaser in Github Actions
-[ ] Write automated tests for CLI program
+[ ] Add: goReleaser in Github Actions
+[ ] Fix: `Error occured while reading file '/proc/pressure/': read /proc/pressure/: is a directory` / Add error handling to ParsePressure
+[ ] Add: Info and warning message passing to `start-scheduler`

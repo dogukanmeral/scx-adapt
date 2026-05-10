@@ -23,6 +23,7 @@ const (
 type Scheduler struct {
 	Type       string     `yaml:"type" validate:"required"`
 	Parameters *[]string  `yaml:"parameters"`
+	Log        *bool      `yaml:"log"`
 	Path       string     `yaml:"path" validate:"required"`
 	Priority   int        `yaml:"priority" validate:"required,gte=1,lte=139"`
 	Criterias  []Criteria `yaml:"criterias" validate:"required,dive"`
@@ -125,6 +126,23 @@ func (s Scheduler) Run(stop <-chan bool, errmsg chan<- error) {
 		} else {
 			cmd = exec.Command(s.GetAbsolutePath())
 		}
+
+		if s.Log != nil {
+			if *s.Log {
+				logFile, err := CreateLogFile(path.Base(s.Path))
+				if err != nil {
+					fmt.Printf("WARNING: %s\n", err)
+					goto skipLogging
+				}
+
+				defer logFile.Close()
+
+				cmd.Stdout = logFile
+				cmd.Stderr = logFile
+
+			}
+		}
+	skipLogging:
 	}
 
 	if err := cmd.Start(); err != nil {

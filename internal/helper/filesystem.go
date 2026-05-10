@@ -3,6 +3,8 @@ package helper
 import (
 	"fmt"
 	"os"
+	"path"
+	"time"
 
 	paths "github.com/dogukanmeral/scx-adapt/internal"
 )
@@ -66,4 +68,22 @@ func IsFileExist(path string) bool {
 	_, err := os.Open(path)
 
 	return err == nil
+}
+
+// Create log file
+func CreateLogFile(schedulerName string) (*os.File, error) {
+	if err := CreateDirIfNotExist(paths.LOGFOLDER); err != nil {
+		return nil, err
+	}
+
+	currentTime := time.Now().Format("2006-01-02_15-04-05")
+	filename := fmt.Sprintf("%s_%s.log", currentTime, schedulerName)
+	filepath := path.Join(paths.LOGFOLDER, filename)
+
+	logFile, err := os.Create(filepath)
+	if err != nil {
+		return nil, fmt.Errorf("Creating log file at %s for scheduler %s failed: %s", filepath, schedulerName, err)
+	}
+
+	return logFile, nil
 }
