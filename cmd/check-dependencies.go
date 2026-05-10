@@ -14,7 +14,7 @@ import (
 // checkDependenciesCmd represents the checkDepencies command
 var checkDependenciesCmd = &cobra.Command{
 	Use:   "check-dependencies",
-	Short: "Check dependencies of scx-adapt.",
+	Short: "Check dependencies of scx-adapt",
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) > 0 {
 			fmt.Println("Too many arguments. scx-adapt --help to see usage")

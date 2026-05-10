@@ -15,7 +15,7 @@ import (
 // logCmd represents the log command
 var logCmd = &cobra.Command{
 	Use:   "log-sched <file_path>",
-	Short: "Write sched_ext event tracing to file.",
+	Short: "Write sched_ext event tracing to file",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		var filepath string

@@ -15,7 +15,7 @@ import (
 // statusCmd represents the status command
 var statusCmd = &cobra.Command{
 	Use:   "status",
-	Short: "Print currently running sched_ext scheduler.",
+	Short: "Print currently running sched_ext scheduler",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		switch len(args) {
