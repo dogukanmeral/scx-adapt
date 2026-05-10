@@ -80,7 +80,7 @@ func CreateLogFile(schedulerName string) (*os.File, error) {
 	filename := fmt.Sprintf("%s_%s.log", currentTime, schedulerName)
 	filepath := path.Join(paths.LOGFOLDER, filename)
 
-	logFile, err := os.Create(filepath)
+	logFile, err := os.OpenFile(filepath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0600)
 	if err != nil {
 		return nil, fmt.Errorf("Creating log file at %s for scheduler %s failed: %s", filepath, schedulerName, err)
 	}
