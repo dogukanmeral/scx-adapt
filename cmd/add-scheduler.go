@@ -20,7 +20,7 @@ var addSchedulerType string
 
 var addSchedulerCmd = &cobra.Command{
 	Use:   "add-scheduler [flags] <scheduler_path>",
-	Short: fmt.Sprintf("Add sched_ext scheduler object file to schedulers folder (%s)", paths.SCHEDULERSFOLDER),
+	Short: fmt.Sprintf("Add sched_ext scheduler to schedulers folder (%s)", paths.SCHEDULERSFOLDER),
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		var schedulerPath string

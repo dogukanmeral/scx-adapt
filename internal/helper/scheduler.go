@@ -118,6 +118,13 @@ func (s Scheduler) Validate() error {
 func (s Scheduler) Run(stop <-chan bool, errmsg chan<- error) {
 	var cmd *exec.Cmd
 
+	var logActive bool
+	if s.Log != nil {
+		logActive = *s.Log
+	} else {
+		logActive = false
+	}
+
 	switch s.Type {
 	case string(KernelOnly):
 		cmd = exec.Command("bpftool", "struct_ops", "register", s.GetAbsolutePath(), "/sys/fs/bpf/sched_ext")
@@ -129,61 +136,70 @@ func (s Scheduler) Run(stop <-chan bool, errmsg chan<- error) {
 			cmd = exec.Command(s.GetAbsolutePath())
 		}
 
-		if s.Log != nil {
-			if *s.Log {
-				logFile, err := CreateLogFile(path.Base(s.Path))
-				if err != nil {
-					fmt.Printf("WARNING: %s\n", err)
-					goto skipLogging
-				}
-
-				defer logFile.Close()
-
-				cmd.Stdout = logFile
-				cmd.Stderr = logFile
-
+		if logActive {
+			logFile, err := CreateLogFile(path.Base(s.Path))
+			if err != nil {
+				fmt.Printf("WARNING: %s\n", err)
+				goto skipLogging
 			}
+
+			defer logFile.Close()
+
+			cmd.Stdout = logFile
+			cmd.Stderr = logFile
+
+		skipLogging:
 		}
-	skipLogging:
-	}
 
-	if err := cmd.Start(); err != nil {
-		errmsg <- err
-		return
-	}
+		if err := cmd.Start(); err != nil {
+			errmsg <- err
+			return
+		}
 
-	finished := make(chan error, 1)
-	go func() {
-		finished <- cmd.Wait()
-	}()
+		finished := make(chan error, 1)
+		go func() {
+			finished <- cmd.Wait()
+		}()
 
-	for {
-		select {
-		case err := <-finished:
-			if err != nil { // scheduler error catching happens HERE
-				errmsg <- err
-				return
-			}
+		for {
+			select {
+			case err := <-finished:
+				switch s.Type {
+				case string(Userspace):
+					if logActive {
+						errmsg <- fmt.Errorf("Userspace scheduler '%s' exited unexpectedly, logs are available at: %s", s.Path, paths.LOGFOLDER)
+					} else {
+						errmsg <- fmt.Errorf("Userspace scheduler '%s' exited unexpectedly", s.Path)
+					}
+					return
 
-		case <-stop:
-			switch s.Type {
-			case string(KernelOnly):
-				if err := os.RemoveAll("/sys/fs/bpf/sched_ext/"); err != nil {
-					errmsg <- fmt.Errorf("Error: Detaching kernel-only scheduler '%s': %s\n", s.GetAbsolutePath(), err)
-				} else {
-					errmsg <- nil
+				case string(KernelOnly):
+					if err != nil { // scheduler error catching happens HERE
+						errmsg <- err
+						return
+					}
 				}
 
-				return
+			case <-stop:
+				switch s.Type {
+				case string(KernelOnly):
+					if err := os.RemoveAll("/sys/fs/bpf/sched_ext/"); err != nil {
+						errmsg <- fmt.Errorf("Detaching kernel-only scheduler '%s': %s\n", s.GetAbsolutePath(), err)
+					} else {
+						errmsg <- nil
+					}
 
-			case string(Userspace):
-				if err := cmd.Process.Kill(); err != nil {
-					errmsg <- fmt.Errorf("Error: Stopping userspace scheduler '%s': %s\n", s.GetAbsolutePath(), err)
-				} else {
-					errmsg <- nil
+					return
+
+				case string(Userspace):
+					if err := cmd.Process.Kill(); err != nil {
+						errmsg <- fmt.Errorf("Stopping userspace scheduler '%s': %s\n", s.GetAbsolutePath(), err)
+					} else {
+						errmsg <- nil
+					}
+
+					return
 				}
-
-				return
 			}
 		}
 	}

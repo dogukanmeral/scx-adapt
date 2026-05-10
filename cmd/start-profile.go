@@ -105,7 +105,7 @@ var startProfileCmd = &cobra.Command{
 		for {
 			select {
 			case err := <-errmsg:
-				fmt.Println(err)
+				fmt.Println("ERROR:", err)
 
 				if e := helper.RemoveLock(); e != nil {
 					fmt.Println(e)
