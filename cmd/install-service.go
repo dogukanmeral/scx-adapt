@@ -19,10 +19,13 @@ import (
 const SERVICEFILE string = `
 [Unit]
 Description=scx-adapt daemon for profile at %I
+StartLimitIntervalSec=30
+StartLimitBurst=2 
 
 [Service]
 Type=exec
 ExecStart=/usr/bin/scx-adapt start-profile  %i
+Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target`
