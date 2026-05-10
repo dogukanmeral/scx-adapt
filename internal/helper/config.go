@@ -81,7 +81,7 @@ func YamlToConfig(yamlData []byte) (Config, error) {
 func (conf Config) Run(changed chan<- Scheduler, errmsg chan<- error) {
 	sort.Sort(conf)
 
-	var currentSched Scheduler = Scheduler{"", nil, "", 0, nil}
+	var currentSched Scheduler = NilScheduler
 
 NEXT_SCHED:
 	for i, s := range conf.Schedulers {
@@ -94,7 +94,7 @@ NEXT_SCHED:
 
 				if i+1 == len(conf.Schedulers) {
 					if currentSched.Path != "" {
-						currentSched = Scheduler{"", nil, "", 0, nil}
+						currentSched = NilScheduler
 						changed <- currentSched
 					}
 				}

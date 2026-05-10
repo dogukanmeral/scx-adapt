@@ -29,6 +29,8 @@ type Scheduler struct {
 	Criterias  []Criteria `yaml:"criterias" validate:"required,dive"`
 }
 
+var NilScheduler Scheduler = Scheduler{"", nil, nil, "", 0, nil}
+
 // Returns: path as it is if an absolute path, if not path of scheduler in SCHEDULERSFOLDER if exists, if none of both path as it is
 func (s Scheduler) GetAbsolutePath() string {
 	if path.IsAbs(s.Path) {
@@ -158,7 +160,7 @@ func (s Scheduler) Run(stop <-chan bool, errmsg chan<- error) {
 	for {
 		select {
 		case err := <-finished:
-			if err != nil {
+			if err != nil { // scheduler error catching happens HERE
 				errmsg <- err
 				return
 			}
