@@ -98,6 +98,9 @@ var startProfileCmd = &cobra.Command{
 
 		go conf.Run(schedChanged, errmsg)
 
+		// Profile started message
+		fmt.Printf("INFO: Profile started: '%s'\n", filepath)
+
 	STOPERROR:
 		for {
 			select {
