@@ -39,14 +39,14 @@ var removeProfileCmd = &cobra.Command{
 
 		// Check if profile exists in the profiles directory
 		if !helper.IsFileExist(path.Join(paths.PROFILESFOLDER, profileFile)) {
-			fmt.Printf("Profile configuration with filename '%s' does not exist at '%s'\n",
+			fmt.Printf("ERROR: Profile configuration with filename '%s' does not exist at '%s'\n",
 				profileFile, paths.PROFILESFOLDER)
 			os.Exit(1)
 		}
 
 		// Remove profile file in the profiles directory
 		if err := os.Remove(path.Join(paths.PROFILESFOLDER, profileFile)); err != nil {
-			fmt.Printf("Error: Deleting profile '%s' in '%s': %s\n",
+			fmt.Printf("ERROR: Deleting profile '%s' in '%s': %s\n",
 				profileFile, paths.PROFILESFOLDER, err)
 			os.Exit(1)
 		}

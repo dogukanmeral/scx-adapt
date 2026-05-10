@@ -29,7 +29,7 @@ var listProfilesCmd = &cobra.Command{
 
 			// Check if profiles directory exists
 			if !helper.IsFileExist(paths.PROFILESFOLDER) {
-				fmt.Printf("Error: Profiles folder '%s' does not exist.\n", paths.PROFILESFOLDER)
+				fmt.Printf("ERROR: Profiles folder '%s' does not exist.\n", paths.PROFILESFOLDER)
 				os.Exit(1)
 			}
 
@@ -48,7 +48,7 @@ var listProfilesCmd = &cobra.Command{
 
 				_, err = helper.YamlToConfig(fileData)
 				if err != nil {
-					fmt.Printf("Error: In profile '%s': %s\n", f.Name(), err)
+					fmt.Printf("ERROR: In profile '%s': %s\n", f.Name(), err)
 					continue
 				}
 

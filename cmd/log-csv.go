@@ -89,7 +89,7 @@ var logCsvCmd = &cobra.Command{
 		case 2:
 			filepath = args[0]
 			if i, err := strconv.Atoi(args[1]); err != nil {
-				fmt.Println("Error: Interval argument must be a positive integer.")
+				fmt.Println("ERROR: Interval argument must be a positive integer.")
 				os.Exit(1)
 			} else {
 				interval = time.Duration(i)
@@ -102,7 +102,7 @@ var logCsvCmd = &cobra.Command{
 		f, err := os.Create(filepath)
 
 		if err != nil {
-			fmt.Printf("Error: Creating file '%s': %s\n", filepath, err)
+			fmt.Printf("ERROR: Creating file '%s': %s\n", filepath, err)
 			os.Exit(1)
 		}
 
@@ -128,7 +128,7 @@ var logCsvCmd = &cobra.Command{
 		_, err = f.WriteString(fmt.Sprintf("%s\n", featuresLine))
 
 		if err != nil {
-			fmt.Printf("Error: Writing features line to file '%s': %s\n", filepath, err)
+			fmt.Printf("ERROR: Writing features line to file '%s': %s\n", filepath, err)
 			kill <- os.Kill
 		}
 
@@ -154,7 +154,7 @@ var logCsvCmd = &cobra.Command{
 					for _, s := range prSeconds {
 						v, err := helper.Pressure(t, o, s)
 						if err != nil {
-							fmt.Printf("Error: Reading pressures: %s\n", err)
+							fmt.Printf("ERROR: Reading pressures: %s\n", err)
 							kill <- os.Kill
 						}
 
@@ -168,7 +168,7 @@ var logCsvCmd = &cobra.Command{
 				v, err := helper.LoadAvg(m)
 
 				if err != nil {
-					fmt.Printf("Error: Reading load averages: %s\n", err)
+					fmt.Printf("ERROR: Reading load averages: %s\n", err)
 					kill <- os.Kill
 				}
 
@@ -177,21 +177,21 @@ var logCsvCmd = &cobra.Command{
 
 			// Processes
 			if procsR, err := helper.GetVariableAsInt("/proc/stat", "procs_running"); err != nil {
-				fmt.Printf("Error: Reading procs_running: %s\n", err)
+				fmt.Printf("ERROR: Reading procs_running: %s\n", err)
 				kill <- os.Kill
 			} else {
 				buf = append(buf, strconv.Itoa(procsR))
 			}
 
 			if procsB, err := helper.GetVariableAsInt("/proc/stat", "procs_blocked"); err != nil {
-				fmt.Printf("Error: Reading procs_blocked: %s\n", err)
+				fmt.Printf("ERROR: Reading procs_blocked: %s\n", err)
 				kill <- os.Kill
 			} else {
 				buf = append(buf, strconv.Itoa(procsB))
 			}
 
 			if procsIO, err := helper.DiskCurIO(); err != nil {
-				fmt.Printf("Error: Reading diskstats: %s\n", err)
+				fmt.Printf("ERROR: Reading diskstats: %s\n", err)
 				kill <- os.Kill
 			} else {
 				buf = append(buf, strconv.Itoa(procsIO))
@@ -203,7 +203,7 @@ var logCsvCmd = &cobra.Command{
 				_, err := f.WriteString(row + "\n")
 
 				if err != nil {
-					fmt.Printf("Error: Writing to file '%s': %s\n", filepath, err)
+					fmt.Printf("ERROR: Writing to file '%s': %s\n", filepath, err)
 					kill <- os.Kill
 				}
 			}

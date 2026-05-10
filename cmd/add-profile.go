@@ -41,7 +41,7 @@ var addProfileCmd = &cobra.Command{
 		// Read file
 		profileData, err := os.ReadFile(profilePath)
 		if err != nil {
-			fmt.Printf("Error: Reading file '%s': %s\n", profilePath, err)
+			fmt.Printf("ERROR: Reading file '%s': %s\n", profilePath, err)
 			os.Exit(1)
 		}
 
@@ -54,7 +54,7 @@ var addProfileCmd = &cobra.Command{
 
 		// Check if a profile exists with the same name in profiles directory
 		if helper.IsFileExist(path.Join(paths.PROFILESFOLDER, filepath.Base(profilePath))) {
-			fmt.Printf("Another profile configuration with filename '%s' already exists at '%s'\n", filepath.Base(profilePath), paths.PROFILESFOLDER)
+			fmt.Printf("ERROR: Another profile configuration with filename '%s' already exists at '%s'\n", filepath.Base(profilePath), paths.PROFILESFOLDER)
 			os.Exit(1)
 		}
 
@@ -72,7 +72,7 @@ var addProfileCmd = &cobra.Command{
 
 		// Copy file to profiles directory
 		if err := os.WriteFile(path.Join(paths.PROFILESFOLDER, filepath.Base(profilePath)), profileData, 0700); err != nil {
-			fmt.Printf("Error: Writing to file '%s': %s\n", path.Join(paths.PROFILESFOLDER, filepath.Base(profilePath)), err)
+			fmt.Printf("ERROR: Writing to file '%s': %s\n", path.Join(paths.PROFILESFOLDER, filepath.Base(profilePath)), err)
 			os.Exit(1)
 		} else {
 			fmt.Printf("Profile added to '%s'\n", path.Join(paths.PROFILESFOLDER, filepath.Base(profilePath)))

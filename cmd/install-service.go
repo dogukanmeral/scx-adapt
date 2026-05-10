@@ -50,7 +50,7 @@ var installServiceCmd = &cobra.Command{
 
 		// Check if .service file already exists.
 		if helper.IsFileExist(path.Join(paths.SERVICESDIR, paths.SERVICEFILENAME)) {
-			fmt.Printf("Error: Service file already exists at %s\n", path.Join(paths.SERVICESDIR,
+			fmt.Printf("ERROR: Service file already exists at %s\n", path.Join(paths.SERVICESDIR,
 				paths.SERVICEFILENAME))
 			os.Exit(1)
 		}
@@ -67,7 +67,7 @@ var installServiceCmd = &cobra.Command{
 		reloadCmd := exec.Command("systemctl", "daemon-reload")
 
 		if err := reloadCmd.Run(); err != nil {
-			fmt.Printf("Error: Reloading daemons: %s\n", err)
+			fmt.Printf("ERROR: Reloading daemons: %s\n", err)
 			os.Exit(1)
 		}
 	},

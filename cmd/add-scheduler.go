@@ -46,7 +46,7 @@ var addSchedulerCmd = &cobra.Command{
 		switch addSchedulerType {
 		case string(helper.KernelOnly):
 			if err := checks.CheckObj(schedulerPath); err != nil {
-				fmt.Printf("Error: Checking object file: %s\n", err)
+				fmt.Printf("ERROR: Checking object file: %s\n", err)
 				os.Exit(1)
 			}
 
@@ -54,26 +54,26 @@ var addSchedulerCmd = &cobra.Command{
 
 		case string(helper.Userspace):
 			if !checks.IsExecutableELF(schedulerPath) {
-				fmt.Printf("Error: Not an executable ELF file: %s\n", schedulerPath)
+				fmt.Printf("ERROR: Not an executable ELF file: %s\n", schedulerPath)
 				os.Exit(1)
 			}
 
 			subdir = paths.USERSPACEFOLDER
 
 		default:
-			fmt.Printf("Error: Invalid scheduler type '%s'. Available scheduler types: kernelonly, userspace\n", addSchedulerType)
+			fmt.Printf("ERROR: Invalid scheduler type '%s'. Available scheduler types: kernelonly, userspace\n", addSchedulerType)
 			os.Exit(1)
 		}
 
 		schedulerData, err := os.ReadFile(schedulerPath)
 		if err != nil {
-			fmt.Printf("Error: Reading file '%s': %s\n", schedulerPath, err)
+			fmt.Printf("ERROR: Reading file '%s': %s\n", schedulerPath, err)
 			os.Exit(1)
 		}
 
 		// Check if a scheduler exists with the same name in schedulers directory
 		if helper.IsFileExist(path.Join(subdir, filepath.Base(schedulerPath))) {
-			fmt.Printf("Another scheduler with filename '%s' already exists at '%s'\n", filepath.Base(schedulerPath), subdir)
+			fmt.Printf("ERROR: Another scheduler with filename '%s' already exists at '%s'\n", filepath.Base(schedulerPath), subdir)
 			os.Exit(1)
 		}
 
@@ -97,7 +97,7 @@ var addSchedulerCmd = &cobra.Command{
 
 		// Copy file to profiles directory
 		if err := os.WriteFile(path.Join(subdir, filepath.Base(schedulerPath)), schedulerData, 0700); err != nil {
-			fmt.Printf("Error: Writing to file '%s': %s\n", path.Join(subdir, filepath.Base(schedulerPath)), err)
+			fmt.Printf("ERROR: Writing to file '%s': %s\n", path.Join(subdir, filepath.Base(schedulerPath)), err)
 			os.Exit(1)
 		} else {
 			fmt.Printf("Profile added to '%s'\n", path.Join(subdir, filepath.Base(schedulerPath)))

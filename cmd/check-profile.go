@@ -34,7 +34,7 @@ var checkProfileCmd = &cobra.Command{
 		// Read file
 		profileData, err := os.ReadFile(profilePath)
 		if err != nil {
-			fmt.Printf("Error: Reading file '%s': %s\n", profilePath, err)
+			fmt.Printf("ERROR: Reading file '%s': %s\n", profilePath, err)
 			os.Exit(1)
 		}
 

@@ -29,7 +29,7 @@ var listSchedulersCmd = &cobra.Command{
 
 			// Check if profiles directory exists
 			if !helper.IsFileExist(paths.SCHEDULERSFOLDER) {
-				fmt.Printf("Error: Schedulers folder '%s' does not exist.\n", paths.SCHEDULERSFOLDER)
+				fmt.Printf("ERROR: Schedulers folder '%s' does not exist.\n", paths.SCHEDULERSFOLDER)
 				os.Exit(1)
 			}
 

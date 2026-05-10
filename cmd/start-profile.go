@@ -49,13 +49,13 @@ var startProfileCmd = &cobra.Command{
 
 		// Check if lock exists (profiler already running)
 		if helper.IsFileExist(paths.LOCKFILEPATH) {
-			fmt.Printf("Error: Another scx-adapt profile is already running. (%s)\n", paths.LOCKFILEPATH)
+			fmt.Printf("ERROR: Another scx-adapt profile is already running. (%s)\n", paths.LOCKFILEPATH)
 			os.Exit(1)
 		}
 
 		// Check if sched_ext is already active
 		if checks.IsSchedExtActive() {
-			fmt.Println("Error: sched_ext is already active")
+			fmt.Println("ERROR: sched_ext is already active")
 			os.Exit(1)
 		}
 
@@ -72,7 +72,7 @@ var startProfileCmd = &cobra.Command{
 
 		yamlData, err := os.ReadFile(filepath)
 		if err != nil {
-			fmt.Printf("Error: Reading file '%s': %s\n", filepath, err)
+			fmt.Printf("ERROR: Reading file '%s': %s\n", filepath, err)
 			os.Exit(1)
 		}
 
@@ -113,10 +113,10 @@ var startProfileCmd = &cobra.Command{
 			case sched := <-schedChanged:
 				switch sched.Path {
 				case "":
-					fmt.Println("None of sched_ext schedulers match criterias. Switching to system scheduler...")
+					fmt.Println("INFO: None of sched_ext schedulers match criterias. Switching to system scheduler...")
 
 				default:
-					fmt.Printf("Criterias match for scheduler '%s'...\n", sched.Path)
+					fmt.Printf("INFO: Criterias match for scheduler '%s'...\n", sched.Path)
 				}
 
 				if checks.IsSchedExtActive() {
@@ -130,7 +130,7 @@ var startProfileCmd = &cobra.Command{
 				if sched.Path != "" {
 					go sched.Run(stop, errmsg)
 
-					fmt.Printf("Starting scheduler '%s'...\n", sched.Path)
+					fmt.Printf("INFO: Starting scheduler '%s'...\n", sched.Path)
 				}
 
 			case <-interrupt:

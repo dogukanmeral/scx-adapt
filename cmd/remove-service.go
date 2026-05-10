@@ -32,7 +32,7 @@ var removeServiceCmd = &cobra.Command{
 
 		// Check if .service file already exists.
 		if !helper.IsFileExist(path.Join(paths.SERVICESDIR, paths.SERVICEFILENAME)) {
-			fmt.Printf("Error: Service file does not exist at %s\n",
+			fmt.Printf("ERROR: Service file does not exist at %s\n",
 				path.Join(paths.SERVICESDIR, paths.SERVICEFILENAME))
 			os.Exit(1)
 		}
