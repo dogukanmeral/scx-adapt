@@ -92,9 +92,20 @@ Add # of CPU cores feature to CSV output (`log-csv`)
 [X] Add: scx-adapt started message to `start-profile`
 [X] Add: log file support for executables (pipe stdout and stderr) (schedulername_2004-09-07_12-00-00.log)
 [X] Add: enable logging option to YAML for userspace schedulers
-[ ] Add: automated tests for CLI program
-[ ] Add: automated tests to CI workflow (create a vm setup and collect test result)
-[ ] Record a demo video
+[X] Add: Self-healing parameters to systemd service file
+[X] Fix: Detection of unexpectedly exiting userspace schedulers
+[X] Fix: File permissions everywhere when creating new files
+[ ] Remove: `libbpf` dependency
+[X] Change: Scheduler type names from `userspace` and `kernelonly` to something more reasonable (about the presence of loader code) (loader: builtin|external)
+[ ] Add: Long descriptions for commands
+[ ] Remove: Binaries in `tests` from source code (move to automated tests setup)
+[ ] Optimize: Logging performance (buffering?)
+[ ] Update: README (Dependencies)
+[ ] Add: Automated tests for CLI program
+[ ] Add: Automated tests to CI workflow (create a VM setup and collect test result)
 [ ] Add: goReleaser in Github Actions
+[ ] Record a demo video
+[ ] Add: Globing and multiple file support to `add-scheduler` and `remove-scheduler`
+[ ] Create a explanatory website (Github pages)
 [ ] Fix: `Error occured while reading file '/proc/pressure/': read /proc/pressure/: is a directory` / Add error handling to ParsePressure
 [ ] Add: Info and warning message passing to `start-scheduler`
