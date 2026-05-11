@@ -41,12 +41,13 @@ var removeSchedulerCmd = &cobra.Command{
 		var subdir string
 
 		switch removeSchedulerType {
-		case string(helper.KernelOnly):
-			subdir = paths.KERNELONLYFOLDER
-		case string(helper.Userspace):
-			subdir = paths.USERSPACEFOLDER
+		case string(helper.External):
+			subdir = paths.EXTERNALFOLDER
+		case string(helper.Builtin):
+			subdir = paths.BUILTINFOLDER
 		default:
-			fmt.Printf("Error: Invalid scheduler type '%s'. Available scheduler types: kernelonly, userspace\n", removeSchedulerType)
+			fmt.Printf("Error: Invalid scheduler loader '%s'. Available scheduler loader types: %s, %s\n",
+				removeSchedulerType, string(helper.External), string(helper.Builtin))
 			os.Exit(1)
 		}
 
@@ -73,10 +74,10 @@ func init() {
 
 	removeSchedulerCmd.Flags().StringVarP(
 		&removeSchedulerType,
-		"type",
-		"t",
+		"loader",
+		"l",
 		"",
-		"Scheduler type (kernelonly|userspace)",
+		"Scheduler loader type (external|builtin)",
 	)
 	removeSchedulerCmd.MarkFlagRequired("type")
 }

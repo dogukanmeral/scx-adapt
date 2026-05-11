@@ -13,15 +13,15 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-type SchedulerType string
+type SchedulerLoader string
 
 const (
-	KernelOnly SchedulerType = "kernelonly"
-	Userspace  SchedulerType = "userspace"
+	External SchedulerLoader = "external"
+	Builtin  SchedulerLoader = "builtin"
 )
 
 type Scheduler struct {
-	Type       string     `yaml:"type" validate:"required"`
+	Loader     string     `yaml:"loader" validate:"required"`
 	Parameters *[]string  `yaml:"parameters"`
 	Log        *bool      `yaml:"log"`
 	Path       string     `yaml:"path" validate:"required"`
@@ -39,11 +39,11 @@ func (s Scheduler) GetAbsolutePath() string {
 
 	var subdir string
 
-	switch s.Type {
-	case string(KernelOnly):
-		subdir = paths.KERNELONLYFOLDER
-	case string(Userspace):
-		subdir = paths.USERSPACEFOLDER
+	switch s.Loader {
+	case string(External):
+		subdir = paths.EXTERNALFOLDER
+	case string(Builtin):
+		subdir = paths.BUILTINFOLDER
 	}
 
 	if p := path.Join(subdir, s.Path); IsFileExist(p) {
@@ -61,28 +61,28 @@ func (s Scheduler) Validate() error {
 		return err
 	}
 
-	// Check if scheduler type is valid (kernelonly, userspace)
-	if !slices.Contains([]string{string(KernelOnly), string(Userspace)}, s.Type) {
-		return &errs.InvalidSchedulerTypeError{
-			Msg: fmt.Sprintf("Invalid scheduler type '%s' for scheduler '%s'.", s.Type, s.Path),
+	// Check if scheduler loader is valid (external, builtin)
+	if !slices.Contains([]string{string(External), string(Builtin)}, s.Loader) {
+		return &errs.InvalidSchedulerLoaderError{
+			Msg: fmt.Sprintf("Invalid scheduler loader '%s' for scheduler '%s'.", s.Loader, s.Path),
 		}
 	}
 
 	// Check if parameters section is valid
-	if s.Type == string(KernelOnly) && s.Parameters != nil {
-		return &errs.ParametersForKernelSchedError{
-			Msg: fmt.Sprintf("Runtime parameters cannot be passed to kernel-only scheduler '%s'", s.Path),
+	if s.Loader == string(External) && s.Parameters != nil {
+		return &errs.ParametersForExternalSchedError{
+			Msg: fmt.Sprintf("Runtime parameters cannot be passed to externally-loaded scheduler '%s'", s.Path),
 		}
 	}
 
-	// If scheduler type is kernel-only, check if file at the path exists and a BPF object file
-	// If scheduler type is userspace, chech if file at the path exists and is an executable file
-	switch s.Type {
-	case string(KernelOnly):
+	// If scheduler loader is external, check if file at the path exists and a BPF object file
+	// If scheduler loader is builtin, chech if file at the path exists and is an executable file
+	switch s.Loader {
+	case string(External):
 		if err := checks.CheckObj(s.GetAbsolutePath()); err != nil {
 			return err
 		}
-	case string(Userspace):
+	case string(Builtin):
 		if !IsFileExist(s.GetAbsolutePath()) {
 			return &errs.SchedulerDoesNotExistError{
 				Msg: fmt.Sprintf("Scheduler does not exist at path '%s'", s.GetAbsolutePath()),
@@ -125,11 +125,11 @@ func (s Scheduler) Run(stop <-chan bool, errmsg chan<- error) {
 		logActive = false
 	}
 
-	switch s.Type {
-	case string(KernelOnly):
+	switch s.Loader {
+	case string(External):
 		cmd = exec.Command("bpftool", "struct_ops", "register", s.GetAbsolutePath(), "/sys/fs/bpf/sched_ext")
 
-	case string(Userspace):
+	case string(Builtin):
 		if s.Parameters != nil {
 			cmd = exec.Command(s.GetAbsolutePath(), *s.Parameters...)
 		} else {
@@ -164,16 +164,16 @@ func (s Scheduler) Run(stop <-chan bool, errmsg chan<- error) {
 		for {
 			select {
 			case err := <-finished:
-				switch s.Type {
-				case string(Userspace):
+				switch s.Loader {
+				case string(Builtin):
 					if logActive {
-						errmsg <- fmt.Errorf("Userspace scheduler '%s' exited unexpectedly, logs are available at: %s", s.Path, paths.LOGFOLDER)
+						errmsg <- fmt.Errorf("Scheduler '%s' exited unexpectedly, logs are available at: %s", s.Path, paths.LOGFOLDER)
 					} else {
-						errmsg <- fmt.Errorf("Userspace scheduler '%s' exited unexpectedly", s.Path)
+						errmsg <- fmt.Errorf("Scheduler '%s' exited unexpectedly", s.Path)
 					}
 					return
 
-				case string(KernelOnly):
+				case string(External):
 					if err != nil { // scheduler error catching happens HERE
 						errmsg <- err
 						return
@@ -181,19 +181,19 @@ func (s Scheduler) Run(stop <-chan bool, errmsg chan<- error) {
 				}
 
 			case <-stop:
-				switch s.Type {
-				case string(KernelOnly):
+				switch s.Loader {
+				case string(External):
 					if err := os.RemoveAll("/sys/fs/bpf/sched_ext/"); err != nil {
-						errmsg <- fmt.Errorf("Detaching kernel-only scheduler '%s': %s\n", s.GetAbsolutePath(), err)
+						errmsg <- fmt.Errorf("Detaching scheduler '%s': %s\n", s.GetAbsolutePath(), err)
 					} else {
 						errmsg <- nil
 					}
 
 					return
 
-				case string(Userspace):
+				case string(Builtin):
 					if err := cmd.Process.Kill(); err != nil {
-						errmsg <- fmt.Errorf("Stopping userspace scheduler '%s': %s\n", s.GetAbsolutePath(), err)
+						errmsg <- fmt.Errorf("Stopping scheduler '%s': %s\n", s.GetAbsolutePath(), err)
 					} else {
 						errmsg <- nil
 					}

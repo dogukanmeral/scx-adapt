@@ -12,19 +12,20 @@ In YAML configuration files, ***sched_ext*** schedulers with their paths, priori
 interval: 1000
 schedulers:
   - path: "rr.o"
-    type: kernelonly
+    loader: external
     priority: 1
     criterias:
       - value_name: load_avg_1
         less_than: 2
   - path: "/home/dogukan/schedulers/cfs.o"
-    type: kernelonly
+    loader: external
     priority: 2
     criterias:
       - value_name: io_psi_some_10
         more_than: 50
   - path: "scx_central"
-    type: userspace
+    loader: builtin
+    log: true
     parameters:
       - "-s=50"
     priority: 3
@@ -37,11 +38,12 @@ schedulers:
 - **interval**: System metrics reading period of scx-adapt (*in milliseconds*)
 - **path**: Filepath of sched_ext scheduler (BPF bytecode or executable). **Relative filepaths** are also supported but it is recommended to write **absolute paths**.
   - Schedulers added via `add-scheduler` command, can be called by their filenames in profile configuration file (stored in `/var/lib/scx-adapt/schedulers` by default).
-- **type**:  Scheduler type:
-  - ***kernelonly***: BPF bytecode with no userspace part. Linked using `bpftool`.
-  - ***userspace***: Executable, links BPF program itself and has userspace part.
-- **parameters** (ONLY for userspace schedulers): Arguments to execute userspace scheduler with.
+- **loader**:  Scheduler loader type:
+  - ***external***: BPF bytecode without the linker/loader logic. Linked using `scx-adapt`'s linker.
+  - ***builtin***: Executable, links BPF program itself and has userspace counter-part.
+- **parameters** (optional) (ONLY for `builtin-loader` schedulers): Arguments to execute `builtin-loader` scheduler with.
 - **priority**: Priority of scheduler (1-139). scx-adapt starts checking the schedulers' criteria in order of their priorities (smaller value, higher priority). Attaches the first matching scheduler to the kernel.
+- **log** (optional) (ONLY for `builtin-loader` schedulers): Logging on or off (true|false) for `builtin-loader` scheduler. Stdout and stderr of scheduler process are piped into a log file which is located at `/var/log/scx-adapt/` (by default).
 - **criterias**: Criterias depending on the current value of system performance metrics. For now, it supports `more_than` and `less_than`
 - **value_name**: System metric name
     - Currently supported metrics:
@@ -68,9 +70,8 @@ schedulers:
 | `remove-service`  Remove Systemd service file 'scx-adapt@.service' in '/etc/systemd/system' |
 | `start-profile <profile_path>` | Run scx-adapt with the profile configuration |
 | `status` | Print currently running sched_ext scheduler. |
-| `stop` | Stop currently running sched_ext scheduler |
-| `add-scheduler` | Add sched_ext scheduler object file to schedulers folder |
-| `remove-scheduler` | Remove scheduler from schedulers folder |
+| `add-scheduler --loader external\|builtin <scheduler_path>` | Add sched_ext scheduler to schedulers folder |
+| `remove-scheduler --type external\|builtin <scheduler_filename>` | Remove scheduler from schedulers folder |
 | `list-schedulers` | List schedulers in schedulers folder |
 
 ### Systemd service

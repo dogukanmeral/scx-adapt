@@ -33,35 +33,35 @@ var listSchedulersCmd = &cobra.Command{
 				os.Exit(1)
 			}
 
-			// List kernelonly schedulers
-			fmt.Println("Kernel-only schedulers:")
-			if helper.IsFileExist(paths.KERNELONLYFOLDER) {
+			// List external-loader schedulers
+			fmt.Println("External-loader schedulers:")
+			if helper.IsFileExist(paths.EXTERNALFOLDER) {
 
-				kernelonlyFiles, err := os.ReadDir(paths.KERNELONLYFOLDER)
+				externalFiles, err := os.ReadDir(paths.EXTERNALFOLDER)
 				if err != nil {
 					fmt.Println(err)
 					os.Exit(1)
 				}
 
-				for _, f := range kernelonlyFiles {
-					if err := checks.CheckObj(path.Join(paths.KERNELONLYFOLDER, f.Name())); err == nil {
+				for _, f := range externalFiles {
+					if err := checks.CheckObj(path.Join(paths.EXTERNALFOLDER, f.Name())); err == nil {
 						fmt.Printf("    %s\n", f.Name())
 					}
 				}
 			}
 
-			// List userspace schedulers
-			fmt.Println("Userspace schedulers:")
-			if helper.IsFileExist(paths.USERSPACEFOLDER) {
+			// List builtin-loader schedulers
+			fmt.Println("Builtin-loader schedulers:")
+			if helper.IsFileExist(paths.BUILTINFOLDER) {
 
-				userspaceFiles, err := os.ReadDir(paths.USERSPACEFOLDER)
+				builtinFiles, err := os.ReadDir(paths.BUILTINFOLDER)
 				if err != nil {
 					fmt.Println(err)
 					os.Exit(1)
 				}
 
-				for _, f := range userspaceFiles {
-					if checks.IsExecutableELF(path.Join(paths.USERSPACEFOLDER, f.Name())) {
+				for _, f := range builtinFiles {
+					if checks.IsExecutableELF(path.Join(paths.BUILTINFOLDER, f.Name())) {
 						fmt.Printf("    %s\n", f.Name())
 					}
 				}

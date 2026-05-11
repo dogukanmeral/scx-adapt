@@ -1,8 +1,8 @@
 package paths
 
 const SCHEDULERSFOLDER string = "/var/lib/scx-adapt/schedulers/"
-const USERSPACEFOLDER string = "/var/lib/scx-adapt/schedulers/userspace/"
-const KERNELONLYFOLDER string = "/var/lib/scx-adapt/schedulers/kernelonly/"
+const BUILTINFOLDER string = "/var/lib/scx-adapt/schedulers/loader-builtin/"
+const EXTERNALFOLDER string = "/var/lib/scx-adapt/schedulers/loader-external/"
 
 const PROFILESFOLDER string = "/var/lib/scx-adapt/profiles/"
 const DATAFOLDER string = "/var/lib/scx-adapt/"

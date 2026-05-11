@@ -10,11 +10,11 @@ func (e *ConflictPrioritiesError) Error() string {
 	return e.Msg
 }
 
-type InvalidSchedulerTypeError struct {
+type InvalidSchedulerLoaderError struct {
 	Msg string
 }
 
-func (e *InvalidSchedulerTypeError) Error() string {
+func (e *InvalidSchedulerLoaderError) Error() string {
 	return e.Msg
 }
 
@@ -50,11 +50,11 @@ func (e *ConflictParametersError) Error() string {
 	return e.Msg
 }
 
-type ParametersForKernelSchedError struct {
+type ParametersForExternalSchedError struct {
 	Msg string
 }
 
-func (e *ParametersForKernelSchedError) Error() string {
+func (e *ParametersForExternalSchedError) Error() string {
 	return e.Msg
 }
 

@@ -44,24 +44,25 @@ var addSchedulerCmd = &cobra.Command{
 		var subdir string
 
 		switch addSchedulerType {
-		case string(helper.KernelOnly):
+		case string(helper.External):
 			if err := checks.CheckObj(schedulerPath); err != nil {
 				fmt.Printf("ERROR: Checking object file: %s\n", err)
 				os.Exit(1)
 			}
 
-			subdir = paths.KERNELONLYFOLDER
+			subdir = paths.EXTERNALFOLDER
 
-		case string(helper.Userspace):
+		case string(helper.Builtin):
 			if !checks.IsExecutableELF(schedulerPath) {
 				fmt.Printf("ERROR: Not an executable ELF file: %s\n", schedulerPath)
 				os.Exit(1)
 			}
 
-			subdir = paths.USERSPACEFOLDER
+			subdir = paths.BUILTINFOLDER
 
 		default:
-			fmt.Printf("ERROR: Invalid scheduler type '%s'. Available scheduler types: kernelonly, userspace\n", addSchedulerType)
+			fmt.Printf("ERROR: Invalid scheduler type '%s'. Available scheduler loader types: %s, %s\n",
+				addSchedulerType, helper.External, helper.Builtin)
 			os.Exit(1)
 		}
 
@@ -95,12 +96,12 @@ var addSchedulerCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		// Copy file to profiles directory
+		// Copy file to schedulers directory
 		if err := os.WriteFile(path.Join(subdir, filepath.Base(schedulerPath)), schedulerData, 0700); err != nil {
 			fmt.Printf("ERROR: Writing to file '%s': %s\n", path.Join(subdir, filepath.Base(schedulerPath)), err)
 			os.Exit(1)
 		} else {
-			fmt.Printf("Profile added to '%s'\n", path.Join(subdir, filepath.Base(schedulerPath)))
+			fmt.Printf("Scheduler added to '%s'\n", path.Join(subdir, filepath.Base(schedulerPath)))
 		}
 	},
 }
@@ -110,10 +111,10 @@ func init() {
 
 	addSchedulerCmd.Flags().StringVarP(
 		&addSchedulerType,
-		"type",
-		"t",
+		"loader",
+		"l",
 		"",
-		"Scheduler type (kernelonly|userspace)",
+		"Scheduler loader type (external|builtin)",
 	)
 	addSchedulerCmd.MarkFlagRequired("type")
 }
