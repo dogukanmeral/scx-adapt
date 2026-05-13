@@ -13,3 +13,5 @@ const LOGFOLDER string = "/var/log/scx-adapt/"
 
 const SERVICEFILENAME string = "scx-adapt@.service"
 const SERVICESDIR string = "/etc/systemd/system"
+
+const SCHEDBPFPINPATH string = "/sys/fs/bpf/scx-adapt"

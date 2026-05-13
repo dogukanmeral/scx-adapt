@@ -117,6 +117,7 @@ func (s Scheduler) Validate() error {
 
 func (s Scheduler) Run(stop <-chan bool, errmsg chan<- error) {
 	var cmd *exec.Cmd
+	errOut := make(chan error, 1)
 
 	var logActive bool
 	if s.Log != nil {
@@ -127,7 +128,9 @@ func (s Scheduler) Run(stop <-chan bool, errmsg chan<- error) {
 
 	switch s.Loader {
 	case string(External):
-		cmd = exec.Command("bpftool", "struct_ops", "register", s.GetAbsolutePath(), "/sys/fs/bpf/sched_ext")
+		if err := LoadBPFScx(s.GetAbsolutePath()); err != nil {
+			errOut <- err
+		}
 
 	case string(Builtin):
 		if s.Parameters != nil {
@@ -149,57 +152,56 @@ func (s Scheduler) Run(stop <-chan bool, errmsg chan<- error) {
 			cmd.Stderr = logFile
 
 		skipLogging:
+
+			if err := cmd.Start(); err != nil {
+				errmsg <- err
+				return
+			}
+
+			go func() {
+				errOut <- cmd.Wait()
+			}()
 		}
+	}
 
-		if err := cmd.Start(); err != nil {
-			errmsg <- err
-			return
-		}
-
-		finished := make(chan error, 1)
-		go func() {
-			finished <- cmd.Wait()
-		}()
-
-		for {
-			select {
-			case err := <-finished:
-				switch s.Loader {
-				case string(Builtin):
-					if logActive {
-						errmsg <- fmt.Errorf("Scheduler '%s' exited unexpectedly, logs are available at: %s", s.Path, paths.LOGFOLDER)
-					} else {
-						errmsg <- fmt.Errorf("Scheduler '%s' exited unexpectedly", s.Path)
-					}
-					return
-
-				case string(External):
-					if err != nil { // scheduler error catching happens HERE
-						errmsg <- err
-						return
-					}
+	for {
+		select {
+		case err := <-errOut:
+			switch s.Loader {
+			case string(Builtin):
+				if logActive {
+					errmsg <- fmt.Errorf("Scheduler '%s' exited unexpectedly, logs are available at: %s", s.Path, paths.LOGFOLDER)
+				} else {
+					errmsg <- fmt.Errorf("Scheduler '%s' exited unexpectedly", s.Path)
 				}
+				return
 
-			case <-stop:
-				switch s.Loader {
-				case string(External):
-					if err := os.RemoveAll("/sys/fs/bpf/sched_ext/"); err != nil {
-						errmsg <- fmt.Errorf("Detaching scheduler '%s': %s\n", s.GetAbsolutePath(), err)
-					} else {
-						errmsg <- nil
-					}
-
-					return
-
-				case string(Builtin):
-					if err := cmd.Process.Kill(); err != nil {
-						errmsg <- fmt.Errorf("Stopping scheduler '%s': %s\n", s.GetAbsolutePath(), err)
-					} else {
-						errmsg <- nil
-					}
-
+			case string(External):
+				if err != nil { // scheduler error catching happens HERE
+					errmsg <- err
 					return
 				}
+			}
+
+		case <-stop:
+			switch s.Loader {
+			case string(External):
+				if err := os.Remove(paths.SCHEDBPFPINPATH); err != nil {
+					errmsg <- fmt.Errorf("Detaching scheduler '%s': %s\n", s.GetAbsolutePath(), err)
+				} else {
+					errmsg <- nil
+				}
+
+				return
+
+			case string(Builtin):
+				if err := cmd.Process.Kill(); err != nil {
+					errmsg <- fmt.Errorf("Stopping scheduler '%s': %s\n", s.GetAbsolutePath(), err)
+				} else {
+					errmsg <- nil
+				}
+
+				return
 			}
 		}
 	}
