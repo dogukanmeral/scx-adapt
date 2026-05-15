@@ -67,7 +67,7 @@ schedulers:
 | `log-csv <csv_file_path> [interval]` | Print system variables to file in csv format |
 | `log-sched` | Print sched_ext event tracing to stdout |
 | `remove-profile <profile_filename>` | Remove profile configuration from profiles folder |
-| `remove-service`  Remove Systemd service file 'scx-adapt@.service' in '/etc/systemd/system' |
+| `remove-service`  | Remove Systemd service file 'scx-adapt@.service' in '/etc/systemd/system' |
 | `start-profile <profile_path>` | Run scx-adapt with the profile configuration |
 | `status` | Print currently running sched_ext scheduler. |
 | `add-scheduler --loader external\|builtin <scheduler_path>` | Add sched_ext scheduler to schedulers folder |
@@ -128,9 +128,16 @@ captain@fedora:/var/log/scx-adapt 🚢🐳 $ ls -1
 
 ### Dependencies
 
-- **bpftool**: Used while attaching the scheduler to the kernel.
-- Kernel compiled with **BPF support** and BPF filesystem is mounted
-- Kernel compiled with **sched_ext support** (sched_ext has been merged at Linux 6.12)
+The kernel has to be built with the following configuration:
+- CONFIG_BPF=y
+- CONFIG_BPF_SYSCALL=y
+- CONFIG_BPF_JIT=y
+- CONFIG_DEBUG_INFO_BTF=y
+- CONFIG_BPF_JIT_ALWAYS_ON=y
+- CONFIG_BPF_JIT_DEFAULT_ON=y
+- CONFIG_SCHED_CLASS_EXT=y
+
+<https://github.com/sched-ext/scx#build--install>
 
 ## Further development
 
