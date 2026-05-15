@@ -71,10 +71,27 @@ schedulers:
 | `start-profile <profile_path>` | Run scx-adapt with the profile configuration |
 | `status` | Print currently running sched_ext scheduler. |
 | `add-scheduler --loader external\|builtin <scheduler_path>` | Add sched_ext scheduler to schedulers folder |
-| `remove-scheduler --type external\|builtin <scheduler_filename>` | Remove scheduler from schedulers folder |
+| `remove-scheduler --loader external\|builtin <scheduler_filename>` | Remove scheduler from schedulers folder |
 | `list-schedulers` | List schedulers in schedulers folder |
 
 ### Systemd service
+
+```ini
+[Unit]
+Description=scx-adapt daemon for profile at %I
+StartLimitIntervalSec=30
+StartLimitBurst=2 
+
+[Service]
+Type=exec
+ExecStart=/usr/bin/scx-adapt start-profile  %i
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+```
+
+scx-adapt service self-heals unless schedulers, which are defined inside the YAML configuration file, fail **more than twice within 30 seconds** (by default).  
 
 To install the service file and enable/start the service:
 - `$ scx-adapt install-service`
@@ -87,6 +104,19 @@ To disable/stop and delete service file:
 - `$ systemctl stop scx-adapt@<profile_path>`
 - `$ scx-adapt remove-service`
 
+
+### Logs
+
+For userspace schedulers (with `log: true`), standart output and standart error streams are written into log files which are located in `/var/log/scx-adapt` by default.
+
+```bash
+captain@fedora:/var/log/scx-adapt 🚢🐳 $ ls -1
+2026-05-10_16-51-23_scx_central.log
+2026-05-10_17-27-38_scx_beerland.log
+2026-05-10_17-32-55_scx_rustland.log
+2026-05-10_17-35-35_scx_simple.log
+2026-05-10_17-47-34_scx_chaos.log
+```
 
 ## Installation
 
@@ -104,7 +134,7 @@ To disable/stop and delete service file:
 
 ## Further development
 
-I (Doğukan Meral) have been the sole developer for v0.0.1 while my friend @onurkaragur is currently working on performance analysis of schedulers and ways to optimize scx-adapt configurations using machine learning techniques on the [scx-adapt-experiments](https://github.com/onurkaragur/scx-adapt-experiments) repository.
+I (Doğukan Meral) have been the sole developer for scx-adapt while my friend [Onur Karagür](https://github.com/onurkaragur/) is currently working on performance analysis of schedulers and ways to optimize scx-adapt configurations using machine learning techniques on the [scx-adapt-experiments](https://github.com/onurkaragur/scx-adapt-experiments) repository.
 
 Your feedbacks, suggestions, criticisms and most importantly your contributions are highly appriciated. Feel free to contact me at my e-mail address `dogukan.meral@yahoo.com`   
 
