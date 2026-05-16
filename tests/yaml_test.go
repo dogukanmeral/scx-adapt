@@ -19,7 +19,7 @@ func formatYamlError(yamlData string, err error) string {
 func TestSingleSched(t *testing.T) {
 	yamlData := `interval: 1000
 schedulers:
-  - path: "obj/valid_0.o"
+  - path: "../testdata/valid_0.o"
     loader: external
     priority: 1
     criterias:
@@ -40,13 +40,13 @@ schedulers:
 func TestMultipleScheds(t *testing.T) {
 	yamlData := `interval: 1000
 schedulers:
-  - path: "obj/valid_0.o"
+  - path: "../testdata/valid_0.o"
     loader: external
     priority: 1
     criterias:
       - value_name: load_avg_1
         less_than: 5
-  - path: "obj/valid_1.o"
+  - path: "../testdata/valid_1.o"
     loader: external
     priority: 2
     criterias:
@@ -63,13 +63,13 @@ schedulers:
 func TestSameSchedMultiplePriorities(t *testing.T) {
 	yamlData := `interval: 1000
 schedulers:
-  - path: "obj/valid_0.o"
+  - path: "../testdata/valid_0.o"
     loader: external
     priority: 1
     criterias:
       - value_name: load_avg_1
         less_than: 5
-  - path: "obj/valid_0.o"
+  - path: "../testdata/valid_1.o"
     loader: external
     priority: 2
     criterias:
@@ -86,7 +86,7 @@ schedulers:
 func TestParametersToUserspace(t *testing.T) {
 	yamlData := `interval: 1000
 schedulers:
-  - path: "obj/userspace_scx"
+  - path: "../testdata/userspace_scx"
     loader: builtin
     parameters:
       - param1
@@ -106,7 +106,7 @@ schedulers:
 func TestNoParametersToUserspace(t *testing.T) {
 	yamlData := `interval: 1000
 schedulers:
-  - path: "obj/userspace_scx"
+  - path: "../testdata/userspace_scx"
     loader: builtin
     priority: 1
     criterias:
@@ -124,7 +124,7 @@ schedulers:
 func TestInvalidValueName(t *testing.T) {
 	yamlData := `interval: 1000
 schedulers:
-  - path: "obj/valid_0.o"
+  - path: "../testdata/valid_0.o"
     loader: external
     priority: 1
     criterias:
@@ -142,7 +142,7 @@ schedulers:
 func TestMissingParameter(t *testing.T) { // no more_than or less_than specified
 	yamlData := `interval: 1000
 schedulers:
-  - path: "obj/valid_0.o"
+  - path: "../testdata/valid_0.o"
     loader: external
     priority: 1
     criterias:
@@ -159,7 +159,7 @@ schedulers:
 func TestConflictCriterias(t *testing.T) { // same value_name specified multiple times
 	yamlData := `interval: 1000
 schedulers:
-  - path: "obj/valid_0.o"
+  - path: "../testdata/valid_0.o"
     loader: external
     priority: 1
     criterias:
@@ -179,7 +179,7 @@ schedulers:
 func TestConflictParametersBigger(t *testing.T) { // more_than > less_than
 	yamlData := `interval: 1000
 schedulers:
-  - path: "obj/valid_0.o"
+  - path: "../testdata/valid_0.o"
     loader: external
     priority: 1
     criterias:
@@ -198,7 +198,7 @@ schedulers:
 func TestConflictParametersEqual(t *testing.T) { // more_than == less_than
 	yamlData := `interval: 1000
 schedulers:
-  - path: "obj/valid_0.o"
+  - path: "../testdata/valid_0.o"
     loader: external
     priority: 1
     criterias:
@@ -234,13 +234,13 @@ schedulers:
 func TestConflictPriorities(t *testing.T) { // both schedulers have same priority
 	yamlData := `interval: 1000
 schedulers:
-  - path: "obj/valid_0.o"
+  - path: "../testdata/valid_0.o"
     loader: external
     priority: 1
     criterias:
       - value_name: load_avg_1
         less_than: 1
-  - path: "obj/valid_1.o"
+  - path: "../testdata/valid_1.o"
     loader: external
     priority: 1
     criterias:
@@ -258,7 +258,7 @@ schedulers:
 func TestParametersToKernelOnly(t *testing.T) {
 	yamlData := `interval: 1000
 schedulers:
-  - path: "obj/valid_0.o"
+  - path: "../testdata/valid_0.o"
     loader: external
     parameters:
       - param1
