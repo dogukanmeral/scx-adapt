@@ -125,6 +125,60 @@ schedulers:
 	}
 }
 
+func TestStructNameSetForExternal(t *testing.T) {
+	yamlData := `interval: 1000
+schedulers:
+  - path: "../testdata/valid_0.o"
+    loader: external
+    structName: "sched_ops"
+    priority: 1
+    criterias:
+      - value_name: load_avg_1
+        less_than: 5
+        more_than: 0`
+
+	_, err := helper.YamlToConfig([]byte(yamlData))
+	if err != nil {
+		t.Error(formatYamlError(yamlData, err))
+	}
+}
+
+func TestLogTrueUserspace(t *testing.T) {
+	yamlData := `interval: 1000
+schedulers:
+  - path: "../testdata/userspace_scx"
+    loader: builtin
+    log: true
+    priority: 1
+    criterias:
+      - value_name: load_avg_1
+        less_than: 5
+        more_than: 0`
+
+	_, err := helper.YamlToConfig([]byte(yamlData))
+	if err != nil {
+		t.Error(formatYamlError(yamlData, err))
+	}
+}
+
+func TestLogFalseUserspace(t *testing.T) {
+	yamlData := `interval: 1000
+schedulers:
+  - path: "../testdata/userspace_scx"
+    loader: builtin
+    log: false
+    priority: 1
+    criterias:
+      - value_name: load_avg_1
+        less_than: 5
+        more_than: 0`
+
+	_, err := helper.YamlToConfig([]byte(yamlData))
+	if err != nil {
+		t.Error(formatYamlError(yamlData, err))
+	}
+}
+
 // //////// Negative tests //////////
 func TestInvalidValueName(t *testing.T) {
 	yamlData := `interval: 1000
@@ -285,6 +339,88 @@ schedulers:
 
 	_, err := helper.YamlToConfig([]byte(yamlData))
 	var expErr *errs.ParametersForExternalSchedError
+	if !errors.As(err, &expErr) {
+		t.Error(formatYamlError(yamlData, err))
+	}
+}
+
+func TestInvalidLoaderType(t *testing.T) {
+	yamlData := `interval: 1000
+schedulers:
+  - path: "../testdata/valid_0.o"
+    loader: blablablabla
+    structName: "sched_ops"
+    priority: 1
+    criterias:
+      - value_name: load_avg_1
+        less_than: 5
+        more_than: 0`
+
+	_, err := helper.YamlToConfig([]byte(yamlData))
+	var expErr *errs.InvalidSchedulerLoaderError
+	if !errors.As(err, &expErr) {
+		t.Error(formatYamlError(yamlData, err))
+	}
+}
+
+func TestLogExternallyLoadedSched(t *testing.T) {
+	yamlData := `interval: 1000
+schedulers:
+  - path: "../testdata/valid_0.o"
+    loader: external
+    structName: "sched_ops"
+    log: true
+    parameters:
+      - param1
+      - param2
+    priority: 1
+    criterias:
+      - value_name: load_avg_1
+        less_than: 5
+        more_than: 0`
+
+	_, err := helper.YamlToConfig([]byte(yamlData))
+	var expErr *errs.LogForNonBuiltinLoaderSchedError
+	if !errors.As(err, &expErr) {
+		t.Error(formatYamlError(yamlData, err))
+	}
+}
+
+func TestStructNameSetForNonExternal(t *testing.T) {
+	yamlData := `interval: 1000
+schedulers:
+  - path: "../testdata/userspace_scx"
+    loader: builtin
+    priority: 1
+    structName: "dr_schedo"
+    criterias:
+      - value_name: load_avg_1
+        less_than: 5
+        more_than: 0`
+
+	_, err := helper.YamlToConfig([]byte(yamlData))
+	var expErr *errs.StructNameForNonExternalLoaderSchedError
+	if !errors.As(err, &expErr) {
+		t.Error(formatYamlError(yamlData, err))
+	}
+}
+
+func TestStructNameNotSetForExternal(t *testing.T) {
+	yamlData := `interval: 1000
+schedulers:
+  - path: "../testdata/valid_0.o"
+    loader: external
+    parameters:
+      - param1
+      - param2
+    priority: 1
+    criterias:
+      - value_name: load_avg_1
+        less_than: 5
+        more_than: 0`
+
+	_, err := helper.YamlToConfig([]byte(yamlData))
+	var expErr *errs.StructNameNotSetError
 	if !errors.As(err, &expErr) {
 		t.Error(formatYamlError(yamlData, err))
 	}
