@@ -58,6 +58,30 @@ func (e *ParametersForExternalSchedError) Error() string {
 	return e.Msg
 }
 
+type LogForNonBuiltinLoaderSchedError struct {
+	Msg string
+}
+
+func (e *LogForNonBuiltinLoaderSchedError) Error() string {
+	return e.Msg
+}
+
+type StructNameNotSetError struct {
+	Msg string
+}
+
+func (e *StructNameNotSetError) Error() string {
+	return e.Msg
+}
+
+type StructNameForNonExternalLoaderSchedError struct {
+	Msg string
+}
+
+func (e *StructNameForNonExternalLoaderSchedError) Error() string {
+	return e.Msg
+}
+
 type SchedulerDoesNotExistError struct {
 	Msg string
 }

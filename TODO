@@ -96,7 +96,7 @@ Add # of CPU cores feature to CSV output (`log-csv`)
 [X] Fix: Detection of unexpectedly exiting userspace schedulers
 [X] Fix: File permissions everywhere when creating new files
 [X] Remove: `libbpf` dependency
-[ ] Add: BPF map key (e.g. `struct_ops`) parameter to YAML file (only for external-loader schedulers) (change hardcoded map in `loader.go`)
+[X] Add: BPF map key (e.g. `struct_ops`) parameter to YAML file (only for external-loader schedulers) (change hardcoded map in `loader.go`)
 [X] Move: Binaries in `tests` from installation (`go get | go install`)
 [ ] Add: Globing and multiple file support to `add-scheduler` and `remove-scheduler`
 [ ] Update: YAML configuration tests for new features (`structName:`, `log:`, invalid values)

@@ -24,12 +24,13 @@ type Scheduler struct {
 	Loader     string     `yaml:"loader" validate:"required"`
 	Parameters *[]string  `yaml:"parameters"`
 	Log        *bool      `yaml:"log"`
+	StructName *string    `yaml:"structName"`
 	Path       string     `yaml:"path" validate:"required"`
 	Priority   int        `yaml:"priority" validate:"required,gte=1,lte=139"`
 	Criterias  []Criteria `yaml:"criterias" validate:"required,dive"`
 }
 
-var NilScheduler Scheduler = Scheduler{"", nil, nil, "", 0, nil}
+var NilScheduler Scheduler = Scheduler{"", nil, nil, nil, "", 0, nil}
 
 // Returns: path as it is if an absolute path, if not path of scheduler in SCHEDULERSFOLDER if exists, if none of both path as it is
 func (s Scheduler) GetAbsolutePath() string {
@@ -65,6 +66,28 @@ func (s Scheduler) Validate() error {
 	if !slices.Contains([]string{string(External), string(Builtin)}, s.Loader) {
 		return &errs.InvalidSchedulerLoaderError{
 			Msg: fmt.Sprintf("Invalid scheduler loader '%s' for scheduler '%s'.", s.Loader, s.Path),
+		}
+	}
+
+	// Check if log option used only for builtin-loader schedulers
+	if s.Log != nil {
+		if s.Loader != string(Builtin) && *s.Log == true {
+			return &errs.LogForNonBuiltinLoaderSchedError{
+				Msg: fmt.Sprintf("Logging feature is not available for loader type '%s' for scheduler '%s'", s.Loader, s.Path),
+			}
+		}
+	}
+
+	// Check if structName is set
+	if s.StructName != nil {
+		if s.Loader != string(External) {
+			return &errs.StructNameForNonExternalLoaderSchedError{
+				Msg: fmt.Sprintf("Scheduler '%s' is not externally-loaded but 'structName' is set", s.Path),
+			}
+		}
+	} else if s.Loader == string(External) {
+		return &errs.StructNameNotSetError{
+			Msg: fmt.Sprintf("Struct name is not set for externally-loaded scheduler %s", s.Path),
 		}
 	}
 
@@ -128,7 +151,7 @@ func (s Scheduler) Run(stop <-chan bool, errmsg chan<- error) {
 
 	switch s.Loader {
 	case string(External):
-		if err := LoadBPFScx(s.GetAbsolutePath()); err != nil {
+		if err := LoadBPFScx(s.GetAbsolutePath(), *s.StructName); err != nil {
 			errOut <- err
 		}
 

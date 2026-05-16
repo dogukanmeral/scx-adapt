@@ -8,7 +8,7 @@ import (
 	paths "github.com/dogukanmeral/scx-adapt/internal"
 )
 
-func LoadBPFScx(filepath string) error {
+func LoadBPFScx(filepath string, structName string) error {
 	collSpec, err := ebpf.LoadCollectionSpec(filepath)
 	if err != nil {
 		return err
@@ -19,9 +19,9 @@ func LoadBPFScx(filepath string) error {
 		return err
 	}
 
-	schedOpsMap := coll.Maps["sched_ops"]
+	schedOpsMap := coll.Maps[structName]
 	if schedOpsMap == nil {
-		return fmt.Errorf("sched_ops map not found")
+		return fmt.Errorf("Map not found: %s", structName)
 	}
 
 	l, err := link.AttachStructOps(link.StructOpsOptions{
