@@ -79,38 +79,39 @@ func YamlToConfig(yamlData []byte) (Config, error) {
 }
 
 func (conf Config) Run(changed chan<- Scheduler, errmsg chan<- error) {
-	sort.Sort(conf)
+	sort.Sort(conf) // Sort Config's by their priority (as defined in 'sort' interface of Config)
 
 	var currentSched Scheduler = NilScheduler
 
 NEXT_SCHED:
 	for i, s := range conf.Schedulers {
 		for _, c := range s.Criterias {
-			if b, err := c.Satisfies(); !b {
-				if err != nil {
+			if b, err := c.Satisfies(); !b { // If a criteria is not satisfied
+				if err != nil { // If an error occurs while reading system variables, write the error to errmsg channel and return subroutine
 					errmsg <- err
 					return
 				}
 
-				if i+1 == len(conf.Schedulers) {
+				if i+1 == len(conf.Schedulers) { // If it's the last scheduler in config
 					if currentSched.Path != "" {
 						currentSched = NilScheduler
-						changed <- currentSched
+						changed <- currentSched // Send nil-scheduler (system scheduler) to changed channel (gets received in start-profile)
 					}
 				}
-				continue NEXT_SCHED
+
+				continue NEXT_SCHED // Continue to check criterias of next scheduler (end of for loop if last element)
 			}
 		}
 
-		if s.Path != currentSched.Path {
-			currentSched = s
-			changed <- s
+		if s.Path != currentSched.Path { // Schedulers which satisfies all criterias reach here
+			currentSched = s // Change current scheduler variable
+			changed <- s     // Send new viable scheduler to changed channel (gets received in start-profile and new scheduler starts)
 		}
 
-		goto SCHED_STARTED
+		goto SCHED_STARTED // After switching to new viable scheduler, go to sleeping period
 	}
 
 SCHED_STARTED:
 	time.Sleep(time.Millisecond * time.Duration(conf.Interval))
-	goto NEXT_SCHED
+	goto NEXT_SCHED // At the end of sleeping period, go to start of for loop which iterates over schedulers and their criterias
 }

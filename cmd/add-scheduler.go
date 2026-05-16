@@ -68,6 +68,7 @@ var addSchedulerCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
+		// Iterate over arguments (scheduler paths)
 		for _, p := range schedulerPaths {
 			switch addSchedulerType {
 			case string(helper.External):

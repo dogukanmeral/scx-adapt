@@ -140,10 +140,10 @@ func (s Scheduler) Validate() error {
 
 func (s Scheduler) Run(stop <-chan bool, errmsg chan<- error) {
 	var cmd *exec.Cmd
-	errOut := make(chan error, 1)
+	errOut := make(chan error, 1) // To receive error messages from subroutine, where stdout and stderr is read
 
 	var logActive bool
-	if s.Log != nil {
+	if s.Log != nil { // Since log parameter is optional, this statement prevents null pointer deference
 		logActive = *s.Log
 	} else {
 		logActive = false
@@ -151,12 +151,12 @@ func (s Scheduler) Run(stop <-chan bool, errmsg chan<- error) {
 
 	switch s.Loader {
 	case string(External):
-		if err := LoadBPFScx(s.GetAbsolutePath(), *s.StructName); err != nil {
+		if err := LoadBPFScx(s.GetAbsolutePath(), *s.StructName); err != nil { // Use scx-adapt's BPF loader if loader type is external
 			errOut <- err
 		}
 
 	case string(Builtin):
-		if s.Parameters != nil {
+		if s.Parameters != nil { // Since command parameters are optional, this statement prevents null pointer deference
 			cmd = exec.Command(s.GetAbsolutePath(), *s.Parameters...)
 		} else {
 			cmd = exec.Command(s.GetAbsolutePath())
@@ -166,7 +166,7 @@ func (s Scheduler) Run(stop <-chan bool, errmsg chan<- error) {
 			logFile, err := CreateLogFile(path.Base(s.Path))
 			if err != nil {
 				fmt.Printf("WARNING: %s\n", err)
-				goto skipLogging
+				goto skipLogging // Do not stop execution of scheduler if log file creation fails
 			}
 
 			defer logFile.Close()
@@ -182,7 +182,7 @@ func (s Scheduler) Run(stop <-chan bool, errmsg chan<- error) {
 			}
 
 			go func() {
-				errOut <- cmd.Wait()
+				errOut <- cmd.Wait() // If a builtin-loader (executable) fails, error is sent to errOut channel, received in for loop
 			}()
 		}
 	}
@@ -200,10 +200,13 @@ func (s Scheduler) Run(stop <-chan bool, errmsg chan<- error) {
 				return
 
 			case string(External):
-				if err != nil { // scheduler error catching happens HERE
+				if err != nil {
 					errmsg <- err
 					return
 				}
+
+				// If BPF is loaded and error message is nil, continue
+				// TODO: Add: Checks for linked scheduler's health
 			}
 
 		case <-stop:

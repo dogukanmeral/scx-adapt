@@ -76,6 +76,7 @@ var startProfileCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
+		// Convert YAML file bytes to 'Config' struct
 		conf, err := helper.YamlToConfig(yamlData)
 		if err != nil {
 			fmt.Println(err)
@@ -92,16 +93,16 @@ var startProfileCmd = &cobra.Command{
 		interrupt := make(chan os.Signal, 1)
 		signal.Notify(interrupt, os.Interrupt, syscall.SIGTERM)
 
-		stop := make(chan bool, 1)
-		errmsg := make(chan error, 1)
-		schedChanged := make(chan helper.Scheduler, 1)
+		stop := make(chan bool, 1)                     // To send stop signal to Scheduler.Run() function
+		errmsg := make(chan error, 1)                  // To receive error messages from Config.Run() and Scheduler.Run()
+		schedChanged := make(chan helper.Scheduler, 1) // If current viable scheduler changes in Config.Run(), it sends the new 'Scheduler' instance,
 
 		go conf.Run(schedChanged, errmsg)
 
 		// Profile started message
 		fmt.Printf("INFO: Profile started: '%s'\n", filepath)
 
-	STOPERROR:
+	STOPERROR: // If a scheduler stop fails, execution continues here with an error in 'errsmg' channel. It gets consumed in  'case err := <-errmsg:'
 		for {
 			select {
 			case err := <-errmsg:
@@ -113,6 +114,7 @@ var startProfileCmd = &cobra.Command{
 
 				os.Exit(1)
 
+			// When the new scheduler gets consumed with '<-schedChanged', stop signal is sent to the previously running scheduler (if there is)
 			case sched := <-schedChanged:
 				switch sched.Path {
 				case "":
@@ -130,8 +132,9 @@ var startProfileCmd = &cobra.Command{
 					}
 				}
 
+				// If the new scheduler is a null-scheduler (system scheduler, none of entries in configuration are viable) 'Scheduler.Run()' is skipped
 				if sched.Path != "" {
-					go sched.Run(stop, errmsg)
+					go sched.Run(stop, errmsg) // // Then the new scheduler runs with 'Scheduler.Run()'
 
 					fmt.Printf("INFO: Starting scheduler '%s'...\n", sched.Path)
 				}

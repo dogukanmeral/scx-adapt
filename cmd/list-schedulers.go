@@ -43,6 +43,7 @@ var listSchedulersCmd = &cobra.Command{
 					os.Exit(1)
 				}
 
+				// Iterate over external-loader schedulers and check
 				for _, f := range externalFiles {
 					if err := checks.CheckObj(path.Join(paths.EXTERNALFOLDER, f.Name())); err == nil {
 						fmt.Printf("    %s\n", f.Name())
@@ -54,12 +55,14 @@ var listSchedulersCmd = &cobra.Command{
 			fmt.Println("Builtin-loader schedulers:")
 			if helper.IsFileExist(paths.BUILTINFOLDER) {
 
+				// Read entries in paths.BUILTIN directory
 				builtinFiles, err := os.ReadDir(paths.BUILTINFOLDER)
 				if err != nil {
 					fmt.Println(err)
 					os.Exit(1)
 				}
 
+				// Iterate over builtin-loader schedulers and check
 				for _, f := range builtinFiles {
 					if checks.IsExecutableELF(path.Join(paths.BUILTINFOLDER, f.Name())) {
 						fmt.Printf("    %s\n", f.Name())

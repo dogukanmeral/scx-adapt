@@ -33,12 +33,14 @@ var listProfilesCmd = &cobra.Command{
 				os.Exit(1)
 			}
 
+			// Read entries in paths.PROFILESFOLDER
 			files, err := os.ReadDir(paths.PROFILESFOLDER)
 			if err != nil {
 				fmt.Println(err)
 				os.Exit(1)
 			}
 
+			// Iterate over all profiles and check if YAML structure is valid
 			for _, f := range files {
 				fileData, err := os.ReadFile(path.Join(paths.PROFILESFOLDER, f.Name()))
 				if err != nil {

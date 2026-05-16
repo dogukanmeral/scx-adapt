@@ -38,7 +38,7 @@ var removeSchedulerCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		var subdir string
+		var subdir string // paths.EXTERNALFOLDER or paths.BUILTINFOLDER
 
 		switch removeSchedulerType {
 		case string(helper.External):
