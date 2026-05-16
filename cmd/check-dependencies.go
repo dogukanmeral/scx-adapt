@@ -23,11 +23,6 @@ var checkDependenciesCmd = &cobra.Command{
 
 		var depNotFound bool = false
 
-		if err := checks.IsBpfToolInstalled(); err != nil {
-			fmt.Print(err)
-			depNotFound = true
-		}
-
 		if err := checks.IsBpfFsMounted(); err != nil {
 			fmt.Print(err)
 			depNotFound = true

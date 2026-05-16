@@ -58,27 +58,12 @@ func IsExecutableELF(path string) bool {
 
 // Checks dependencies: bpftool, kernel (BPF and sched_ext)
 func CheckBPFDependencies() error {
-	if err := IsBpfToolInstalled(); err != nil {
-		return err
-	}
-
 	if err := IsBpfFsMounted(); err != nil {
 		return err
 	}
 
 	if err := IsSchedExtDirExist(); err != nil {
 		return err
-	}
-
-	return nil
-}
-
-func IsBpfToolInstalled() error {
-	whichCmd := exec.Command("which", "bpftool")
-	whichCmd.Run()
-
-	if whichCmd.Err != nil {
-		return fmt.Errorf("Error: 'bpftool' is not found in PATH: %s\n", os.Getenv("PATH"))
 	}
 
 	return nil
