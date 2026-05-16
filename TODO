@@ -87,7 +87,7 @@ Add # of CPU cores feature to CSV output (`log-csv`)
 [X] Add `kernelonly` and `userspace` directories under **SCHEDULERSFOLDER** 
 [X] Fix locking mechanism
 
-# Backlog
+# v0.3.0
 
 [X] Add: scx-adapt started message to `start-profile`
 [X] Add: log file support for executables (pipe stdout and stderr) (schedulername_2004-09-07_12-00-00.log)
@@ -99,16 +99,18 @@ Add # of CPU cores feature to CSV output (`log-csv`)
 [X] Add: BPF map key (e.g. `struct_ops`) parameter to YAML file (only for external-loader schedulers) (change hardcoded map in `loader.go`)
 [X] Move: Binaries in `tests` from installation (`go get | go install`)
 [X] Add: Multiple file support to `add-scheduler`
-[ ] Update: YAML configuration tests for new features (`structName:`, `log:`, invalid values)
+[X] Update: YAML configuration tests for new features (`structName:`, `log:`, invalid values)
 [X] Change: Scheduler type names from `userspace` and `kernelonly` to something more reasonable (about the presence of loader code) (loader: builtin|external)
-[ ] Add: Long descriptions for commands
+[X] Add: Comments for new functions and mechanisms, and an overview of the structure
 [X] Update: README (Dependencies)
-[ ] Remove: Binaries in `tests` from source code (move to automated tests setup)
+
+# Backlog
+
 [ ] Optimize: Logging performance (buffering?)
-[ ] Add: Automated tests for CLI program
-[ ] Add: Automated tests to CI workflow (create a VM setup and collect test result)
+[ ] Move: Test binaries in `testdata` to CI
+[ ] Add: Automated tests for CLI program (Running on a host)
 [ ] Add: goReleaser in Github Actions
-[ ] Record a demo video
-[ ] Create a explanatory website (Github pages)
+[ ] Record: A demo video
+[ ] Create: An explanatory website (Github Pages maybe?)
 [ ] Fix: `Error occured while reading file '/proc/pressure/': read /proc/pressure/: is a directory` / Add error handling to ParsePressure
 [ ] Add: Info and warning message passing to `start-scheduler`

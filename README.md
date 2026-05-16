@@ -13,12 +13,14 @@ interval: 1000
 schedulers:
   - path: "rr.o"
     loader: external
+    structName: "sched_ops"
     priority: 1
     criterias:
       - value_name: load_avg_1
         less_than: 2
   - path: "/home/dogukan/schedulers/cfs.o"
     loader: external
+    structName: "sched_ops"
     priority: 2
     criterias:
       - value_name: io_psi_some_10
@@ -41,6 +43,7 @@ schedulers:
 - **loader**:  Scheduler loader type:
   - ***external***: BPF bytecode without the linker/loader logic. Linked using `scx-adapt`'s linker.
   - ***builtin***: Executable, links BPF program itself and has userspace counter-part.
+- **structName** (REQUIRED to link `builtin-loader` schedulers): BPF map key of the struct which holds pointers of scheduling methods.
 - **parameters** (optional) (ONLY for `builtin-loader` schedulers): Arguments to execute `builtin-loader` scheduler with.
 - **priority**: Priority of scheduler (1-139). scx-adapt starts checking the schedulers' criteria in order of their priorities (smaller value, higher priority). Attaches the first matching scheduler to the kernel.
 - **log** (optional) (ONLY for `builtin-loader` schedulers): Logging on or off (true|false) for `builtin-loader` scheduler. Stdout and stderr of scheduler process are piped into a log file which is located at `/var/log/scx-adapt/` (by default).
@@ -70,7 +73,7 @@ schedulers:
 | `remove-service`  | Remove Systemd service file 'scx-adapt@.service' in '/etc/systemd/system' |
 | `start-profile <profile_path>` | Run scx-adapt with the profile configuration |
 | `status` | Print currently running sched_ext scheduler. |
-| `add-scheduler --loader external\|builtin <scheduler_path>` | Add sched_ext scheduler to schedulers folder |
+| `add-scheduler --loader external\|builtin <scheduler_path(s)...>` | Add sched_ext scheduler to schedulers folder |
 | `remove-scheduler --loader external\|builtin <scheduler_filename>` | Remove scheduler from schedulers folder |
 | `list-schedulers` | List schedulers in schedulers folder |
 
