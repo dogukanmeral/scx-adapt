@@ -8,32 +8,32 @@ Initial version of scx-adapt.
     - Systemd profile for scx-adapt,
     - Managing profiles in /etc/scx-adapt/profiles
 
-[X] Fix YAML unmarshalling and checks
-[X] Fix running profiles logic
-[X] Write unit tests for functions
-[X] Add wait_time to YAML config
-[X] Ordering scheds by priorities and conflict checking in YAML config
-[X] Profile runner function
-[X] Profile runner state file (readonly)
-[X] `add-profile` (to `/etc/scx-adapt`), `rm-profile`, `start-profile` (from /etc if, not absolute path or not in cwd), status helpers and commands
-[X] Commands' explanations and auto-completion
-[X] Turn to system scheduler if any scx satisfies criterias
-[X] Fix test cases in order to work with new file structure (obj's for testing to `tests/obj` folder)
-[X] Add logging to CLI
-[X] Add list-profiles command
-[X] README file
-[X] Add function descriptions
-[X] Systemd service file (which takes yaml templates)
-[X] Add `install-service` and `remove-service` commands
-[X] Automated go tests in Github Actions
+- [X] Fix YAML unmarshalling and checks
+- [X] Fix running profiles logic
+- [X] Write unit tests for functions
+- [X] Add wait_time to YAML config
+- [X] Ordering scheds by priorities and conflict checking in YAML config
+- [X] Profile runner function
+- [X] Profile runner state file (readonly)
+- [X] `add-profile` (to `/etc/scx-adapt`), `rm-profile`, `start-profile` (from /etc if, not absolute path or not in cwd), status helpers and commands
+- [X] Commands' explanations and auto-completion
+- [X] Turn to system scheduler if any scx satisfies criterias
+- [X] Fix test cases in order to work with new file structure (obj's for testing to `tests/obj` folder)
+- [X] Add logging to CLI
+- [X] Add list-profiles command
+- [X] README file
+- [X] Add function descriptions
+- [X] Systemd service file (which takes yaml templates)
+- [X] Add `install-service` and `remove-service` commands
+- [X] Automated go tests in Github Actions
 
 # v0.0.2
 
 Bug fixes
 
-[X] Fix go.mod "replace" problem
-[X] Fix below zero values in `log-csv` (e.g. 0.5)
-[X] Update README
+- [X] Fix go.mod "replace" problem
+- [X] Fix below zero values in `log-csv` (e.g. 0.5)
+- [X] Update README
 
 # v0.1.0
 
@@ -48,69 +48,69 @@ Bug fixes
     - `check-profile` now reads file from path positional argument (instead of STDIN)
     - **TODO** looks more beautiful
 
-[X] Fix scx-adapt keeps running even if sched_ext scheduler crashes bug (check status of sched_ext: `/sys/kernel/sched_ext/state`)
-[X] Fix `scx-adapt.lock exists` problem when exited with error and lock doesn't get deleted.
-[X] `add-scheduler`, `remove-scheduler`, `list-schedulers` commands (to *SCHEDULERSFOLDER*).
-[X] Load schedulers in *SCHEDULERSFOLDER* automatically in .yaml config (Refer to file in *SCHEDULERSFOLDER* if filepath in yaml is not absolute)
-[X] Change `check-profile` to read file from file path.
-[X] Move files to `/var/lib/scx-adapt`
-[X] Enhance TODO with Markdown 
+- [X] Fix scx-adapt keeps running even if sched_ext scheduler crashes bug (check status of sched_ext: `/sys/kernel/sched_ext/state`)
+- [X] Fix `scx-adapt.lock exists` problem when exited with error and lock doesn't get deleted.
+- [X] `add-scheduler`, `remove-scheduler`, `list-schedulers` commands (to *SCHEDULERSFOLDER*).
+- [X] Load schedulers in *SCHEDULERSFOLDER* automatically in .yaml config (Refer to file in *SCHEDULERSFOLDER* if filepath in yaml is not absolute)
+- [X] Change `check-profile` to read file from file path.
+- [X] Move files to `/var/lib/scx-adapt`
+- [X] Enhance TODO with Markdown 
 
 # v0.1.1
 
 Update documentations for changes made in v0.1.0
 
-[X] Fix paths in short explanations of cmd
-[X] Update README.md
+- [X] Fix paths in short explanations of cmd
+- [X] Update README.md
 
 # v0.1.2
 
 Add # of CPU cores feature to CSV output (`log-csv`)
 
-[X] Add # of CPU's feature to CSV
+- [X] Add # of CPU's feature to CSV
 
 # v0.2.0
 
-[X] Add `check-dependencies` cmd
-[X] In YAML file, specify scheduler type as 'kernel' or 'userspace'. (Keep bpftool attaching for this version)
-[X] Change "StartScx" and "StopScx" helpers to get "Scheduler" struct as argument
-[X] Move all CheckObj to YAML validation part, move all CheckDependencies to only CLI
-[X] Fix "CurrentScx()" and "TraceSchedExt()" parameter passing (considering CLI)
-[X] Add check if sched_ext is already enabled when scx-adapt started
-[X] Move "must run as root" stuff to CLI (remove from helpers)
-[X] Parameters section in YAML for userspace schedulers
-[X] Refactor RunProfile and add support for 'userspace' schedulers
-[X] Add parameter passing to userspace schedulers
-[X] Update README for new features-changes (explain commands in table structure)
-[X] Update automated tests and add new tests for "Parameters"
-[X] Update `add-scheduler`, `check-profile` and `list-schedulers` to work with **userspace** schedulers
-[X] Add `kernelonly` and `userspace` directories under **SCHEDULERSFOLDER** 
-[X] Fix locking mechanism
+- [X] Add `check-dependencies` cmd
+- [X] In YAML file, specify scheduler type as 'kernel' or 'userspace'. (Keep bpftool attaching for this version)
+- [X] Change "StartScx" and "StopScx" helpers to get "Scheduler" struct as argument
+- [X] Move all CheckObj to YAML validation part, move all CheckDependencies to only CLI
+- [X] Fix "CurrentScx()" and "TraceSchedExt()" parameter passing (considering CLI)
+- [X] Add check if sched_ext is already enabled when scx-adapt started
+- [X] Move "must run as root" stuff to CLI (remove from helpers)
+- [X] Parameters section in YAML for userspace schedulers
+- [X] Refactor RunProfile and add support for 'userspace' schedulers
+- [X] Add parameter passing to userspace schedulers
+- [X] Update README for new features-changes (explain commands in table structure)
+- [X] Update automated tests and add new tests for "Parameters"
+- [X] Update `add-scheduler`, `check-profile` and `list-schedulers` to work with **userspace** schedulers
+- [X] Add `kernelonly` and `userspace` directories under **SCHEDULERSFOLDER** 
+- [X] Fix locking mechanism
 
 # v0.3.0
 
-[X] Add: scx-adapt started message to `start-profile`
-[X] Add: log file support for executables (pipe stdout and stderr) (schedulername_2004-09-07_12-00-00.log)
-[X] Add: enable logging option to YAML for userspace schedulers
-[X] Add: Self-healing parameters to systemd service file
-[X] Fix: Detection of unexpectedly exiting userspace schedulers
-[X] Fix: File permissions everywhere when creating new files
-[X] Remove: `libbpf` dependency
-[X] Add: BPF map key (e.g. `struct_ops`) parameter to YAML file (only for external-loader schedulers) (change hardcoded map in `loader.go`)
-[X] Move: Binaries in `tests` from installation (`go get | go install`)
-[X] Add: Multiple file support to `add-scheduler`
-[X] Update: YAML configuration tests for new features (`structName:`, `log:`, invalid values)
-[X] Change: Scheduler type names from `userspace` and `kernelonly` to something more reasonable (about the presence of loader code) (loader: builtin|external)
-[X] Add: Comments for new functions and mechanisms, and an overview of the structure
-[X] Update: README (Dependencies)
+- [X] Add: scx-adapt started message to `start-profile`
+- [X] Add: log file support for executables (pipe stdout and stderr) (schedulername_2004-09-07_12-00-00.log)
+- [X] Add: enable logging option to YAML for userspace schedulers
+- [X] Add: Self-healing parameters to systemd service file
+- [X] Fix: Detection of unexpectedly exiting userspace schedulers
+- [X] Fix: File permissions everywhere when creating new files
+- [X] Remove: `libbpf` dependency
+- [X] Add: BPF map key (e.g. `struct_ops`) parameter to YAML file (only for external-loader schedulers) (change hardcoded map in `loader.go`)
+- [X] Move: Binaries in `tests` from installation (`go get | go install`)
+- [X] Add: Multiple file support to `add-scheduler`
+- [X] Update: YAML configuration tests for new features (`structName:`, `log:`, invalid values)
+- [X] Change: Scheduler type names from `userspace` and `kernelonly` to something more reasonable (about the presence of loader code) (loader: builtin|external)
+- [X] Add: Comments for new functions and mechanisms, and an overview of the structure
+- [X] Update: README (Dependencies)
 
 # Backlog
 
-[ ] Optimize: Logging performance (buffering?)
-[ ] Move: Test binaries in `testdata` to CI
-[ ] Add: Automated tests for CLI program (Running on a host)
-[ ] Add: goReleaser in Github Actions
-[ ] Record: A demo video
-[ ] Create: An explanatory website (Github Pages maybe?)
-[ ] Fix: `Error occured while reading file '/proc/pressure/': read /proc/pressure/: is a directory` / Add error handling to ParsePressure
-[ ] Add: Info and warning message passing to `start-scheduler`
+- [X] Fix: `Error occured while reading file '/proc/pressure/': read /proc/pressure/: is a directory` / Add error handling to ParsePressure and ParseLoadAvg
+- [ ] Optimize: Logging performance (buffering?)
+- [ ] Move: Test binaries in `testdata` to CI
+- [ ] Add: Automated tests for CLI program (Running on a host)
+- [ ] Add: goReleaser in Github Actions
+- [ ] Record: A demo video
+- [ ] Create: An explanatory website (Github Pages maybe?)
+- [ ] Add: Info and warning message passing to `start-scheduler`
