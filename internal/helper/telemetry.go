@@ -129,7 +129,7 @@ type PressureType string
 const (
 	Cpu PressureType = "cpu"
 	IO  PressureType = "io"
-	Mem PressureType = "memory"
+	Mem PressureType = "mem"
 )
 
 type PressureOption string
@@ -154,7 +154,7 @@ const (
 
 // Read system file '/proc/pressure/<pressure type>' and return the pressure for specified type, option and second values.
 func Pressure(presType PressureType, presOpt PressureOption, presSec PressureSecond) (float64, error) {
-	presFile := fmt.Sprintf("/proc/pressure/%s", presType)
+	presFile := fmt.Sprintf("/proc/pressure/%s", PRESSURE_TYPE_FILES[presType])
 
 	presData, err := os.ReadFile(presFile)
 	if err != nil {
