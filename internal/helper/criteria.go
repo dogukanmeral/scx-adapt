@@ -31,6 +31,12 @@ var VALID_VALUE_REGEX = map[string]string{
 	"procsDiskIo":  "^procs_disk_io$",
 }
 
+var PRESSURE_TYPE_FILES = map[PressureType]string{
+	Cpu: "cpu",
+	IO:  "io",
+	Mem: "memory",
+}
+
 // Validate Criteria
 func (c Criteria) Validate() error {
 	v := validator.New()
@@ -84,7 +90,11 @@ func (c Criteria) SatisfiesLessMore(sysValue float64) bool {
 // Checks if live system values satisfies the criteria.
 func (c Criteria) Satisfies() (bool, error) {
 	if b, _ := regexp.MatchString(VALID_VALUE_REGEX["pressures"], c.ValueName); b {
-		pType, pOpt, pSec := ParsePressure(c.ValueName)
+		pType, pOpt, pSec, err := ParsePressure(c.ValueName)
+		if err != nil {
+			return false, err
+		}
+
 		pValue, err := Pressure(pType, pOpt, pSec)
 
 		if err != nil {
@@ -94,7 +104,11 @@ func (c Criteria) Satisfies() (bool, error) {
 		return c.SatisfiesLessMore(pValue), nil
 
 	} else if b, _ := regexp.MatchString(VALID_VALUE_REGEX["loadAvgs"], c.ValueName); b {
-		laMinute := ParseLoadAvg(c.ValueName)
+		laMinute, err := ParseLoadAvg(c.ValueName)
+		if err != nil {
+			return false, err
+		}
+
 		laValue, err := LoadAvg(laMinute)
 
 		if err != nil {

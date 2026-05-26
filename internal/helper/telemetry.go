@@ -107,7 +107,7 @@ func LoadAvg(minutes LoadAvgMinute) (float64, error) {
 }
 
 // Parse load average value name and return it's minute.
-func ParseLoadAvg(loadAvgValName string) LoadAvgMinute {
+func ParseLoadAvg(loadAvgValName string) (LoadAvgMinute, error) {
 	var laMinute LoadAvgMinute
 
 	switch strings.Split(loadAvgValName, "_")[2] {
@@ -117,9 +117,11 @@ func ParseLoadAvg(loadAvgValName string) LoadAvgMinute {
 		laMinute = Avg5min
 	case "15":
 		laMinute = Avg15min
+	default:
+		return 0, fmt.Errorf("Parsing load average (1|5|15) failed for '%s'", loadAvgValName)
 	}
 
-	return laMinute
+	return laMinute, nil
 }
 
 type PressureType string
@@ -182,7 +184,7 @@ func Pressure(presType PressureType, presOpt PressureOption, presSec PressureSec
 }
 
 // Parse pressure value name to it's: type (CPU, IO or Mem), option(some or full), seconds(10, 60 or 300).
-func ParsePressure(pressureValName string) (PressureType, PressureOption, PressureSecond) { // 0: avg10, 1: avg60, 2: avg300
+func ParsePressure(pressureValName string) (PressureType, PressureOption, PressureSecond, error) { // 0: avg10, 1: avg60, 2: avg300
 	var pType PressureType
 	var pOpt PressureOption
 	var pSec PressureSecond
@@ -194,6 +196,8 @@ func ParsePressure(pressureValName string) (PressureType, PressureOption, Pressu
 		pType = IO
 	case string(Mem):
 		pType = Mem
+	default:
+		return "", "", 0, fmt.Errorf("Parsing pressure type (cpu|io|mem) failed for '%s'", pressureValName)
 	}
 
 	switch strings.Split(pressureValName, "_")[2] {
@@ -201,6 +205,8 @@ func ParsePressure(pressureValName string) (PressureType, PressureOption, Pressu
 		pOpt = Some
 	case string(Full):
 		pOpt = Full
+	default:
+		return "", "", 0, fmt.Errorf("Parsing pressure option (some|full) failed for '%s'", pressureValName)
 	}
 
 	switch strings.Split(pressureValName, "_")[3] {
@@ -210,9 +216,11 @@ func ParsePressure(pressureValName string) (PressureType, PressureOption, Pressu
 		pSec = Avg60sec
 	case "300":
 		pSec = Avg300sec
+	default:
+		return "", "", 0, fmt.Errorf("Parsing pressure second (10|60|300) failed for '%s'", pressureValName)
 	}
 
-	return pType, pOpt, pSec
+	return pType, pOpt, pSec, nil
 }
 
 // Convert elements in []float64 to string and return these as []string
