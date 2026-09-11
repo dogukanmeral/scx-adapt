@@ -104,12 +104,25 @@ Add # of CPU cores feature to CSV output (`log-csv`)
 - [X] Add: Comments for new functions and mechanisms, and an overview of the structure
 - [X] Update: README (Dependencies)
 
-# Backlog
+# v0.3.1
+
+Bug fixes:
+- Fixed pressure telemetry path bug — `/proc/pressure/mem` was used, but the actual kernel filename is `/proc/pressure/memory`.
+
+Improvements:
+- Error handling in ParseLoadAvg and ParsePressure: both now return an error instead of silently returning zero values on malformed value names.
+- TODO cleanup: reformatted task list to Markdown task syntax.
 
 - [X] Fix: `Error occured while reading file '/proc/pressure/': read /proc/pressure/: is a directory` / Add error handling to ParsePressure and ParseLoadAvg
+- [X] Fix: Lightweight and unordered tags
+- [X] Reformat: TODO list to Markdown task syntax
+
+# Backlog
+
+- [ ] Add: New (out of `/proc` fs) parameters for scheduler selection
 - [ ] Optimize: Logging performance (buffering?)
 - [ ] Move: Test binaries in `testdata` to CI
-- [ ] Add: Automated tests for CLI program (Running on a host)
+- [ ] Add: Automated tests for CLI program (Running on a dedicated host)
 - [ ] Add: goReleaser in Github Actions
 - [ ] Record: A demo video
 - [ ] Create: An explanatory website (Github Pages maybe?)
