@@ -61,12 +61,16 @@ func DiskCurIO() (int, error) {
 	var curIO int
 
 	for line := range strings.Lines(string(diskData)) {
-		if partitionHier := strings.Fields(line)[1]; partitionHier == "0" {
+		fields := strings.Fields(line)
+		if len(fields) < 12 {
+			continue
+		}
 
-			curIOPartition, err := strconv.Atoi(strings.Fields(line)[11])
+		if fields[1] == "0" {
+			curIOPartition, err := strconv.Atoi(fields[11])
 
 			if err != nil {
-				return -1, fmt.Errorf("Error occured while converting '%s' to int: %s\n", strings.Fields(line)[11], err)
+				return -1, fmt.Errorf("Error occured while converting '%s' to int: %s\n", fields[11], err)
 			}
 
 			curIO += curIOPartition
