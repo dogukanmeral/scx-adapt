@@ -57,16 +57,24 @@ func IsExecutableELF(path string) bool {
 }
 
 // Checks dependencies: bpftool, kernel (BPF and sched_ext)
-func CheckBPFDependencies() error {
+func CheckBPFDependencies() {
+	// os.Exit() does not run immediately when an error is encountered
+	// All lacking dependencies are printed
+	var depNotFound bool = false
+
 	if err := IsBpfFsMounted(); err != nil {
-		return err
+		fmt.Print(err)
+		depNotFound = true
 	}
 
 	if err := IsSchedExtDirExist(); err != nil {
-		return err
+		fmt.Print(err)
+		depNotFound = true
 	}
 
-	return nil
+	if depNotFound {
+		os.Exit(1)
+	}
 }
 
 func IsBpfFsMounted() error {

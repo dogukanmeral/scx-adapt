@@ -46,10 +46,7 @@ var installServiceCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		if err := checks.CheckBPFDependencies(); err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
+		checks.CheckBPFDependencies()
 
 		// Check if .service file already exists.
 		if helper.IsFileExist(path.Join(paths.SERVICESDIR, paths.SERVICEFILENAME)) {

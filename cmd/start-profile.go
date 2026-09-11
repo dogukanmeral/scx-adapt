@@ -42,10 +42,7 @@ var startProfileCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		if err := checks.CheckBPFDependencies(); err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
+		checks.CheckBPFDependencies()
 
 		// Check if lock exists (profiler already running)
 		if helper.IsFileExist(paths.LOCKFILEPATH) {

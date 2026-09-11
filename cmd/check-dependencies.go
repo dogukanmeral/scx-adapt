@@ -21,23 +21,7 @@ var checkDependenciesCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		// os.Exit() does not run immediately when an error is encountered
-		// All lacking dependencies are printed
-		var depNotFound bool = false
-
-		if err := checks.IsBpfFsMounted(); err != nil {
-			fmt.Print(err)
-			depNotFound = true
-		}
-
-		if err := checks.IsSchedExtDirExist(); err != nil {
-			fmt.Print(err)
-			depNotFound = true
-		}
-
-		if depNotFound {
-			os.Exit(1)
-		}
+		checks.CheckBPFDependencies()
 	},
 }
 
