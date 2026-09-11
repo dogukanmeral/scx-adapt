@@ -23,12 +23,12 @@ type Criteria struct {
 		procs_disk_io
 */
 
-var VALID_VALUE_REGEX = map[string]string{
-	"pressures":    "^(cpu|io|mem)_psi_(some|full)_(10|60|300)$",
-	"loadAvgs":     "^load_avg_(1|5|15)$",
-	"procsRunning": "^procs_running$",
-	"procsBlocked": "^procs_blocked$",
-	"procsDiskIo":  "^procs_disk_io$",
+var VALID_VALUE_REGEX = map[string]*regexp.Regexp{
+	"pressures":    regexp.MustCompile("^(cpu|io|mem)_psi_(some|full)_(10|60|300)$"),
+	"loadAvgs":     regexp.MustCompile("^load_avg_(1|5|15)$"),
+	"procsRunning": regexp.MustCompile("^procs_running$"),
+	"procsBlocked": regexp.MustCompile("^procs_blocked$"),
+	"procsDiskIo":  regexp.MustCompile("^procs_disk_io$"),
 }
 
 var PRESSURE_TYPE_FILES = map[PressureType]string{
@@ -46,7 +46,7 @@ func (c Criteria) Validate() error {
 	}
 
 	for _, r := range VALID_VALUE_REGEX {
-		if m, _ := regexp.MatchString(r, c.ValueName); m {
+		if r.MatchString(c.ValueName) {
 			goto valueNameValid
 		}
 	}
@@ -89,7 +89,7 @@ func (c Criteria) SatisfiesLessMore(sysValue float64) bool {
 
 // Checks if live system values satisfies the criteria.
 func (c Criteria) Satisfies() (bool, error) {
-	if b, _ := regexp.MatchString(VALID_VALUE_REGEX["pressures"], c.ValueName); b {
+	if VALID_VALUE_REGEX["pressures"].MatchString(c.ValueName) {
 		pType, pOpt, pSec, err := ParsePressure(c.ValueName)
 		if err != nil {
 			return false, err
@@ -103,7 +103,7 @@ func (c Criteria) Satisfies() (bool, error) {
 
 		return c.SatisfiesLessMore(pValue), nil
 
-	} else if b, _ := regexp.MatchString(VALID_VALUE_REGEX["loadAvgs"], c.ValueName); b {
+	} else if VALID_VALUE_REGEX["loadAvgs"].MatchString(c.ValueName) {
 		laMinute, err := ParseLoadAvg(c.ValueName)
 		if err != nil {
 			return false, err
@@ -117,7 +117,7 @@ func (c Criteria) Satisfies() (bool, error) {
 
 		return c.SatisfiesLessMore(laValue), nil
 
-	} else if b, _ := regexp.MatchString(VALID_VALUE_REGEX["procsRunning"], c.ValueName); b {
+	} else if VALID_VALUE_REGEX["procsRunning"].MatchString(c.ValueName) {
 		pRunValue, err := GetVariableAsInt("/proc/stat", "procs_running")
 
 		if err != nil {
@@ -126,7 +126,7 @@ func (c Criteria) Satisfies() (bool, error) {
 
 		return c.SatisfiesLessMore(float64(pRunValue)), nil
 
-	} else if b, _ := regexp.MatchString(VALID_VALUE_REGEX["procsBlocked"], c.ValueName); b {
+	} else if VALID_VALUE_REGEX["procsBlocked"].MatchString(c.ValueName) {
 		pBlckValue, err := GetVariableAsInt("/proc/stat", "procs_blocked")
 
 		if err != nil {
@@ -135,7 +135,7 @@ func (c Criteria) Satisfies() (bool, error) {
 
 		return c.SatisfiesLessMore(float64(pBlckValue)), nil
 
-	} else if b, _ := regexp.MatchString(VALID_VALUE_REGEX["procsDiskIo"], c.ValueName); b {
+	} else if VALID_VALUE_REGEX["procsDiskIo"].MatchString(c.ValueName) {
 		pIoValue, err := DiskCurIO()
 
 		if err != nil {

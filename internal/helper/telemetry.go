@@ -161,11 +161,9 @@ func Pressure(presType PressureType, presOpt PressureOption, presSec PressureSec
 		return 0, fmt.Errorf("Error occured while reading file '%s': %s\n", presFile, err)
 	}
 
-	re := regexp.MustCompile(fmt.Sprintf("^%s", presOpt))
-
 	var pressures []float64
 	for line := range strings.Lines(string(presData)) {
-		if re.MatchString(line) {
+		if strings.HasPrefix(line, string(presOpt)) {
 			for _, psi := range strings.Fields(line)[1:4] {
 				presStr := strings.Split(psi, "=")[1]
 
