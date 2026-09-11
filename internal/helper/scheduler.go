@@ -1,6 +1,7 @@
 package helper
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"os/exec"
@@ -162,6 +163,8 @@ func (s Scheduler) Run(stop <-chan bool, errmsg chan<- error) {
 			cmd = exec.Command(s.GetAbsolutePath())
 		}
 
+		var logWriter *bufio.Writer
+
 		if logActive {
 			logFile, err := CreateLogFile(path.Base(s.Path))
 			if err != nil {
@@ -171,8 +174,9 @@ func (s Scheduler) Run(stop <-chan bool, errmsg chan<- error) {
 
 			defer logFile.Close()
 
-			cmd.Stdout = logFile
-			cmd.Stderr = logFile
+			logWriter = bufio.NewWriterSize(logFile, 64*1024) // Write to buffer before writing to the log files (less syscalls)
+			cmd.Stdout = logWriter
+			cmd.Stderr = logWriter
 
 		skipLogging:
 
@@ -182,7 +186,11 @@ func (s Scheduler) Run(stop <-chan bool, errmsg chan<- error) {
 			}
 
 			go func() {
-				errOut <- cmd.Wait() // If a builtin-loader (executable) fails, error is sent to errOut channel, received in for loop
+				err := cmd.Wait()
+				if logWriter != nil {
+					logWriter.Flush() // Flush remaining bytes in the buffer
+				}
+				errOut <- err // If a builtin-loader (executable) fails, error is sent to errOut channel, received in for loop
 			}()
 		}
 	}
