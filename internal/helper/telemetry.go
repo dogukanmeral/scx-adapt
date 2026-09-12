@@ -22,7 +22,7 @@ func GetVariableAsInt(filePath string, variableName string) (int, error) {
 	}
 
 	var v string
-	for _, line := range strings.Split(string(data), "\n") {
+	for line := range strings.Lines(string(data)) {
 		if strings.HasPrefix(line, variableName) {
 			v = strings.Fields(line)[1]
 			break
