@@ -59,25 +59,25 @@ Requires root privileges.`,
 				subdir = paths.EXTERNALFOLDER
 			case string(helper.Builtin):
 				subdir = paths.BUILTINFOLDER
-			default:
-				fmt.Printf("Error: Invalid scheduler loader '%s'. Available scheduler loader types: %s, %s\n",
-					removeSchedulerType, string(helper.External), string(helper.Builtin))
-				os.Exit(1)
-			}
+		default:
+			fmt.Printf("ERROR: Invalid scheduler loader '%s'. Available scheduler loader types: %s, %s\n",
+				removeSchedulerType, string(helper.External), string(helper.Builtin))
+			os.Exit(1)
+		}
 
-			// Check if scheduler exists in the schedulers directory
-			if !helper.IsFileExist(path.Join(subdir, schedulerFile)) {
-				fmt.Printf("Scheduler with filename '%s' does not exist at '%s'\n",
-					schedulerFile, subdir)
-				os.Exit(1)
-			}
+		// Check if scheduler exists in the schedulers directory
+		if !helper.IsFileExist(path.Join(subdir, schedulerFile)) {
+			fmt.Printf("ERROR: Scheduler with filename '%s' does not exist at '%s'\n",
+				schedulerFile, subdir)
+			os.Exit(1)
+		}
 
-			// Remove scheduler file in the schedulers directory
-			if err := os.Remove(path.Join(subdir, schedulerFile)); err != nil {
-				fmt.Printf("Error: Deleting scheduler '%s' in '%s': %s\n",
-					schedulerFile, subdir, err)
-				os.Exit(1)
-			}
+		// Remove scheduler file in the schedulers directory
+		if err := os.Remove(path.Join(subdir, schedulerFile)); err != nil {
+			fmt.Printf("ERROR: Deleting scheduler '%s' in '%s': %s\n",
+				schedulerFile, subdir, err)
+			os.Exit(1)
+		}
 
 			fmt.Printf("Scheduler at '%s' removed.\n", path.Join(subdir, schedulerFile))
 		},

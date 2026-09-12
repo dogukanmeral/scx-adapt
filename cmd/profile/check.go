@@ -29,10 +29,10 @@ schedulers, and criteria. Reports errors if invalid.`,
 				os.Exit(1)
 			case 1:
 				profilePath = args[0]
-			default:
-				fmt.Println("Too many arguments. scx-adapt --help to see usage")
-				os.Exit(1)
-			}
+		default:
+			fmt.Println(msg.TOO_MANY_ARGS_MSG)
+			os.Exit(1)
+		}
 
 			// Read file
 			profileData, err := os.ReadFile(profilePath)
