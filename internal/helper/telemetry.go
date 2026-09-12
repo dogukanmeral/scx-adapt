@@ -6,7 +6,6 @@ package helper
 import (
 	"fmt"
 	"os"
-	"regexp"
 	"strconv"
 	"strings"
 )
@@ -22,14 +21,11 @@ func GetVariableAsInt(filePath string, variableName string) (int, error) {
 		return -1, fmt.Errorf("Error occured while reading file '%s': %s\n", filePath, err)
 	}
 
-	re := regexp.MustCompile(fmt.Sprintf("^%s", variableName))
-
 	var v string
-out:
 	for _, line := range strings.Split(string(data), "\n") {
-		if re.MatchString(line) {
+		if strings.HasPrefix(line, variableName) {
 			v = strings.Fields(line)[1]
-			break out
+			break
 		}
 	}
 
