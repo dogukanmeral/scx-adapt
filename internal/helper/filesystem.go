@@ -6,7 +6,7 @@ import (
 	"path"
 	"time"
 
-	paths "github.com/dogukanmeral/scx-adapt/internal"
+	"github.com/dogukanmeral/scx-adapt/internal/paths"
 )
 
 // Creates directory with permission '700' if it does not exist already.

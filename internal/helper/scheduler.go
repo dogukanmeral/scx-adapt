@@ -8,9 +8,9 @@ import (
 	"path"
 	"slices"
 
-	paths "github.com/dogukanmeral/scx-adapt/internal"
 	"github.com/dogukanmeral/scx-adapt/internal/checks"
 	"github.com/dogukanmeral/scx-adapt/internal/errs"
+	"github.com/dogukanmeral/scx-adapt/internal/paths"
 	"github.com/go-playground/validator/v10"
 )
 

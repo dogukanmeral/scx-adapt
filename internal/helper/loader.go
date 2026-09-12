@@ -5,7 +5,7 @@ import (
 
 	"github.com/cilium/ebpf"
 	"github.com/cilium/ebpf/link"
-	paths "github.com/dogukanmeral/scx-adapt/internal"
+	"github.com/dogukanmeral/scx-adapt/internal/paths"
 )
 
 func LoadBPFScx(filepath string, structName string) error {

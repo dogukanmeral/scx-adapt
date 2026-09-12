@@ -9,9 +9,9 @@ import (
 	"path"
 	"path/filepath"
 
-	paths "github.com/dogukanmeral/scx-adapt/internal"
 	"github.com/dogukanmeral/scx-adapt/internal/helper"
 	"github.com/dogukanmeral/scx-adapt/internal/msg"
+	"github.com/dogukanmeral/scx-adapt/internal/paths"
 
 	"github.com/spf13/cobra"
 )
