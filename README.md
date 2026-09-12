@@ -1,13 +1,29 @@
 # scx-adapt
 
-## What is it?
+`scx-adapt` is basically an automatic selection tool for ***sched_ext*** schedulers.
 
-`scx-adapt` is basically a profiling tool for ***sched_ext*** schedulers. Main goal is to **choose and attach the appropiate scheduler** for the current workload type since there is not a **one-size-fits-all** solution for CPU scheduling.  
+Main goal is to **choose and attach the appropriate scheduler** for the current workload type since there is not a **one-size-fits-all** solution for CPU scheduling.
 
-In YAML configuration files, ***sched_ext*** schedulers with their paths, priorities (scx-adapt iterates over schedulers and their criteria **in order of their priorities**) and their selection criteria are set. Schedulers get attached to kernel depending on the value of system performance metrics (e.g. load average). 
+## Features
 
-## Example configuration file
+- YAML-based profile configuration
+- Automatic scheduler selection based on the current workload
+- Priority-based ordering of schedulers
+- Support for `external` (BPF bytecode) and `builtin` (executable) schedulers
+- Runtime parameters for `builtin` schedulers
+- Selection criteria using live metrics: load average, PSI (pressure), process counts, disk I/O
+- Fallback to the system scheduler when no criteria match
+- BPF loading via `cilium/ebpf` (no `bpftool` dependency)
+- Object-grouped CLI: `profile`, `scheduler`, `service`
+- Optional per-scheduler logging to file
+- sched_ext event tracing
+- Live status overview
 
+---
+
+## Profiles
+
+Example:
 ```yaml
 interval: 1000
 schedulers:
@@ -37,80 +53,109 @@ schedulers:
 
 ```
 
-- **interval**: System metrics reading period of scx-adapt (*in milliseconds*)
-- **path**: Filepath of sched_ext scheduler (BPF bytecode or executable). **Relative filepaths** are also supported but it is recommended to write **absolute paths**.
-  - Schedulers added via `add-scheduler` command, can be called by their filenames in profile configuration file (stored in `/var/lib/scx-adapt/schedulers` by default).
-- **loader**:  Scheduler loader type:
-  - ***external***: BPF bytecode without the linker/loader logic. Linked using `scx-adapt`'s linker.
-  - ***builtin***: Executable, links BPF program itself and has userspace counter-part.
-- **structName** (REQUIRED to link `builtin-loader` schedulers): BPF map key of the struct which holds pointers of scheduling methods.
-- **parameters** (optional) (ONLY for `builtin-loader` schedulers): Arguments to execute `builtin-loader` scheduler with.
-- **priority**: Priority of scheduler (1-139). scx-adapt starts checking the schedulers' criteria in order of their priorities (smaller value, higher priority). Attaches the first matching scheduler to the kernel.
-- **log** (optional) (ONLY for `builtin-loader` schedulers): Logging on or off (true|false) for `builtin-loader` scheduler. Stdout and stderr of scheduler process are piped into a log file which is located at `/var/log/scx-adapt/` (by default).
-- **criterias**: Criterias depending on the current value of system performance metrics. For now, it supports `more_than` and `less_than`
-- **value_name**: System metric name
-    - Currently supported metrics:
-        - (cpu|io|mem)\_psi_(some|full)_(10|60|300)
-		- load_avg_(1|5|15)
-		- procs_running
-		- procs_blocked
-		- procs_disk_io
+| Key | Required | Applies to | Description |
+| --- | --- | --- | --- |
+| `interval` | Yes | — | How often scx-adapt reads system metrics, in milliseconds |
+| `path` | Yes | all schedulers | Where the scheduler file is. Can be a relative path, but absolute is safer. Schedulers added with `scheduler add` can be referred to by filename only. |
+| `loader` | Yes | all schedulers | How the scheduler is loaded: `external` (raw BPF bytecode, scx-adapt links it) or `builtin` (standalone executable). |
+| `structName` | Only `external` | external | The BPF map key that points to the scheduler's methods. |
+| `parameters` | No | `builtin` only | Command-line arguments passed to the `builtin` scheduler. |
+| `priority` | Yes | all schedulers | Scheduler priority (1-139). Lower number = checked first. The first scheduler whose criteria match is used. |
+| `log` | No | `builtin` only | Turn logging on (`true`) or off (`false`). Scheduler output goes to a file in `/var/log/scx-adapt/`. |
+| `criterias` | Yes | all schedulers | The conditions a scheduler must meet to be selected. Each one compares a metric using `more_than` or `less_than`. |
+| `value_name` | Yes | within criteria | Which metric to check. See the table below. |
+
+### Currently supported metrics (`value_name`)
+
+| Metric | Format | What it measures |
+| --- | --- | --- |
+| Pressure Stall Information | `(cpu\|io\|mem)_psi_(some\|full)_(10\|60\|300)` | How much time tasks spent waiting on CPU, I/O or memory |
+| Load average | `load_avg_(1\|5\|15)` | System load over the last 1, 5 or 15 minutes |
+| Running processes | `procs_running` | How many processes are currently running |
+| Blocked processes | `procs_blocked` | How many processes are waiting on I/O |
+| Disk I/O | `procs_disk_io` | How many processes are doing I/O right now |
+
+---
 
 ## Using scx-adapt
 
 - `scx-adapt [command]`
 
-| Command | Explanation |
-| --- | --- |
-| `add-profile <profile_path>` | Add scx-adapt profile configuration to profiles folder | 
-| `check-dependencies` | Check dependencies of scx-adapt |
-| `check-profile <profile_path>` | Check if profile file in YAML format is valid |
-| `install-service` | Add Systemd service file 'scx-adapt@.service' to '/etc/systemd/system' |
-| `list-profiles` | List profile configurations in profiles folder |
-| `log-csv <csv_file_path> [interval]` | Print system variables to file in csv format |
-| `log-sched` | Print sched_ext event tracing to stdout |
-| `remove-profile <profile_filename>` | Remove profile configuration from profiles folder |
-| `remove-service`  | Remove Systemd service file 'scx-adapt@.service' in '/etc/systemd/system' |
-| `start-profile <profile_path>` | Run scx-adapt with the profile configuration |
-| `status` | Print currently running sched_ext scheduler. |
-| `add-scheduler --loader external\|builtin <scheduler_path(s)...>` | Add sched_ext scheduler to schedulers folder |
-| `remove-scheduler --loader external\|builtin <scheduler_filename>` | Remove scheduler from schedulers folder |
-| `list-schedulers` | List schedulers in schedulers folder |
+Commands are grouped into three main areas: `profile`, `scheduler` and `service`.
 
-### Systemd service
+### Profiles
+
+| Command | What it does |
+| --- | --- |
+| `profile add <path>` | Copy a profile file into the profiles folder |
+| `profile ls` | List all valid profiles in the profiles folder |
+| `profile check <path>` | Validate a profile file without adding it |
+| `profile edit <filename>` | Open a stored profile in your editor |
+| `profile start <path>` | Run scx-adapt with a profile (by filename or any path) |
+| `profile rm <filename>` | Delete a profile from the profiles folder |
+
+### Schedulers
+
+| Command | What it does |
+| --- | --- |
+| `scheduler add --loader external\|builtin <path(s)>` | Add one or more schedulers to the schedulers folder |
+| `scheduler ls` | List added schedulers (grouped by loader type) |
+| `scheduler rm --loader external\|builtin <filename>` | Remove a scheduler |
+
+### Service
+
+| Command | What it does |
+| --- | --- |
+| `service install` | Install the systemd service file |
+| `service edit` | Edit the service file with `systemctl edit --full` |
+| `service reset` | Reset the service file to its defaults |
+| `service rm` | Remove the systemd service file |
+
+### Everything else
+
+| Command | What it does |
+| --- | --- |
+| `check-dependencies` | Check that the kernel and BPF setup are ready |
+| `status` | Show scheduler/profile counts and current state |
+| `trace-sched <file>` | Write sched_ext event tracing to a file |
+
+---
+
+## Systemd service
 
 ```ini
 [Unit]
 Description=scx-adapt daemon for profile at %I
 StartLimitIntervalSec=30
-StartLimitBurst=2 
+StartLimitBurst=4 
 
 [Service]
 Type=exec
-ExecStart=/usr/bin/scx-adapt start-profile  %i
+ExecStart=/usr/bin/scx-adapt profile start %i
 Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target
 ```
 
-scx-adapt service self-heals unless schedulers, which are defined inside the YAML configuration file, fail **more than twice within 30 seconds** (by default).  
+scx-adapt service self-heals unless schedulers, which are defined inside the YAML configuration file, fail **more than four times within 30 seconds** (by default).  
 
 To install the service file and enable/start the service:
-- `$ scx-adapt install-service`
-- `$ systemctl enable scx-adapt@<profile_path>`
-- `$ systemctl start scx-adapt@<profile_path>`
+- `# scx-adapt service install`
+- `# systemctl enable scx-adapt@<profile_path>`
+- `# systemctl start scx-adapt@<profile_path>`
 
 To disable/stop and delete service file:
  
-- `$ systemctl disable scx-adapt@<profile_path>`
-- `$ systemctl stop scx-adapt@<profile_path>`
-- `$ scx-adapt remove-service`
+- `# systemctl disable scx-adapt@<profile_path>`
+- `# systemctl stop scx-adapt@<profile_path>`
+- `# scx-adapt service rm`
 
+---
 
-### Logs
+## Logs
 
-For userspace schedulers (with `log: true`), standart output and standart error streams are written into log files which are located in `/var/log/scx-adapt` by default.
+For builtin-loader schedulers with `log: true`, standard output and standard error streams are written into log files which are located in `/var/log/scx-adapt` by default.
 
 ```bash
 captain@fedora:/var/log/scx-adapt 🚢🐳 $ ls -1
@@ -120,6 +165,8 @@ captain@fedora:/var/log/scx-adapt 🚢🐳 $ ls -1
 2026-05-10_17-35-35_scx_simple.log
 2026-05-10_17-47-34_scx_chaos.log
 ```
+
+---
 
 ## Installation
 
@@ -142,11 +189,15 @@ The kernel has to be built with the following configuration:
 
 <https://github.com/sched-ext/scx#build--install>
 
+---
+
 ## Further development
 
-I (Doğukan Meral) have been the sole developer for scx-adapt while my friend [Onur Karagür](https://github.com/onurkaragur/) is currently working on performance analysis of schedulers and ways to optimize scx-adapt configurations using machine learning techniques on the [scx-adapt-experiments](https://github.com/onurkaragur/scx-adapt-experiments) repository.
+I (Doğukan Meral) have been the sole developer for scx-adapt while my friend [Onur Karagür](https://github.com/onurkaragur/) helped me on performance analysis of schedulers and ways to optimize scx-adapt configurations using machine learning techniques on the [scx-adapt-experiments](https://github.com/onurkaragur/scx-adapt-experiments) repository.
 
-Your feedbacks, suggestions, criticisms and most importantly your contributions are highly appriciated. Feel free to contact me at my e-mail address `dogukan.meral@yahoo.com`   
+Your feedbacks, suggestions, criticisms and most importantly your contributions are highly appreciated. Feel free to contact me at my e-mail address `dogukan.meral@protonmail.com`   
+
+---
 
 ## Helpful resources for bpf and sched_ext / Inspirations for this project
 
@@ -155,6 +206,8 @@ Your feedbacks, suggestions, criticisms and most importantly your contributions 
 - [scx repository](https://github.com/sched-ext/scx) which contains many Sched_ext schedulers and tools
 - [Perfetto](https://ui.perfetto.dev/): Browser based and locally running scheduler trace visualisation and analysis tool
 - Changwoo Min's ['sched_ext: a BPF-extensible scheduler class'](https://blogs.igalia.com/changwoo/sched-ext-a-bpf-extensible-scheduler-class-part-1/) and ['sched_ext: scheduler architecture and interfaces'](blogs.igalia.com/changwoo/sched-ext-scheduler-architecture-and-interfaces-part-2/) blog articles
+
+---
 
 ## License
 
