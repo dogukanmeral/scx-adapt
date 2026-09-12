@@ -90,7 +90,7 @@ Requires root privileges.`,
 		"",
 		"Scheduler loader type (external|builtin)",
 	)
-	cmd.MarkFlagRequired("type")
+	cmd.MarkFlagRequired("loader")
 
 	return cmd
 }
