@@ -1,0 +1,71 @@
+package service
+
+import (
+	"fmt"
+	"os"
+	"os/exec"
+	"path"
+
+	"github.com/dogukanmeral/scx-adapt/internal/checks"
+	"github.com/dogukanmeral/scx-adapt/internal/helper"
+	"github.com/dogukanmeral/scx-adapt/internal/msg"
+	"github.com/dogukanmeral/scx-adapt/internal/paths"
+	"github.com/spf13/cobra"
+)
+
+const SERVICEFILE string = `
+[Unit]
+Description=scx-adapt daemon for profile at %I
+StartLimitIntervalSec=30
+StartLimitBurst=2 
+
+[Service]
+Type=exec
+ExecStart=/usr/bin/scx-adapt start-profile  %i
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target`
+
+func newInstallCmd() *cobra.Command {
+	return &cobra.Command{
+		Use:   "install",
+		Short: fmt.Sprintf("Add Systemd service file '%s' to '%s'", paths.SERVICEFILENAME, paths.SERVICESDIR),
+		Run: func(cmd *cobra.Command, args []string) {
+			if len(args) > 0 {
+				fmt.Println(msg.TOO_MANY_ARGS_MSG)
+				os.Exit(1)
+			}
+
+			if os.Geteuid() != 0 {
+				fmt.Println(msg.MUST_RUN_AS_ROOT_MSG)
+				os.Exit(1)
+			}
+
+			checks.CheckBPFDependencies()
+
+			// Check if .service file already exists.
+			if helper.IsFileExist(path.Join(paths.SERVICESDIR, paths.SERVICEFILENAME)) {
+				fmt.Printf("ERROR: Service file already exists at %s\n", path.Join(paths.SERVICESDIR,
+					paths.SERVICEFILENAME))
+				os.Exit(1)
+			}
+
+			// Write service file.
+			if err := os.WriteFile(path.Join(paths.SERVICESDIR,
+				paths.SERVICEFILENAME), []byte(SERVICEFILE), 0700); err != nil {
+				fmt.Println(err)
+				os.Exit(1)
+			}
+
+			fmt.Printf("Service file added: %s\n", path.Join(paths.SERVICESDIR, paths.SERVICEFILENAME))
+
+			reloadCmd := exec.Command("systemctl", "daemon-reload")
+
+			if err := reloadCmd.Run(); err != nil {
+				fmt.Printf("ERROR: Reloading daemons: %s\n", err)
+				os.Exit(1)
+			}
+		},
+	}
+}

@@ -1,0 +1,80 @@
+package scheduler
+
+import (
+	"fmt"
+	"os"
+	"path"
+
+	"github.com/dogukanmeral/scx-adapt/internal/helper"
+	"github.com/dogukanmeral/scx-adapt/internal/msg"
+	"github.com/dogukanmeral/scx-adapt/internal/paths"
+	"github.com/spf13/cobra"
+)
+
+var removeSchedulerType string
+
+func newRmCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "rm [flags] <scheduler-filename>",
+		Short: "Remove scheduler",
+		Run: func(cmd *cobra.Command, args []string) {
+			var schedulerFile string
+
+			switch len(args) {
+			case 0:
+				fmt.Println(msg.MISSING_ARGS_MSG)
+				os.Exit(1)
+			case 1:
+				schedulerFile = args[0]
+			default:
+				fmt.Println(msg.TOO_MANY_ARGS_MSG)
+				os.Exit(1)
+			}
+
+			if os.Geteuid() != 0 {
+				fmt.Println(msg.MUST_RUN_AS_ROOT_MSG)
+				os.Exit(1)
+			}
+
+			var subdir string // paths.EXTERNALFOLDER or paths.BUILTINFOLDER
+
+			switch removeSchedulerType {
+			case string(helper.External):
+				subdir = paths.EXTERNALFOLDER
+			case string(helper.Builtin):
+				subdir = paths.BUILTINFOLDER
+			default:
+				fmt.Printf("Error: Invalid scheduler loader '%s'. Available scheduler loader types: %s, %s\n",
+					removeSchedulerType, string(helper.External), string(helper.Builtin))
+				os.Exit(1)
+			}
+
+			// Check if scheduler exists in the schedulers directory
+			if !helper.IsFileExist(path.Join(subdir, schedulerFile)) {
+				fmt.Printf("Scheduler with filename '%s' does not exist at '%s'\n",
+					schedulerFile, subdir)
+				os.Exit(1)
+			}
+
+			// Remove scheduler file in the schedulers directory
+			if err := os.Remove(path.Join(subdir, schedulerFile)); err != nil {
+				fmt.Printf("Error: Deleting scheduler '%s' in '%s': %s\n",
+					schedulerFile, subdir, err)
+				os.Exit(1)
+			}
+
+			fmt.Printf("Scheduler at '%s' removed.\n", path.Join(subdir, schedulerFile))
+		},
+	}
+
+	cmd.Flags().StringVarP(
+		&removeSchedulerType,
+		"loader",
+		"l",
+		"",
+		"Scheduler loader type (external|builtin)",
+	)
+	cmd.MarkFlagRequired("type")
+
+	return cmd
+}
