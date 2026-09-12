@@ -16,6 +16,10 @@ func newCheckCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "check-profile <profile-path>",
 		Short: "Check if profile file (in YAML format) is valid",
+		Long: `Check whether a profile file is a valid scx-adapt configuration.
+
+Parses the YAML file at the given path and validates its structure,
+schedulers, and criteria. Reports errors if invalid.`,
 		Run: func(cmd *cobra.Command, args []string) {
 			var profilePath string
 

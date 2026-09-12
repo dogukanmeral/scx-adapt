@@ -19,8 +19,23 @@ import (
 
 func newStartCmd() *cobra.Command {
 	return &cobra.Command{
-		Use:   "start-profile <profile-path>",
+		Use:   "start <profile-path>",
 		Short: "Run scx-adapt with a specific profile",
+		Long: `Run scx-adapt with a specific profile.
+
+The profile can be referenced either by its filename (for profiles stored in
+the profiles folder) or by an absolute/relative path to a profile file located
+anywhere in the filesystem.
+
+Examples:
+  # Start a profile stored in the profiles folder
+  scx-adapt profile start my-profile.yaml
+
+  # Start a profile from an absolute path
+  scx-adapt profile start /home/user/profiles/gaming.yaml
+
+  # Start a profile from a relative path
+  scx-adapt profile start ./profiles/work.yaml`,
 		Run: func(cmd *cobra.Command, args []string) {
 			var filepath string
 

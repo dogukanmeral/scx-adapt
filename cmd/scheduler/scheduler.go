@@ -9,6 +9,10 @@ func NewCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "scheduler",
 		Short: "Manage schedulers",
+		Long: `Manage sched_ext schedulers.
+
+Schedulers are stored in the schedulers folder, grouped by loader type
+(external or builtin), and are referenced by profiles.`,
 	}
 
 	cmd.AddCommand(

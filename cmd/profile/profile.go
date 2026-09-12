@@ -9,6 +9,10 @@ func NewCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "profile",
 		Short: "Manage scx-adapt profiles",
+		Long: `Manage scx-adapt profiles.
+
+Profiles are YAML configuration files that define a set of sched_ext
+schedulers and the criteria used to select between them at runtime.`,
 	}
 
 	cmd.AddCommand(

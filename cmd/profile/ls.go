@@ -18,6 +18,12 @@ func newLsCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "ls",
 		Short: "List profiles",
+		Long: `List profile configurations in the profiles folder.
+
+Prints the filename of each valid profile found in the profiles folder.
+Invalid profiles are reported as errors.
+
+Requires root privileges.`,
 		Run: func(cmd *cobra.Command, args []string) {
 			switch len(args) {
 			case 0:

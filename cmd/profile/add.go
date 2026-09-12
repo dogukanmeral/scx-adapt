@@ -20,6 +20,12 @@ func newAddCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "add <profile-path>",
 		Short: "Add profile",
+		Long: `Add a profile configuration to the profiles folder.
+
+Copies the profile file (in YAML format) from the given path into the
+profiles folder after validating it.
+
+Requires root privileges.`,
 		Run: func(cmd *cobra.Command, args []string) {
 			var profilePath string
 

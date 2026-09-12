@@ -14,6 +14,11 @@ import (
 var checkDependenciesCmd = &cobra.Command{
 	Use:   "check-dependencies",
 	Short: "Check dependencies of scx-adapt",
+	Long: `Check that all dependencies required by scx-adapt are available.
+
+This verifies that the BPF filesystem is mounted and that the kernel has
+sched_ext support (the '/sys/kernel/sched_ext' directory exists). If any
+dependency is missing, it is reported.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) > 0 {
 			fmt.Println("Too many arguments. scx-adapt --help to see usage")

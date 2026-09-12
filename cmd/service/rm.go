@@ -18,6 +18,11 @@ func newRmCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "rm",
 		Short: "Remove Systemd service file",
+		Long: `Remove the systemd service file for scx-adapt.
+
+Deletes the scx-adapt systemd unit from the systemd directory.
+
+Requires root privileges.`,
 		Run: func(cmd *cobra.Command, args []string) {
 			if len(args) > 0 {
 				fmt.Println(msg.TOO_MANY_ARGS_MSG)

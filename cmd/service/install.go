@@ -34,6 +34,12 @@ func newInstallCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "install",
 		Short: fmt.Sprintf("Add Systemd service file '%s' to '%s'", paths.SERVICEFILENAME, paths.SERVICESDIR),
+		Long: `Install the systemd service file for scx-adapt.
+
+Writes the scx-adapt systemd template unit into the systemd directory and
+runs 'systemctl daemon-reload'.
+
+Requires root privileges.`,
 		Run: func(cmd *cobra.Command, args []string) {
 			if len(args) > 0 {
 				fmt.Println(msg.TOO_MANY_ARGS_MSG)

@@ -20,6 +20,19 @@ func newRmCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "rm [flags] <scheduler-filename>",
 		Short: "Remove scheduler",
+		Long: `Remove a scheduler from the schedulers folder.
+
+Deletes the scheduler file with the given filename from the loader-specific
+subfolder selected by the '--loader' flag (external or builtin).
+
+Examples:
+  # Remove a builtin-loader scheduler
+  scx-adapt scheduler rm --loader builtin scx_bpfland
+
+  # Remove an external-loader scheduler
+  scx-adapt scheduler rm -l external scx_rustland.bpf.o
+
+Requires root privileges.`,
 		Run: func(cmd *cobra.Command, args []string) {
 			var schedulerFile string
 

@@ -18,6 +18,11 @@ func newRmCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "rm <profile-filename>",
 		Short: "Remove profile",
+		Long: `Remove a profile from the profiles folder.
+
+Deletes the profile file with the given filename from the profiles folder.
+
+Requires root privileges.`,
 		Run: func(cmd *cobra.Command, args []string) {
 			var profileFile string
 

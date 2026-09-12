@@ -13,9 +13,12 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:     "scx-adapt",
-	Short:   "Adaptive and automated scheduler swtiching for sched_ext",
-	Long:    ``,
+	Use:   "scx-adapt",
+	Short: "Adaptive and automated scheduler swtiching for sched_ext",
+	Long: `scx-adapt is an adaptive and automated scheduler policy manager for sched_ext.
+
+It manages profiles (sets of sched_ext schedulers with selection criteria),
+schedulers, and the systemd service used to run them automatically.`,
 	Version: "0.3.1",
 }
 

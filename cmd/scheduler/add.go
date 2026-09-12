@@ -22,6 +22,22 @@ func newAddCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "add [flags] <scheduler-path(s)...>",
 		Short: "Add sched_ext scheduler(s)",
+		Long: `Add one or more sched_ext schedulers to the schedulers folder.
+
+Each scheduler is copied into the loader-specific subfolder selected by the
+'--loader' flag (external or builtin) after being validated.
+
+Examples:
+  # Add a builtin-loader scheduler
+  scx-adapt scheduler add --loader builtin scx_bpfland
+
+  # Add an external-loader scheduler (BPF object)
+  scx-adapt scheduler add --loader external scx_rustland.bpf.o
+
+  # Add multiple schedulers at once
+  scx-adapt scheduler add -l builtin scx_bpfland scx_lavd
+
+Requires root privileges.`,
 		Run: func(cmd *cobra.Command, args []string) {
 			var schedulerPaths []string
 			var subdir string

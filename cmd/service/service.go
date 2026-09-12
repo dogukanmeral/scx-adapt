@@ -9,6 +9,10 @@ func NewCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "service",
 		Short: "Manage the systemd service file",
+		Long: `Manage the systemd service file for scx-adapt.
+
+Install, remove, edit, or reset the systemd unit that runs scx-adapt
+automatically.`,
 	}
 
 	cmd.AddCommand(

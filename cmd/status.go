@@ -16,7 +16,10 @@ import (
 var statusCmd = &cobra.Command{
 	Use:   "status",
 	Short: "Print currently running sched_ext scheduler",
-	Long:  ``,
+	Long: `Print the currently running sched_ext scheduler.
+
+Reads '/sys/kernel/sched_ext/root/ops' to report the name of the active
+sched_ext scheduler. Reports an error if no custom scheduler is attached.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		switch len(args) {
 		case 0:

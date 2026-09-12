@@ -21,6 +21,13 @@ func newEditCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "edit <profile-filename>",
 		Short: "Edit a profile with the default editor",
+		Long: `Edit a profile stored in the profiles folder.
+
+Opens the profile in the default editor (from $VISUAL or $EDITOR). After the
+editor closes, the profile is validated. If it is invalid, you are prompted to
+restore the backup, edit again, or keep the changes.
+
+Requires root privileges.`,
 		Run: func(cmd *cobra.Command, args []string) {
 			var profileName string
 

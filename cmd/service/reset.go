@@ -19,6 +19,12 @@ func newResetCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "reset",
 		Short: "Reset the systemd service file to its default state",
+		Long: `Reset the systemd service file to its default state.
+
+Restores the scx-adapt systemd unit from the built-in default template and
+runs 'systemctl daemon-reload'.
+
+Requires root privileges.`,
 		Run: func(cmd *cobra.Command, args []string) {
 			if len(args) > 0 {
 				fmt.Println(msg.TOO_MANY_ARGS_MSG)

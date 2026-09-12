@@ -19,6 +19,12 @@ func newLsCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "ls",
 		Short: "List added schedulers",
+		Long: `List schedulers in the schedulers folder.
+
+Prints the filename of each scheduler, grouped by loader type (external or
+builtin). Only valid schedulers are listed.
+
+Requires root privileges.`,
 		Run: func(cmd *cobra.Command, args []string) {
 			switch len(args) {
 			case 0:

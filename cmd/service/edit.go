@@ -17,6 +17,11 @@ func newEditCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "edit",
 		Short: "Edit the systemd service file",
+		Long: `Edit the systemd service file for scx-adapt.
+
+Opens the unit file in the editor via 'systemctl edit --full'.
+
+Requires root privileges.`,
 		Run: func(cmd *cobra.Command, args []string) {
 			if len(args) > 0 {
 				fmt.Println(msg.TOO_MANY_ARGS_MSG)

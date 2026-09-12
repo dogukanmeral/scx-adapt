@@ -16,7 +16,12 @@ import (
 var traceCmd = &cobra.Command{
 	Use:   "trace-sched <file_path>",
 	Short: "Write sched_ext event tracing to file",
-	Long:  ``,
+	Long: `Write sched_ext event tracing to a file.
+
+Enables sched_ext trace events in the kernel tracing subsystem and streams
+them to the given file until interrupted.
+
+Requires root privileges.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		var filepath string
 
