@@ -131,7 +131,7 @@ Examples:
 						fmt.Println("INFO: None of sched_ext schedulers match criterias. Switching to system scheduler...")
 
 					default:
-						fmt.Printf("INFO: Criterias match for scheduler '%s'...\n", sched.Path)
+						fmt.Printf("INFO: Criterias match for the scheduler '%s' (priority %d)...\n", sched.Path, sched.Priority)
 					}
 
 					if checks.IsSchedExtActive() {
