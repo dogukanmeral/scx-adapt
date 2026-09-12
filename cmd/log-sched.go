@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/dogukanmeral/scx-adapt/internal/helper"
+	"github.com/dogukanmeral/scx-adapt/internal/msg"
 
 	"github.com/spf13/cobra"
 )
@@ -21,19 +22,19 @@ var logCmd = &cobra.Command{
 		var filepath string
 
 		if os.Geteuid() != 0 {
-			fmt.Println(MUST_RUN_AS_ROOT_MSG)
+			fmt.Println(msg.MUST_RUN_AS_ROOT_MSG)
 			os.Exit(1)
 		}
 
 		switch len(args) {
 		case 0:
-			fmt.Println(MISSING_ARGS_MSG)
+			fmt.Println(msg.MISSING_ARGS_MSG)
 			os.Exit(1)
 		case 1:
 			filepath = args[0]
 			helper.TraceSchedExt(filepath)
 		default:
-			fmt.Println(TOO_MANY_ARGS_MSG)
+			fmt.Println(msg.TOO_MANY_ARGS_MSG)
 			os.Exit(1)
 		}
 	},

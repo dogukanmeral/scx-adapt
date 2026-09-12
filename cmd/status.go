@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/dogukanmeral/scx-adapt/internal/helper"
+	"github.com/dogukanmeral/scx-adapt/internal/msg"
 
 	"github.com/spf13/cobra"
 )
@@ -28,7 +29,7 @@ var statusCmd = &cobra.Command{
 
 			fmt.Printf("Current scheduler: %s\n", c)
 		default:
-			fmt.Println(TOO_MANY_ARGS_MSG)
+			fmt.Println(msg.TOO_MANY_ARGS_MSG)
 			os.Exit(1)
 		}
 	},

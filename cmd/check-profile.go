@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/dogukanmeral/scx-adapt/internal/helper"
+	"github.com/dogukanmeral/scx-adapt/internal/msg"
 
 	"github.com/spf13/cobra"
 )
@@ -22,7 +23,7 @@ var checkProfileCmd = &cobra.Command{
 
 		switch len(args) {
 		case 0:
-			fmt.Println(MISSING_ARGS_MSG)
+			fmt.Println(msg.MISSING_ARGS_MSG)
 			os.Exit(1)
 		case 1:
 			profilePath = args[0]

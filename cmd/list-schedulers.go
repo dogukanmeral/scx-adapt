@@ -12,6 +12,7 @@ import (
 	paths "github.com/dogukanmeral/scx-adapt/internal"
 	"github.com/dogukanmeral/scx-adapt/internal/checks"
 	"github.com/dogukanmeral/scx-adapt/internal/helper"
+	"github.com/dogukanmeral/scx-adapt/internal/msg"
 	"github.com/spf13/cobra"
 )
 
@@ -23,7 +24,7 @@ var listSchedulersCmd = &cobra.Command{
 		switch len(args) {
 		case 0:
 			if os.Geteuid() != 0 {
-				fmt.Println(MUST_RUN_AS_ROOT_MSG)
+				fmt.Println(msg.MUST_RUN_AS_ROOT_MSG)
 				os.Exit(1)
 			}
 
@@ -70,7 +71,7 @@ var listSchedulersCmd = &cobra.Command{
 				}
 			}
 		default:
-			fmt.Println(TOO_MANY_ARGS_MSG)
+			fmt.Println(msg.TOO_MANY_ARGS_MSG)
 			os.Exit(1)
 		}
 	},

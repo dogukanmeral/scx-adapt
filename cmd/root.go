@@ -10,11 +10,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const MISSING_ARGS_MSG = "ERROR: Missing arguments. scx-adapt --help to see usage"
-const TOO_MANY_ARGS_MSG = "ERROR: Too many arguments. scx-adapt --help to see usage"
-const MUST_RUN_AS_ROOT_MSG = "ERROR: Must run as root"
-const INTERRUPT_MSG = "INFO: Interrupted... Exiting..."
-
 var rootCmd = &cobra.Command{
 	Use:     "scx-adapt",
 	Short:   "Adaptive and automated scheduler policies for sched_ext",

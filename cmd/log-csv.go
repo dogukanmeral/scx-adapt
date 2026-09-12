@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/dogukanmeral/scx-adapt/internal/helper"
+	"github.com/dogukanmeral/scx-adapt/internal/msg"
 
 	"github.com/spf13/cobra"
 )
@@ -81,7 +82,7 @@ var logCsvCmd = &cobra.Command{
 
 		switch len(args) {
 		case 0:
-			fmt.Println(MISSING_ARGS_MSG)
+			fmt.Println(msg.MISSING_ARGS_MSG)
 			os.Exit(1)
 		case 1:
 			filepath = args[0]
@@ -95,7 +96,7 @@ var logCsvCmd = &cobra.Command{
 				interval = time.Duration(i)
 			}
 		default:
-			fmt.Println(TOO_MANY_ARGS_MSG)
+			fmt.Println(msg.TOO_MANY_ARGS_MSG)
 			os.Exit(1)
 		}
 
@@ -116,7 +117,7 @@ var logCsvCmd = &cobra.Command{
 			f.Close()
 
 			if slices.Contains([]os.Signal{os.Interrupt, syscall.SIGTERM}, sig) {
-				fmt.Println(INTERRUPT_MSG)
+				fmt.Println(msg.INTERRUPT_MSG)
 				os.Exit(0)
 			} else {
 				os.Exit(1)

@@ -12,6 +12,7 @@ import (
 	paths "github.com/dogukanmeral/scx-adapt/internal"
 	"github.com/dogukanmeral/scx-adapt/internal/checks"
 	"github.com/dogukanmeral/scx-adapt/internal/helper"
+	"github.com/dogukanmeral/scx-adapt/internal/msg"
 
 	"github.com/spf13/cobra"
 )
@@ -37,12 +38,12 @@ var installServiceCmd = &cobra.Command{
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) > 0 {
-			fmt.Println(TOO_MANY_ARGS_MSG)
+			fmt.Println(msg.TOO_MANY_ARGS_MSG)
 			os.Exit(1)
 		}
 
 		if os.Geteuid() != 0 {
-			fmt.Println(MUST_RUN_AS_ROOT_MSG)
+			fmt.Println(msg.MUST_RUN_AS_ROOT_MSG)
 			os.Exit(1)
 		}
 
