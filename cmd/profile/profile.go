@@ -15,6 +15,7 @@ func NewCmd() *cobra.Command {
 		newAddCmd(),
 		newLsCmd(),
 		newRmCmd(),
+		newEditCmd(),
 		newCheckCmd(),
 		newStartCmd(),
 	)
