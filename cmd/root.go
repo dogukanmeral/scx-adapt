@@ -19,7 +19,7 @@ var rootCmd = &cobra.Command{
 
 It manages profiles (sets of sched_ext schedulers with selection criteria),
 schedulers, and the systemd service used to run them automatically.`,
-	Version: "0.3.1",
+	Version: "0.4.0",
 }
 
 func init() {

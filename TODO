@@ -117,13 +117,31 @@ Improvements:
 - [X] Fix: Lightweight and unordered tags
 - [X] Reformat: TODO list to Markdown task syntax
 
+# v0.4.0
+
+- [X] docs: Switch to "conventional commits" (from v0.4.0)
+- [X] refactor: Move message printing and os.Exit() to check functions (only for repetitive ones) 
+- [X] perf: Improve logging CPU-time
+- [X] perf: Optimize `/proc` fs reads and regex in `telemetry.go` and `criteria.go`
+- [X] feat: Switch to logically grouped CLI command structure (e.g. `scx-adapt profile add`)
+- [X] feat: Add `profile edit` option (use the default text editor)
+- [X] feat: Add `service edit` (edits .service via `systemctl --edit full`) and `service reset`
+- [X] remove: `log-csv` command since it hasn't produced any useful data
+- [X] rename: Change `log-sched` to `trace-sched`
+- [X] feat: Change `status` command to print detailed info about the live state and saved objects
+- [X] feat: Add `--version` | `-v`
+- [X] feat: Write matched scheduler's priority to profile logs
+- [X] docs: Add the license header to source files
+- [X] docs: Make `README.md` more sexy and pleasant to read
+
 # Backlog
 
-- [ ] Add: New (out of `/proc` fs) parameters for scheduler selection
-- [ ] Optimize: Logging performance (buffering?)
-- [ ] Move: Test binaries in `testdata` to CI
-- [ ] Add: Automated tests for CLI program (Running on a dedicated host)
-- [ ] Add: goReleaser in Github Actions
-- [ ] Record: A demo video
-- [ ] Create: An explanatory website (Github Pages maybe?)
-- [ ] Add: Info and warning message passing to `start-scheduler`
+- [ ] docs: Write a blog post about `scx-adapt`
+- [ ] feat: Implement new (out of `/proc` fs) parameters for scheduler selection
+- [ ] feat: Bring `scheduler start` option back
+- [ ] ci: Move test binaries in `testdata` to CI
+- [ ] test: Add automated tests for the CLI (Running on a dedicated host)
+- [ ] build: Implement "goReleaser" in Github Actions
+- [ ] docs: Record a demo video
+- [ ] docs: Create an explanatory website (Github Pages?)
+- [ ] feat: Add info and warning message passing capability to `start-scheduler`
