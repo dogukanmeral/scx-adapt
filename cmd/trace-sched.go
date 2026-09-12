@@ -12,9 +12,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// logCmd represents the log command
-var logCmd = &cobra.Command{
-	Use:   "log-sched <file_path>",
+// traceCmd represents the log command
+var traceCmd = &cobra.Command{
+	Use:   "trace-sched <file_path>",
 	Short: "Write sched_ext event tracing to file",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -40,5 +40,5 @@ var logCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(logCmd)
+	rootCmd.AddCommand(traceCmd)
 }
