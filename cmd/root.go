@@ -16,9 +16,10 @@ const MUST_RUN_AS_ROOT_MSG = "ERROR: Must run as root"
 const INTERRUPT_MSG = "INFO: Interrupted... Exiting..."
 
 var rootCmd = &cobra.Command{
-	Use:   "scx-adapt",
-	Short: "Adaptive and automated scheduler policies for sched_ext",
-	Long:  ``,
+	Use:     "scx-adapt",
+	Short:   "Adaptive and automated scheduler policies for sched_ext",
+	Long:    ``,
+	Version: "0.3.1",
 }
 
 func Execute() {
