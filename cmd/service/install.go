@@ -24,7 +24,7 @@ StartLimitBurst=4
 
 [Service]
 Type=exec
-ExecStart=/usr/bin/scx-adapt start-profile  %i
+ExecStart=/usr/bin/scx-adapt profile start  %i
 Restart=on-failure
 
 [Install]
