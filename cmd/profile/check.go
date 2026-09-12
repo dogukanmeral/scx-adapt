@@ -14,7 +14,7 @@ import (
 
 func newCheckCmd() *cobra.Command {
 	return &cobra.Command{
-		Use:   "check-profile <profile-path>",
+		Use:   "check <profile-path>",
 		Short: "Check if profile file (in YAML format) is valid",
 		Long: `Check whether a profile file is a valid scx-adapt configuration.
 
