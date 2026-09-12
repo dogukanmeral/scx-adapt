@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"strings"
 	"time"
 
 	"github.com/dogukanmeral/scx-adapt/internal/paths"
@@ -57,13 +58,23 @@ func RemoveLock() error {
 	return nil
 }
 
-// Creates the lock file
-func CreateLock() error {
-	if _, err := os.Create(paths.LOCKFILEPATH); err != nil {
+// Creates the lock file and writes the active profile name into it
+func CreateLock(profileName string) error {
+	if err := os.WriteFile(paths.LOCKFILEPATH, []byte(profileName), 0700); err != nil {
 		return fmt.Errorf("Error: Creating lock file at '%s': %s", paths.LOCKFILEPATH, err)
 	}
 
 	return nil
+}
+
+// Returns the name of the active profile written in the lock file
+func ReadLock() (string, error) {
+	data, err := os.ReadFile(paths.LOCKFILEPATH)
+	if err != nil {
+		return "", fmt.Errorf("Error: Reading lock file at '%s': %s", paths.LOCKFILEPATH, err)
+	}
+
+	return strings.TrimSpace(string(data)), nil
 }
 
 // Returns if file exists or not

@@ -94,7 +94,7 @@ Examples:
 			}
 
 			// Create lock file
-			if err := helper.CreateLock(); err != nil {
+			if err := helper.CreateLock(path.Base(filepath)); err != nil {
 				fmt.Println(err)
 				os.Exit(1)
 			}
