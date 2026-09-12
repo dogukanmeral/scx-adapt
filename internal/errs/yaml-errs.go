@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-2.0-only
+// Copyright © 2026 Doğukan Meral <dogukan.meral@protonmail.com>
+
 package errs
 
 // NO nested errors: if a custom error occured from a function call; return the error as it is

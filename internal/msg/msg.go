@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-2.0-only
+// Copyright © 2026 Doğukan Meral <dogukan.meral@protonmail.com>
+
 package msg
 
 const MISSING_ARGS_MSG = "ERROR: Missing arguments. scx-adapt --help to see usage"
